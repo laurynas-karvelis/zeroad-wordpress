@@ -2,5 +2,4 @@
 /.idea/
 node_modules/
 .DS_Store
-**/vendor/composer
-**/vendor/autoload.php
+vendor/
