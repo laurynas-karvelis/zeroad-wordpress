@@ -24,6 +24,7 @@ class Config
   private function __construct()
   {
     $this->options = get_option(self::OPT_KEY, [
+      "enabled" => false,
       "client_id" => "",
       "features" => [],
       "output_method" => "header"
@@ -57,18 +58,22 @@ class Config
   public function initializeSite(): void
   {
     try {
+      $this->renderer->options($this->options);
+
       if (
+        !empty($this->options["enabled"]) &&
         !empty($this->options["client_id"]) &&
         !empty($this->options["features"]) &&
         count($this->options["features"])
       ) {
-        $this->renderer->options($this->options);
         $this->renderer->site(
           new Site([
             "clientId" => $this->options["client_id"],
             "features" => $this->options["features"]
           ])
         );
+      } else {
+        $this->renderer->site(null);
       }
     } catch (\Throwable $e) {
       error_log("ZeroAd Token: new Site() failed: " . $e->getMessage());
@@ -99,8 +104,25 @@ class Config
     );
 
     add_settings_field(
+      "enabled",
+      "Plugin enabled",
+      function () {
+        $opts = get_option(self::OPT_KEY, []);
+        $enabled = !empty($opts["enabled"]);
+        ?>
+        <input type="checkbox"
+               name="<?php echo self::OPT_KEY; ?>[enabled]"
+               value="1"
+               <?php checked($enabled); ?>>
+        <?php
+      },
+      self::OPT_KEY,
+      "zeroad_main"
+    );
+
+    add_settings_field(
       "client_id",
-      "Your site Client ID value",
+      "Client ID",
       function () {
         $opts = get_option(self::OPT_KEY, []);
         $v = isset($opts["client_id"]) ? esc_attr($opts["client_id"]) : "";
@@ -113,21 +135,28 @@ class Config
 
     add_settings_field(
       "features",
-      "Select site Features to enable",
+      "Features to enable",
       function () {
         $opts = get_option(self::OPT_KEY, []);
         $v = isset($opts["features"]) ? $opts["features"] : [];
         $features = Constants::FEATURES;
 
+        $descriptions = [
+          Constants::FEATURES["CLEAN_WEB"] =>
+            "Disable advertisements, cookie consent screens, 3rd party non-functional trackers, marketing popups.",
+          Constants::FEATURES["ONE_PASS"] => "Disable content paywalls; Enable access to content behind subscriptions."
+        ];
+
         foreach ($features as $key => $value) {
           $checked = in_array($value, $v) ? "checked" : "";
           echo '<label style="display:block;">';
           echo sprintf(
-            '<input type="checkbox" name="%s[features][]" value="%s" %s /> %s',
+            '<input type="checkbox" name="%s[features][]" value="%s" %s /> %s - %s',
             self::OPT_KEY,
             esc_attr($value),
             $checked,
-            esc_html($key)
+            esc_html($key),
+            $descriptions[$value]
           );
           echo "</label>";
         }
@@ -160,19 +189,25 @@ class Config
   public function validateOptions($input)
   {
     $out = [];
+
+    // Field `enabled`
+    $out["enabled"] = isset($input["enabled"]) ? 1 : 0;
+
+    // Field `client_id`
     $out["client_id"] = isset($input["client_id"]) ? sanitize_text_field($input["client_id"]) : "";
+
+    // Field `output_method`
     $out["output_method"] = in_array($input["output_method"] ?? "", ["header", "meta"], true)
       ? $input["output_method"]
       : "header";
 
+    // Field `features`
     if (isset($input["features"])) {
-      // Cast values to integer
       foreach ($input["features"] as $key => $value) {
         $input["features"][$key] = (int) $value;
       }
     }
 
-    // Filter only allowed keys
     $out["features"] = array_intersect($input["features"] ?? [], array_values(Constants::FEATURES));
 
     // Validation: must have at least one selected
@@ -180,6 +215,7 @@ class Config
       add_settings_error("features", "features_error", "You must select at least one feature.", "error");
     }
 
+    // Validation complete
     $this->options = $out;
 
     if (did_action("init")) {
@@ -191,19 +227,36 @@ class Config
 
   public function addAdminPage(): void
   {
-    add_options_page("Zero Ad Network", "Zero Ad Network", "manage_options", "zeroad-token", [
+    add_menu_page("Zero Ad Network", "Zero Ad Network", "manage_options", "zeroad-token", [$this, "renderAdminPage"]);
+
+    add_submenu_page("zeroad-token", "Main Settings", "Main Settings", "manage_options", "zeroad-token", [
       $this,
       "renderAdminPage"
     ]);
+
+    add_submenu_page(
+      "zeroad-token",
+      "Proxy / CDN Configs",
+      "Proxy / CDN Configs",
+      "manage_options",
+      "zeroad-proxy-configs",
+      [$this, "renderProxyConfigPage"]
+    );
   }
 
   public function renderAdminPage(): void
   {
     if (!current_user_can("manage_options")) {
       wp_die("Unauthorized");
+
+      if (function_exists("settings_errors")) {
+        settings_errors(); // This prints WP admin notices for the current settings page
+      }
     } ?>
+    
         <div class="wrap">
             <h1>Zero Ad Network</h1>
+            <?php settings_errors(); ?>
             <hr>
             <form method="post" action="options.php">
                 <?php
@@ -211,22 +264,202 @@ class Config
                 do_settings_sections(self::OPT_KEY);
                 submit_button();?>
             </form>
-            <h2>Cache configuration</h2>
-            <p>The plugin uses a deterministic <strong>X-ZeroAd-Variant</strong> header to vary cached pages based on feature flags.</p>
-            <p>This means:</p>
-            <ul>
-                <li>Edge caches (Varnish, nginx, CDN) should be configured to vary on the <code>X-ZeroAd-Variant</code> header.</li>
-                <li>The variant string format is: <code>clean_web{0|1}-one_pass{0|1}</code>.</li>
-            </ul>
-            <p>Example: <code>X-ZeroAd-Variant: clean_web1-one_pass0</code></p>
-            <p>Benefits:</p>
-            <ul>
-                <li>Reduces cache explosion — one cached page per combination of feature flags, not per user token.</li>
-                <li>Stateless approach — all decisions are made server-side based on the signed token.</li>
-                <li>Works seamlessly with your existing caching infrastructure.</li>
-            </ul>
-            <p>See the plugin README for sample Varnish / Nginx / CDN snippets to handle <code>X-ZeroAd-Variant</code> based caching.</p>
         </div>
   <?php
+  }
+
+  public function renderProxyConfigPage(): void
+  {
+    ?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+<style>
+    .za-accordion { margin-top: 25px; }
+    .za-item { border: 1px solid #ccc; margin-bottom: 10px; border-radius: 4px; }
+    .za-header {
+        background: #f1f1f1;
+        padding: 12px;
+        cursor: pointer;
+        font-weight: bold;
+        user-select: none;
+        border-radius: 4px 4px 0 0;
+    }
+    .za-body {
+        display: none;
+        padding: 15px;
+        background: #fff;
+    }
+    .za-body.open { display: block; border-radius: 0 0 4px 4px; }
+
+    pre {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="wrap">
+    <h1>Zero Ad Network – Proxy / CDN Cache Configuration Examples</h1>
+
+    <p>
+        The caching infrastructure must vary on the deterministic feature-flag header:
+    </p>
+
+<pre><code class="language-none">X-ZeroAd-Variant: clean_web{0|1}-one_pass{0|1}</code></pre>
+
+    <div class="za-accordion">
+
+        <!-- Apache -->
+        <div class="za-item">
+            <div class="za-header">Apache</div>
+            <div class="za-body">
+<pre><code class="language-apacheconf"># Apache (mod_cache) example
+CacheQuickHandler off
+CacheEnable disk /
+
+# Vary cache by header
+CacheVaryByHeader X-ZeroAd-Variant
+
+# Ensure header is passed from backend
+Header always merge X-ZeroAd-Variant %{X-ZeroAd-Variant}e
+
+# If acting as a reverse proxy:
+ProxyPass / http://backend/
+ProxyPassReverse / http://backend/
+RequestHeader set X-ZeroAd-Variant %{X-ZeroAd-Variant}e
+</code></pre>
+            </div>
+        </div>
+
+        <!-- Nginx -->
+        <div class="za-item">
+            <div class="za-header">Nginx</div>
+            <div class="za-body">
+<pre><code class="language-nginx"># Nginx proxy_cache example
+proxy_cache_path /var/cache/nginx keys_zone=pagecache:50m;
+
+map $http_x_zeroad_variant $variant {
+    default $http_x_zeroad_variant;
+}
+
+server {
+    location / {
+        proxy_set_header X-ZeroAd-Variant $variant;
+
+        proxy_cache pagecache;
+        proxy_cache_key "$scheme$host$request_uri::$variant";
+
+        proxy_pass http://backend;
+    }
+}
+</code></pre>
+            </div>
+        </div>
+
+        <!-- Caddy -->
+        <div class="za-item">
+            <div class="za-header">Caddy</div>
+            <div class="za-body">
+<pre><code class="language-caddyfile"># Caddy (with http.cache plugin)
+:80 {
+    route {
+        header {
+            defer
+            +X-ZeroAd-Variant {header.X-ZeroAd-Variant}
+        }
+
+        cache {
+            vary X-ZeroAd-Variant
+        }
+
+        reverse_proxy backend:80
+    }
+}
+</code></pre>
+            </div>
+        </div>
+
+        <!-- Varnish -->
+        <div class="za-item">
+            <div class="za-header">Varnish</div>
+            <div class="za-body">
+<pre><code class="language-vcl"># Varnish VCL (4.x / 7.x)
+vcl_recv {
+    if (req.http.X-ZeroAd-Variant) {
+        set req.http.X-ZeroAd-Variant = req.http.X-ZeroAd-Variant;
+    }
+
+    # Include in hash
+    hash_data(req.http.X-ZeroAd-Variant);
+}
+
+vcl_backend_response {
+    # Make Vary explicit
+    set beresp.http.Vary = "X-ZeroAd-Variant";
+}
+</code></pre>
+            </div>
+        </div>
+
+        <!-- CDN Providers -->
+        <div class="za-item">
+            <div class="za-header">CDN Providers</div>
+            <div class="za-body">
+
+<h3>Cloudflare</h3>
+<pre><code class="language-none"># Cache Rules → Custom Cache Key
+Include header:
+http.request.headers["X-ZeroAd-Variant"]
+</code></pre>
+
+<h3>Fastly</h3>
+<pre><code class="language-vcl">sub vcl_hash {
+    hash_data(req.http.X-ZeroAd-Variant);
+}
+</code></pre>
+
+<h3>Akamai</h3>
+<pre><code class="language-none"># Akamai Property Manager
+Cache Key → Add Header:
+X-ZeroAd-Variant
+</code></pre>
+
+<h3>AWS CloudFront (Lambda@Edge)</h3>
+<pre><code class="language-javascript">exports.handler = async (event) => {
+  const req = event.Records[0].cf.request;
+
+  const variant = req.headers['x-zeroad-variant']
+      ? req.headers['x-zeroad-variant'][0].value
+      : 'clean_web0-one_pass0';
+
+  req.headers['x-zeroad-variant'] = [
+      { key: 'X-ZeroAd-Variant', value: variant }
+  ];
+
+  // Inject into cache key
+  req.querystring = "variant=" + variant;
+
+  return req;
+};
+</code></pre>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.querySelectorAll(".za-header").forEach(header => {
+    header.addEventListener("click", () => {
+        const body = header.nextElementSibling;
+        body.classList.toggle("open");
+    });
+});
+</script>
+
+<?php
   }
 }
