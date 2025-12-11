@@ -10,7 +10,7 @@
  * Author:            Explosive Brains Ltd.
  * License:           Apache 2.0
  * License URI:       https://www.apache.org/licenses/LICENSE-2.0.txt
- * Text Domain:       zeroad-wp
+ * Text Domain:       zeroad-network
  */
 
 if (!defined("ABSPATH")) {
