@@ -1,0 +1,10 @@
+{
+  "name": "zeroad.network/zeroad-wp-plugin",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=7.2",
+    "ext-sodium": "*",
+    "zeroad.network/token": "^0.13.12"
+  },
+  "autoload": {}
+}

@@ -1,0 +1,13 @@
+{
+  "name": "zeroad-wordpress",
+  "private": true,
+  "scripts": {
+    "composer:install": "composer install --no-autoloader",
+    "start": "wp-env start",
+    "stop": "wp-env stop",
+    "destroy": "wp-env destroy"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^10.36.0"
+  }
+}
