@@ -11,7 +11,7 @@ class Constants
    * Used to verify that `X-Better-Web-Hello` header values are authentic
    * and have not been tampered with.
    */
-  public const ZEROAD_NETWORK_PUBLIC_KEY = "MCowBQYDK2VwAyEAEVl1D0yHwfrr5l+YhRkhE0n5WdzBkHQ00UqolLaJhro=";
+  public const ZEROAD_NETWORK_PUBLIC_KEY = "MCowBQYDK2VwAyEAignXRaTQtxEDl4ThULucKNQKEEO2Lo5bEO8qKwjSDVs=";
 
   /**
    * IMPORTANT: Requirements listed for each feature class MUST be fulfilled fully.
