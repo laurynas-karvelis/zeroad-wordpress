@@ -1,0 +1,39 @@
+name: Build Plugin ZIP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: |
+          bun install --frozen-lockfile
+
+      - name: Install Composer dependencies
+        working-directory: plugins/zeroad-network
+        run: |
+          bun composer:install
+
+      - name: Create ZIP
+        run: |
+          mkdir build
+          cp -R plugins/zeroad-network build/zeroad-network
+          cd build
+          zip -r zeroad-network.zip zeroad-network
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zeroad-network
+          path: build/zeroad-network.zip
