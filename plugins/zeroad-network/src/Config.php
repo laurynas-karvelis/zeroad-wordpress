@@ -274,26 +274,7 @@ class Config
 
   public function renderProxyConfigPage(): void
   {
-    wp_enqueue_style(
-      "zeroad-wordpress-prism-stylesheet",
-      "https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css",
-      [],
-      "1.30.0"
-    );
-    wp_enqueue_script(
-      "zeroad-wordpress-prism-min",
-      "https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js",
-      [], // Dependencies (optional)
-      "1.30.0", // Version number
-      true // Load in footer
-    );
-    wp_enqueue_script(
-      "zeroad-wordpress-prism-autoloader",
-      "https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/autoloader/prism-autoloader.min.js",
-      [], // Dependencies (optional)
-      "1.30.0", // Version number
-      true // Load in footer
-    );?>
+    ?>
 
 <style>
     .za-accordion { margin-top: 25px; }
@@ -311,6 +292,16 @@ class Config
         padding: 15px;
         background: #fff;
     }
+    .wrap pre {
+      border-color: #ccc;
+      padding: 0.4rem 0.6rem;
+      background-color: rgba(0, 0, 0, 0.07);
+    }
+
+    .wrap pre code {
+      background-color: transparent !important;
+    }
+
     .za-body.open { display: block; border-radius: 0 0 4px 4px; }
 
     pre {
