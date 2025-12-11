@@ -53,7 +53,7 @@ class Renderer
 
     // Start output buffering after template redirect so we can post-process HTML
     add_action("template_redirect", [$this, "maybeStartOutputBuffer"], 5);
-    add_filter("the_content", [$this, "prependTokenContextToContent"]);
+    // add_filter("the_content", [$this, "prependTokenContextToContent"]); // For debug purposes only
   }
 
   public function prependTokenContextToContent($content)
