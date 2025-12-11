@@ -6,8 +6,5 @@
     "ext-sodium": "*",
     "zeroad.network/token": "^0.13.12"
   },
-  "config": {
-    "vendor-dir": "plugins/zeroad-network/vendor"
-  },
   "autoload": {}
 }

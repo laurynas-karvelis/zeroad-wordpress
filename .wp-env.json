@@ -1,11 +1,11 @@
 {
   "core": "WordPress/WordPress#6.9",
   "phpVersion": "8.5",
-  "plugins": ["./"],
+  "plugins": ["./plugins/zeroad-network"],
   "config": {
     "WP_DEBUG": true
   },
   "mappings": {
-    "wp-content/plugins/zeroad-wordpress": "./"
+    "wp-content/plugins/zeroad-network": "./plugins/zeroad-network"
   }
 }
