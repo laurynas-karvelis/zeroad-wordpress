@@ -21,19 +21,18 @@ jobs:
           bun install --frozen-lockfile
 
       - name: Install Composer dependencies
-        working-directory: plugins/zeroad-network
         run: |
           bun composer:install
 
       - name: Create ZIP
         run: |
           mkdir build
-          cp -R plugins/zeroad-network build/zeroad-network
+          cp -R plugins/zero-ad-network build/zero-ad-network
           cd build
-          zip -r zeroad-network.zip zeroad-network
+          zip -r zero-ad-network.zip zero-ad-network
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: zeroad-network
-          path: build/zeroad-network.zip
+          path: build/zero-ad-network.zip
