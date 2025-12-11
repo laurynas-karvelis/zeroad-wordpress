@@ -2,7 +2,7 @@
   "name": "zeroad-wordpress",
   "private": true,
   "scripts": {
-    "composer:install": "composer install --no-autoloader",
+    "composer:install": "cd plugins/zeroad-network && composer install --no-autoloader",
     "start": "wp-env start",
     "stop": "wp-env stop",
     "destroy": "wp-env destroy"
