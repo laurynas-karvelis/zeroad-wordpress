@@ -12,11 +12,11 @@ use ZeroAd\Token\Site;
 use ZeroAd\Token\Constants;
 
 use ZeroAd\WP\Config;
-use ZeroAd\WP\Features\Advertisements;
-use ZeroAd\WP\Features\ContentPaywalls;
-use ZeroAd\WP\Features\CookieConsent;
-use ZeroAd\WP\Features\MarketingDialogs;
-use ZeroAd\WP\Features\SubscriptionAccess;
+use ZeroAd\WP\Actions\Advertisements;
+use ZeroAd\WP\Actions\ContentPaywalls;
+use ZeroAd\WP\Actions\CookieConsent;
+use ZeroAd\WP\Actions\MarketingDialogs;
+use ZeroAd\WP\Actions\SubscriptionAccess;
 
 class Renderer
 {
@@ -24,7 +24,7 @@ class Renderer
   private $site;
   private $tokenContext;
 
-  private $featureClasses = [
+  const FEATURE_ACTION_CLASSES = [
     Advertisements::class,
     CookieConsent::class,
     MarketingDialogs::class,
@@ -44,30 +44,22 @@ class Renderer
 
   public function run(): void
   {
-    // Output meta/header for the site welcome
     add_action("wp_head", [$this, "maybeInjectMetaTag"]);
     add_action("send_headers", [$this, "maybeSendHeader"], 20);
 
-    // Process incoming token and set cookies/headers for caching
     add_action("init", [$this, "parseClientToken"], 2);
-
-    // Targeted filters for popular paywall/membership plugins
     add_action("init", [$this, "registerPluginOverrides"], 3);
-
     add_action("template_redirect", [$this, "maybeToggleFeatures"], 2);
-    add_action("template_redirect", [$this, "maybeInjectVaryHeader"], 3);
 
     // Start output buffering after template redirect so we can post-process HTML
     add_action("template_redirect", [$this, "maybeStartOutputBuffer"], 5);
-
     add_filter("the_content", [$this, "prependTokenContextToContent"]);
   }
 
   public function prependTokenContextToContent($content)
   {
-    $tokenContext = $GLOBALS["zeroad_token_context"] ?? null;
-    if ($tokenContext) {
-      $debug = '<pre style="background:#eee;padding:8px;">' . esc_html(print_r($tokenContext, true)) . "</pre>";
+    if (!empty($this->tokenContext)) {
+      $debug = '<pre style="background:#eee;padding:8px;">' . esc_html(print_r($this->tokenContext, true)) . "</pre>";
       $content = $debug . $content;
     }
 
@@ -102,10 +94,10 @@ class Renderer
       // Parse & verify the signed token
       $this->tokenContext = $this->site->parseClientToken($_SERVER[$this->site->CLIENT_HEADER_NAME] ?? null);
 
-      // Make `$tokenContext` available globally to everyone
+      // Make `tokenContext` available globally to everyone
       $GLOBALS["zeroad_token_context"] = $this->tokenContext;
     } catch (\Throwable $e) {
-      error_log("ZeroAd Token: parseClientToken error: " . $e->getMessage());
+      error_log("ZeroAd: parseClientToken error: " . $e->getMessage());
     }
   }
 
@@ -115,9 +107,9 @@ class Renderer
       return;
     }
 
-    foreach ($this->featureClasses as $Class) {
-      if ($Class::intercept($this->tokenContext)) {
-        $Class::toggle();
+    foreach (self::FEATURE_ACTION_CLASSES as $Class) {
+      if ($Class::enabled($this->tokenContext)) {
+        $Class::run();
       }
     }
   }
@@ -146,8 +138,8 @@ class Renderer
       return $html;
     }
 
-    foreach ($this->featureClasses as $Class) {
-      if ($Class::intercept($this->tokenContext)) {
+    foreach (self::FEATURE_ACTION_CLASSES as $Class) {
+      if ($Class::enabled($this->tokenContext)) {
         $html = $Class::outputBufferCallback($html);
       }
     }
@@ -156,23 +148,14 @@ class Renderer
     return $html;
   }
 
-  public function maybeInjectVaryHeader()
-  {
-    if (empty($this->tokenContext)) {
-      return;
-    }
-
-    CacheInterceptor::injectVaryHeader($this->tokenContext);
-  }
-
   public function registerPluginOverrides(): void
   {
     if (empty($this->tokenContext) || is_admin()) {
       return;
     }
 
-    foreach ($this->featureClasses as $Class) {
-      if ($Class::intercept($this->tokenContext)) {
+    foreach (self::FEATURE_ACTION_CLASSES as $Class) {
+      if ($Class::enabled($this->tokenContext)) {
         if (method_exists($Class, "registerPluginOverrides")) {
           $Class::registerPluginOverrides();
         }

@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace ZeroAd\WP\Features;
+namespace ZeroAd\WP\Actions;
 
 if (!defined("ABSPATH")) {
   exit();
 }
 
-use ZeroAd\WP\Features\Base;
+use ZeroAd\WP\Actions\Action;
 
-class Advertisements extends Base
+class Advertisements extends Action
 {
-  public static function intercept(array $ctx): bool
+  public static function enabled(array $ctx): bool
   {
     return !empty($ctx["HIDE_ADVERTISEMENTS"]);
   }
 
-  public static function toggle(): void
+  public static function run(): void
   {
     // No ability to add a filter
 

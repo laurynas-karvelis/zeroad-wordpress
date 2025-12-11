@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace ZeroAd\WP\Features;
+namespace ZeroAd\WP\Actions;
 
 if (!defined("ABSPATH")) {
   exit();
 }
 
-use ZeroAd\WP\Features\Base;
+use ZeroAd\WP\Actions\Action;
 
-class SubscriptionAccess extends Base
+class SubscriptionAccess extends Action
 {
-  public static function intercept(array $ctx): bool
+  public static function enabled(array $ctx): bool
   {
     return !empty($ctx["ENABLE_SUBSCRIPTION_ACCESS"]);
   }
 
-  public static function toggle(): void
+  public static function run(): void
   {
     // Give general "yes" to all membership plugins
     parent::addFilters([["user_can", "__return_true", 999, 3], ["current_user_can", "__return_true", 999, 3]]);

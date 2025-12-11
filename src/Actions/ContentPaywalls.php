@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace ZeroAd\WP\Features;
+namespace ZeroAd\WP\Actions;
 
-use ZeroAd\WP\Features\Base;
+use ZeroAd\WP\Actions\Action;
 
 if (!defined("ABSPATH")) {
   exit();
 }
 
-class ContentPaywalls extends Base
+class ContentPaywalls extends Action
 {
-  public static function intercept(array $ctx): bool
+  public static function enabled(array $ctx): bool
   {
     return !empty($ctx["DISABLE_CONTENT_PAYWALL"]);
   }
 
-  public static function toggle(): void
+  public static function run(): void
   {
     parent::addFilters([
       // Content Control

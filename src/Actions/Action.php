@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
-namespace ZeroAd\WP\Features;
+namespace ZeroAd\WP\Actions;
 
 if (!defined("ABSPATH")) {
   exit();
 }
 
-class Base
+abstract class Action
 {
   private static $plugins;
+
+  abstract public static function enabled(array $ctx): bool;
+  abstract public static function run(): void;
+  abstract public static function outputBufferCallback(string $html): string;
 
   /**
    * Inject a string into the <head> (before </head>), or at start if head not present.
