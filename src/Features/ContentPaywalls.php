@@ -19,56 +19,55 @@ class ContentPaywalls extends Base
 
   public static function toggle(): void
   {
-    // Content Control
-    add_filter("content_control/protection_is_disabled", "__return_true", 999);
+    parent::addFilters([
+      // Content Control
+      ["content_control/protection_is_disabled", "__return_true", 999],
 
-    // Leaky Paywall
-    add_filter("leaky_paywall_current_user_can_view_all_content", "__return_true", 999);
+      // Leaky Paywall
+      ["leaky_paywall_current_user_can_view_all_content", "__return_true", 999],
 
-    // MemberFul
-    add_filter("memberful_wp_protect_content", "__return_false", 999);
+      // MemberFul
+      ["memberful_wp_protect_content", "__return_false", 999],
 
-    // Membership For WooCommerce
-    add_filter("woocommerce_is_purchasable", "__return_false", 999);
-
-    // Protected Video
-    parent::disablePlugin("protected-video", "Protected_Video_", ["protected_video"]);
-
-    // s2Member Framework
-    parent::disablePlugin("s2member", "c_ws_plugin", []);
-
-    // Secure Copy Content Protection
-    parent::disablePlugin("secure-copy-content-protection", "Secure_Copy_Content_Protection", [
-      "ays_block",
-      "ays_block_subscribe"
+      // Membership For WooCommerce
+      ["woocommerce_is_purchasable", "__return_false", 999]
     ]);
 
-    // Steady for WordPress
-    parent::disablePlugin("steady-wp", "Steady_WP", []);
+    parent::disablePlugins([
+      // Protected Video
+      ["protected-video", "Protected_Video_", ["protected_video"]],
 
-    // Pay For Post with WooCommerce
-    parent::disablePlugin("wc_pay_per_post", "Woocommerce_Pay_Per_Post_", ["wc-pay-for-post-status"]);
+      // s2Member Framework
+      ["s2member", "c_ws_plugin", []],
 
-    // ProfilePress
-    parent::disablePlugin("wp-user-avatar", "ProfilePress", []);
+      // Secure Copy Content Protection
+      ["secure-copy-content-protection", "Secure_Copy_Content_Protection", ["ays_block", "ays_block_subscribe"]],
 
-    // Zlick
-    parent::disablePlugin("zlick-paywall", "zp_", ["zlick_payment_widget", "zp_placeholder"]);
+      // Steady for WordPress
+      ["steady-wp", "Steady_WP", []],
 
-    // Easy Digital Downloads
-    parent::disablePlugin("easy-digital-downloads", "edd_", [
-      "purchase_link",
-      "download_history",
-      "purchase_history",
-      "download_checkout",
-      "download_cart"
+      // Pay For Post with WooCommerce
+      ["wc_pay_per_post", "Woocommerce_Pay_Per_Post_", ["wc-pay-for-post-status"]],
+
+      // ProfilePress
+      ["wp-user-avatar", "ProfilePress", []],
+
+      // Zlick
+      ["zlick-paywall", "zp_", ["zlick_payment_widget", "zp_placeholder"]],
+
+      // Easy Digital Downloads
+      [
+        "easy-digital-downloads",
+        "edd_",
+        ["purchase_link", "download_history", "purchase_history", "download_checkout", "download_cart"]
+      ],
+
+      // Flexible Subscriptions
+      ["flexible-subscriptions", "WPDesk\FlexibleSubscriptions", []],
+
+      // SureCart
+      ["surecart", "SureCart", ["sc_form", "sc_line_item", "sc_buy_button"]]
     ]);
-
-    // Flexible Subscriptions
-    parent::disablePlugin("flexible-subscriptions", "WPDesk\FlexibleSubscriptions", []);
-
-    // SureCart
-    parent::disablePlugin("surecart", "SureCart", ["sc_form", "sc_line_item", "sc_buy_button"]);
   }
 
   public static function outputBufferCallback(string $html): string

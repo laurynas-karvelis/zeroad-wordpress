@@ -20,17 +20,18 @@ class SubscriptionAccess extends Base
   public static function toggle(): void
   {
     // Give general "yes" to all membership plugins
-    add_filter("user_can", "__return_true", 999, 3);
-    add_filter("current_user_can", "__return_true", 999, 3);
+    parent::addFilters([["user_can", "__return_true", 999, 3], ["current_user_can", "__return_true", 999, 3]]);
 
-    // Paid Member Subscriptions
-    parent::disablePlugin("paid-member-subscriptions", "Paid_Member_", ["pms-wpb-register"]);
+    parent::disablePlugins([
+      // Paid Member Subscriptions
+      ["paid-member-subscriptions", "Paid_Member_", ["pms-wpb-register"]],
 
-    // WPSubscription
-    parent::disablePlugin("wp_subscription", "SpringDevs\Subscription", []);
+      // WPSubscription
+      ["wp_subscription", "SpringDevs\Subscription", []],
 
-    // Subscriptions For WooCommerce
-    parent::disablePlugin("subscriptions-for-woocommerce", "wps_sfw_", ["wps-subscription-dashboard"]);
+      // Subscriptions For WooCommerce
+      ["subscriptions-for-woocommerce", "wps_sfw_", ["wps-subscription-dashboard"]]
+    ]);
   }
 
   public static function outputBufferCallback(string $html): string
@@ -62,28 +63,26 @@ class SubscriptionAccess extends Base
   public static function registerPluginOverrides(): void
   {
     // Paid Memberships Pro: filter pmpro_has_membership_level and pmpro_has_membership_access
-    if (function_exists("apply_filters")) {
-      // pmpro_has_membership_level filter
-      add_filter(
-        "pmpro_has_membership_level",
-        function ($has, $user_id, $levels) {
-          // If feature requests access, allow membership-level checks to succeed
-          return true;
-        },
-        10,
-        3
-      );
+    // pmpro_has_membership_level filter
+    add_filter(
+      "pmpro_has_membership_level",
+      function ($has, $user_id, $levels) {
+        // If feature requests access, allow membership-level checks to succeed
+        return true;
+      },
+      10,
+      3
+    );
 
-      // pmpro_has_membership_access_filter
-      add_filter(
-        "pmpro_has_membership_access_filter",
-        function ($hasAccess, $post, $user, $levels) {
-          return true;
-        },
-        10,
-        4
-      );
-    }
+    // pmpro_has_membership_access_filter
+    add_filter(
+      "pmpro_has_membership_access_filter",
+      function ($hasAccess, $post, $user, $levels) {
+        return true;
+      },
+      10,
+      4
+    );
 
     // MemberPress: try to short-circuit common filters and methods
     if (class_exists("MeprUser")) {

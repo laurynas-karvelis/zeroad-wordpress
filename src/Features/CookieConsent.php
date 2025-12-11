@@ -23,22 +23,29 @@ class CookieConsent extends Base
     self::disablePlugins([
       // Cookie Bot
       ["cookiebot", "cybot\cookiebot", ["cookie_declaration", "uc_embedding"]],
+
       // Beautiful and responsive cookie consent
       ["bar-cookie-consent", "nsc_bar_", ["cc_show_cookie_banner_nsc_bar"]],
+
       // Real Cookie Banner
       [
         "real-cookie-banner",
         "DevOwl\RealCookieBanner",
         ["rcb-consent", "rcb-consent-history-uuids", "rcb-consent-print-uuid", "rcb-cookie-policy", ""]
       ],
+
       // GDPR cookie consent
       ["gdpr-cookie-consent", "Gdpr_", ["wpl_data_request", "wpl_cookie_details", "youtube"]],
+
       // Pressidium Cookie Consent
       ["pressidium-cookie-consent", "Pressidium\WP\CookieConsent", []],
+
       // WPConsent
       ["wpconsent-cookies-banner-privacy-suite", "WPConsent_", ["wpconsent_cookie_policy"]],
+
       // GDPR Cookie Compliance
       ["gdpr-cookie-compliance", "Moove_GDPR_", []],
+
       // Complianz | GDPR/CCPA Cookie Consent
       [
         "complianz-gdpr",
@@ -52,6 +59,7 @@ class CookieConsent extends Base
           "cmplz-accept-link"
         ]
       ],
+
       // CookieYes | GDPR Cookie Consent
       [
         "cookie-law-info",
@@ -71,16 +79,21 @@ class CookieConsent extends Base
           "cookie_close",
           "wt_cli_manage_consent",
           "cookie_accept_all"
-        ],
-        // Cookie Notice & Compliance for GDPR / CCPA
-        ["cookie-notice", "Cookie_Notice", ["cookies_accepted", "cookies_revoke", "cookies_policy_link"]],
-        // CookieAdmin - Cookie Consent Banner
-        ["cookieadmin", "cookieadmin_", []]
+        ]
       ],
+
+      // Cookie Notice & Compliance for GDPR / CCPA
+      ["cookie-notice", "Cookie_Notice", ["cookies_accepted", "cookies_revoke", "cookies_policy_link"]],
+
+      // CookieAdmin - Cookie Consent Banner
+      ["cookieadmin", "cookieadmin_", []],
+
       // Cookie Notice and Consent Banner
       ["cookie-notice-and-consent-banner", "CNCB_", ["revoke_consent"]],
+
       // Cookies and Content Security Policy
       ["cookies-and-content-security-policy", "cacsp_", []],
+
       // Termly - GDPR/CCPA Cookie Consent Banner
       ["uk-cookie-consent", "termly", []]
     ]);

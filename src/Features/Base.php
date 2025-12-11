@@ -24,6 +24,22 @@ class Base
     return $inject . $html;
   }
 
+  protected static function addFilters(array $list): void
+  {
+    foreach ($list as $value) {
+      [$name, $fn, $priority] = $value;
+      add_filter($name, $fn, $priority ?? null);
+    }
+  }
+
+  protected static function removeActions(array $list): void
+  {
+    foreach ($list as $value) {
+      [$name, $fn, $priority] = $value;
+      remove_action($name, $fn, $priority);
+    }
+  }
+
   protected static function removeShortcodes(array $list): void
   {
     foreach ($list as $value) {

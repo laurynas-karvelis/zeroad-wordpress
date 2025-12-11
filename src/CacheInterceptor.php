@@ -32,18 +32,6 @@ class CacheInterceptor
     return implode("-", $parts);
   }
 
-  /**
-   * Called early during template_redirect to set headers for cache variants.
-   */
-  public static function injectVaryHeader(array $tokenContext)
-  {
-    $variant = self::buildVariantString($tokenContext);
-
-    // Emit deterministic variant header
-    header("Vary: X-ZeroAd-Variant", false);
-    header("X-ZeroAd-Variant: {$variant}", false);
-  }
-
   public static function registerPluginOverrides(array $tokenContext): void
   {
     $variant = self::buildVariantString($tokenContext);

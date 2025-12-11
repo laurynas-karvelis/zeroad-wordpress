@@ -23,41 +23,56 @@ class MarketingDialogs extends Base
     parent::disablePlugins([
       // Popup Maker
       ["popup-maker", "Pum_", []],
+
       // OptinMonster
       ["optin-monster-api", "OMAPI", ["optin-monster", "optin-monster-shortcode", "optin-monster-inline"]],
+
       // Popup Maker WP
       [null, "SGPM", []],
+
       // Popup by Supsystic
-      // TODO: revisit this
       ["popup-by-supsystic", "popupPps", ["supsystic-show-popup", "embed"]],
+
       // PopupKit
       ["popup-builder-block", "PopupBuilderBlock", []],
+
       // Popup Anything - A Marketing Popup
       ["popup-anything-on-click", "Popupaoc_", ["paoc_details"]],
+
       // Advanced Popups
       ["advanced-popups", "ADP_", []],
+
       // Popup Box
       ["ays-popup-box", "Ays_Pb_", ["ays_pb"]],
+
       // Depicter — Popup & Slider Builder
       ["depicter", "depicter_", ["depicter"]],
+
       // FooBox Image Lightbox
       ["foobox-image-lightbox", "Foobox_", []],
+
       // MailOptin - Lite
       ["mailoptin", "MailOptin", ["mo-mailchimp-interests", "posts-loop", "mo-optin-form-wrapper", ""]],
+
       // Poptin
       ["poptin", "POPTIN_", ["poptin-form"]],
+
       // Popup Builder - Create highly converting, mobile friendly marketing popups.
       ["popup-builder", "sgpb", ["sg_popup"]],
+
       // Popups for Divi
       ["divi-popup", "pfd_", []],
+
       // Hustle
       ["hustle", "Hustle_", ["wd_hustle", "wd_hustle_cc", "wd_hustle_ss", "wd_hustle_unsubscribe"]],
+
       // WP Popups Lite
       [
         "wp-popups-lite",
         "WPPopups_",
         ["wppopup-template", "spu-facebook", "spu-facebook-page", "spu-twitter", "spu-close", "spu"]
       ],
+
       // Icegram Express - Email Subscribers, Newsletters and Marketing Automation Plugin
       [
         "email-subscribers",
@@ -67,12 +82,14 @@ class MarketingDialogs extends Base
     ]);
 
     // Email Subscribe
-    remove_action("wp_footer", "addModalPopupHtmlToWpFooter");
-    remove_action("wp_enqueue_scripts", "email_subscription_popup_load_styles_and_js");
-    remove_action("wp_ajax_getEmailTemplate", "getEmailTemplate");
-    remove_action("widgets_init", "nksnewslettersubscriberSet");
-    remove_action("wp_ajax_store_email", "store_email_callback");
-    remove_action("wp_ajax_nopriv_store_email", "store_email_callback");
+    parent::removeActions([
+      ["wp_footer", "addModalPopupHtmlToWpFooter"],
+      ["wp_enqueue_scripts", "email_subscription_popup_load_styles_and_js"],
+      ["wp_ajax_getEmailTemplate", "getEmailTemplate"],
+      ["widgets_init", "nksnewslettersubscriberSet"],
+      ["wp_ajax_store_email", "store_email_callback"],
+      ["wp_ajax_nopriv_store_email", "store_email_callback"]
+    ]);
   }
 
   public static function outputBufferCallback(string $html): string
