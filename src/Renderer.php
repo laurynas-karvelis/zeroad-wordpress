@@ -56,15 +56,15 @@ class Renderer
     // add_filter("the_content", [$this, "prependTokenContextToContent"]); // For debug purposes only
   }
 
-  public function prependTokenContextToContent($content)
-  {
-    if (!empty($this->tokenContext)) {
-      $debug = '<pre style="background:#eee;padding:8px;">' . esc_html(print_r($this->tokenContext, true)) . "</pre>";
-      $content = $debug . $content;
-    }
+  // public function prependTokenContextToContent($content)
+  // {
+  //   if (!empty($this->tokenContext)) {
+  //     $debug = '<pre style="background:#eee;padding:8px;">' . esc_html(print_r($this->tokenContext, true)) . "</pre>";
+  //     $content = $debug . $content;
+  //   }
 
-    return $content;
-  }
+  //   return $content;
+  // }
 
   public function maybeSendHeader(): void
   {
@@ -81,7 +81,7 @@ class Renderer
       return;
     }
     $value = esc_attr($this->site->SERVER_HEADER_VALUE);
-    echo "<meta name='{$this->site->SERVER_HEADER_NAME}' content='{$value}' />\n";
+    echo "<meta name='" . esc_html($this->site->SERVER_HEADER_NAME) . "' content='" . esc_html($value) . "' />\n";
   }
 
   public function parseClientToken(): void
@@ -92,12 +92,15 @@ class Renderer
 
     try {
       // Parse & verify the signed token
-      $this->tokenContext = $this->site->parseClientToken($_SERVER[$this->site->CLIENT_HEADER_NAME] ?? null);
+      $headerValue = !empty($_SERVER[$this->site->CLIENT_HEADER_NAME])
+        ? sanitize_text_field(wp_unslash($_SERVER[$this->site->CLIENT_HEADER_NAME]))
+        : null;
+      $this->tokenContext = $this->site->parseClientToken($headerValue);
 
       // Make `tokenContext` available globally to everyone
       $GLOBALS["zeroad_token_context"] = $this->tokenContext;
     } catch (\Throwable $e) {
-      error_log("ZeroAd: parseClientToken error: " . $e->getMessage());
+      // give up
     }
   }
 
@@ -175,8 +178,8 @@ if (!function_exists("wp_is_json_request")) {
     }
 
     // Check headers
-    $accept = isset($_SERVER["HTTP_ACCEPT"]) ? $_SERVER["HTTP_ACCEPT"] : "";
-    $content_type = isset($_SERVER["CONTENT_TYPE"]) ? $_SERVER["CONTENT_TYPE"] : "";
+    $accept = isset($_SERVER["HTTP_ACCEPT"]) ? sanitize_text_field(wp_unslash($_SERVER["HTTP_ACCEPT"])) : "";
+    $content_type = isset($_SERVER["CONTENT_TYPE"]) ? sanitize_text_field(wp_unslash($_SERVER["CONTENT_TYPE"])) : "";
 
     if (strpos($accept, "application/json") !== false || strpos($content_type, "application/json") !== false) {
       return true;

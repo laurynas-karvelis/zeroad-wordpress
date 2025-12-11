@@ -76,7 +76,7 @@ class Config
         $this->renderer->site(null);
       }
     } catch (\Throwable $e) {
-      error_log("ZeroAd Token: new Site() failed: " . $e->getMessage());
+      // give up
     }
   }
 
@@ -111,7 +111,7 @@ class Config
         $enabled = !empty($opts["enabled"]);
         ?>
         <input type="checkbox"
-               name="<?php echo self::OPT_KEY; ?>[enabled]"
+               name="<?php echo esc_attr(self::OPT_KEY); ?>[enabled]"
                value="1"
                <?php checked($enabled); ?>>
         <?php
@@ -126,7 +126,11 @@ class Config
       function () {
         $opts = get_option(self::OPT_KEY, []);
         $v = isset($opts["client_id"]) ? esc_attr($opts["client_id"]) : "";
-        echo "<input type='text' name='" . self::OPT_KEY . "[client_id]' value='{$v}' style='width:60%'/>";
+        echo "<input type='text' name='" .
+          esc_attr(self::OPT_KEY) .
+          "[client_id]' value='" .
+          esc_attr($v) .
+          "' style='width:60%'/>";
         echo "<p class='description'>Your site Client ID value that was provided during site registration</p>";
       },
       self::OPT_KEY,
@@ -152,11 +156,11 @@ class Config
           echo '<label style="display:block;">';
           echo sprintf(
             '<input type="checkbox" name="%s[features][]" value="%s" %s /> %s - %s',
-            self::OPT_KEY,
+            esc_attr(self::OPT_KEY),
             esc_attr($value),
-            $checked,
+            esc_attr($checked),
             esc_html($key),
-            $descriptions[$value]
+            esc_html($descriptions[$value])
           );
           echo "</label>";
         }
@@ -173,7 +177,7 @@ class Config
         $opts = get_option(self::OPT_KEY, []);
         $v = $opts["output_method"] ?? "header";
         ?>
-            <select name="<?php echo self::OPT_KEY; ?>[output_method]">
+            <select name="<?php echo esc_attr(self::OPT_KEY); ?>[output_method]">
                 <option value="header" <?php selected($v, "header"); ?>>HTTP Header</option>
                 <option value="meta" <?php selected($v, "meta"); ?>>HTML Meta Tag</option>
             </select>
@@ -270,11 +274,26 @@ class Config
 
   public function renderProxyConfigPage(): void
   {
-    ?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-
+    wp_enqueue_style(
+      "zeroad-wordpress-prism-stylesheet",
+      "https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css",
+      [],
+      "1.30.0"
+    );
+    wp_enqueue_script(
+      "zeroad-wordpress-prism-min",
+      "https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js",
+      [], // Dependencies (optional)
+      "1.30.0", // Version number
+      true // Load in footer
+    );
+    wp_enqueue_script(
+      "zeroad-wordpress-prism-autoloader",
+      "https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/autoloader/prism-autoloader.min.js",
+      [], // Dependencies (optional)
+      "1.30.0", // Version number
+      true // Load in footer
+    );?>
 
 <style>
     .za-accordion { margin-top: 25px; }

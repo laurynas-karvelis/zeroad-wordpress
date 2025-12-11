@@ -1,14 +1,16 @@
-=== Zero Ad Network for WordPress ===
+=== Zero Ad Network ===
 Contributors: laurynas-karvelis
-Tags: token, access-token, authentication, feature-flags, entitlement, ad-free, paywall, content-access, http-header, cache-variation, php, api, subscription, middleware
+Tags: middleware, ad-free, paywall, content-access, subscription
 Requires at least: 4.9
 Tested up to: 6.9
 Stable tag: 0.13.12
 License: Apache 2.0
 License URI: https://www.apache.org/licenses/LICENSE-2.0.txt
 
+Provide clean and limitless web experience to Zero Ad Network users and get paid.
+
 == Description ==
-The "Zero Ad Network for WordPress" plugin is a lightweight, open-source, HTTP-header-based "access/entitlement token" plugin that builds on top of "zeroad.network/token" PHP Composer module.
+An HTTP-header-based "access / entitlement token" plugin for Zero Ad Network partnering sites using WordPress.
 
 == Installation ==
 1. Upload the plugin files to the `/wp-content/plugins/zeroad-wordpress` directory
