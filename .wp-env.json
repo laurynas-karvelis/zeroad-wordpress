@@ -1,11 +1,11 @@
 {
   "core": "WordPress/WordPress#6.9",
   "phpVersion": "8.5",
-  "plugins": ["./plugins/zeroad-network"],
+  "plugins": ["./plugins/zero-ad-network"],
   "config": {
     "WP_DEBUG": true
   },
   "mappings": {
-    "wp-content/plugins/zeroad-network": "./plugins/zeroad-network"
+    "wp-content/plugins/zero-ad-network": "./plugins/zero-ad-network"
   }
 }
