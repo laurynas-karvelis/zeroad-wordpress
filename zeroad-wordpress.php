@@ -7,7 +7,7 @@
  * Version:           0.1.0
  * Requires at least: 4.9
  * Requires PHP:      7.2
- * Author:            Zero Ad Network
+ * Author:            Explosive Brains Ltd.
  * License:           Apache 2.0
  * License URI:       https://www.apache.org/licenses/LICENSE-2.0.txt
  * Text Domain:       zeroad-wordpress
