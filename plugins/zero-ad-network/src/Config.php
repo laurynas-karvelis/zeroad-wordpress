@@ -143,12 +143,12 @@ class Config
       function () {
         $opts = get_option(self::OPT_KEY, []);
         $v = isset($opts["features"]) ? $opts["features"] : [];
-        $features = Constants::FEATURES;
+        $features = Constants::FEATURE;
 
         $descriptions = [
-          Constants::FEATURES["CLEAN_WEB"] =>
+          Constants::FEATURE["CLEAN_WEB"] =>
             "Disable advertisements, cookie consent screens, 3rd party non-functional trackers, marketing popups.",
-          Constants::FEATURES["ONE_PASS"] => "Disable content paywalls; Enable access to content behind subscriptions."
+          Constants::FEATURE["ONE_PASS"] => "Disable content paywalls; Enable access to content behind subscriptions."
         ];
 
         foreach ($features as $key => $value) {
@@ -212,7 +212,7 @@ class Config
       }
     }
 
-    $out["features"] = array_intersect($input["features"] ?? [], array_values(Constants::FEATURES));
+    $out["features"] = array_intersect($input["features"] ?? [], array_values(Constants::FEATURE));
 
     // Validation: must have at least one selected
     if (empty($out["features"])) {

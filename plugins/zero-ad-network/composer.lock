@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7472269e70615b4f88c0845a0d98da7b",
+    "content-hash": "25cba6714c0babf5ce60d463c37d04dd",
     "packages": [
         {
             "name": "zeroad.network/token",
-            "version": "0.13.12",
+            "version": "0.13.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laurynas-karvelis/zeroad-token-php.git",
-                "reference": "71049049d42c3797db27af2bc4535a8ac80801a1"
+                "reference": "de7f5f70cadfb3c4815b1bec37d5024050868c6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laurynas-karvelis/zeroad-token-php/zipball/71049049d42c3797db27af2bc4535a8ac80801a1",
-                "reference": "71049049d42c3797db27af2bc4535a8ac80801a1",
+                "url": "https://api.github.com/repos/laurynas-karvelis/zeroad-token-php/zipball/de7f5f70cadfb3c4815b1bec37d5024050868c6d",
+                "reference": "de7f5f70cadfb3c4815b1bec37d5024050868c6d",
                 "shasum": ""
             },
             "require": {
@@ -72,9 +72,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laurynas-karvelis/zeroad-token-php/issues",
-                "source": "https://github.com/laurynas-karvelis/zeroad-token-php/tree/0.13.12"
+                "source": "https://github.com/laurynas-karvelis/zeroad-token-php/tree/0.13.13"
             },
-            "time": "2025-12-11T01:07:04+00:00"
+            "time": "2025-12-16T20:39:40+00:00"
         }
     ],
     "packages-dev": [],
