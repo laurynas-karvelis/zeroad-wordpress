@@ -18,6 +18,7 @@ use ZeroAd\WP\Actions\CookieConsent;
 use ZeroAd\WP\Actions\MarketingDialogs;
 use ZeroAd\WP\Actions\SubscriptionAccess;
 
+// cspell:words unslash
 class Renderer
 {
   private $options;

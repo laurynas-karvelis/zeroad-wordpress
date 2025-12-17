@@ -10,6 +10,7 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\WP\Actions\Action;
 
+// cspell:words Divi  Foobox  Icegram OMAPI Optin POPTIN  Popupaoc  SGPM  Supsystic convertflow hubspot mailoptin nksnewslettersubscriber nopriv  optinmonster  paoc  sgpb  thrv  wpforms wppopup
 class MarketingDialogs extends Action
 {
   public static function enabled(array $ctx): bool

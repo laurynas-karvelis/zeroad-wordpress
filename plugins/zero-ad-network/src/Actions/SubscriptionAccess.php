@@ -10,6 +10,7 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\WP\Actions\Action;
 
+// cspell:words Mepr  pmpro woocommerce
 class SubscriptionAccess extends Action
 {
   public static function enabled(array $ctx): bool

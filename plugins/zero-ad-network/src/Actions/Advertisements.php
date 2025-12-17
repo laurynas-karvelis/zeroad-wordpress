@@ -10,6 +10,7 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\WP\Actions\Action;
 
+// cspell:words Adsfor Adsforwp Raptive Wpadcenter adgroup adinsert adrotate adsbygoogle adsense adservice adthrive doubleclick googlesitekit googlesyndication mofile
 class Advertisements extends Action
 {
   public static function enabled(array $ctx): bool

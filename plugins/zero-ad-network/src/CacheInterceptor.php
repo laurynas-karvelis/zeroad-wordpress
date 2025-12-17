@@ -8,6 +8,7 @@ if (!defined("ABSPATH")) {
   exit();
 }
 
+// cspell:words CACHIFY cachekey  wpsc
 class CacheInterceptor
 {
   /**

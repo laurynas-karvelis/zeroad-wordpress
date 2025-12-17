@@ -11,6 +11,7 @@ if (!defined("ABSPATH")) {
 use ZeroAd\Token\Site;
 use ZeroAd\Token\Constants;
 
+// cspell:words Fastly beresp
 class Config
 {
   private static $instance;

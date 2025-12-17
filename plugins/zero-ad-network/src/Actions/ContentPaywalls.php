@@ -10,6 +10,7 @@ if (!defined("ABSPATH")) {
   exit();
 }
 
+// cspell:words Woocommerce Zlick memberful memberpress mepr pmpro surecart
 class ContentPaywalls extends Action
 {
   public static function enabled(array $ctx): bool

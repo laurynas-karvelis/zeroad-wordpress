@@ -109,7 +109,7 @@ abstract class Action
           $func = $callback_data["function"];
 
           //
-          // Case 1: Simple named function: "myplugin_do_something"
+          // Case 1: Simple named function: "my_plugin_do_something"
           //
           if (is_string($func)) {
             if (stripos($func, $prefix) === 0) {

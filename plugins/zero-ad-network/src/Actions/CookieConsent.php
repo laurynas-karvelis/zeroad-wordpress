@@ -10,6 +10,7 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\WP\Actions\Action;
 
+// cspell:words CCPA  CNCB  Complianz Moove Pressidium  cacsp cmplz cookieadmin cookiebot cookieyes cybot optout  webtoffee wpconsent
 class CookieConsent extends Action
 {
   public static function enabled(array $ctx): bool
