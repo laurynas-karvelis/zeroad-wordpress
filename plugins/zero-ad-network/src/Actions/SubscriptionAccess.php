@@ -39,7 +39,7 @@ class SubscriptionAccess extends Action
     // Work on the HTML safely — operate on body content only if present
     $bodyStart = stripos($html, "<body");
     if ($bodyStart === false) {
-      // fallback: work globally
+      // Fallback: work globally
       $workHtml = $html;
     } else {
       $workHtml = $html;

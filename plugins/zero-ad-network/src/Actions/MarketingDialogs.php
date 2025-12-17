@@ -117,7 +117,7 @@ class MarketingDialogs extends Action
       "",
       $workHtml
     );
-    // hide by CSS if anything remains
+    // Hide by CSS if anything remains
     $hidePopCss =
       "<style data-zeroad> .popup, .modal, .marketing, .optin, .pum-overlay, .thrv-modal { display:none !important; visibility:hidden !important; }</style>";
     $workHtml = parent::injectIntoHead($workHtml, $hidePopCss);

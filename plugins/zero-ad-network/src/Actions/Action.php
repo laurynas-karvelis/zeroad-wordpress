@@ -24,7 +24,7 @@ abstract class Action
     if (stripos($html, "</head>") !== false) {
       return preg_replace("#</head>#i", $inject . "</head>", $html, 1);
     }
-    // fallback: prepend to document
+    // Fallback: prepend to document
     return $inject . $html;
   }
 
@@ -191,6 +191,6 @@ abstract class Action
       }
     }
 
-    return false; // no plugin matched this name
+    return false; // No plugin matched this name
   }
 }

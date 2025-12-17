@@ -100,7 +100,7 @@ class Renderer
       // Make `tokenContext` available globally to everyone
       $GLOBALS["zeroad_token_context"] = $this->tokenContext;
     } catch (\Throwable $e) {
-      // give up
+      // Give up
     }
   }
 
