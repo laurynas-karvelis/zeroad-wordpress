@@ -1,6 +1,6 @@
 {
-  "name": "zeroad-wordpress",
   "private": true,
+  "name": "zeroad-wordpress",
   "scripts": {
     "composer:install": "cd plugins/zero-ad-network && composer install --no-autoloader",
     "start": "wp-env start",
