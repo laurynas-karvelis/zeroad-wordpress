@@ -69,49 +69,19 @@ class ContentPaywalls extends Action
       // SureCart
       ["surecart", "SureCart", ["sc_form", "sc_line_item", "sc_buy_button"]]
     ]);
+
+    wp_enqueue_style("zero-ad-ads", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/content-paywalls.css");
   }
 
   public static function outputBufferCallback(string $html): string
   {
-    // Work on the HTML safely — operate on body content only if present
-    $bodyStart = stripos($html, "<body");
-    if ($bodyStart === false) {
-      // fallback: work globally
-      $workHtml = $html;
-    } else {
-      $workHtml = $html;
-    }
-
     // Remove paywall overlays and un-hide hidden content as best-effort
-
-    // Remove overlay elements by class/id names used by common paywall plugins
-    $workHtml = preg_replace(
+    return parent::runReplacements($html, [
+      // Remove overlay elements by class/id names used by common paywall plugins
       '#<(div|aside|section)[^>]*(class|id)\s*=\s*["\'][^"\']*(paywall|pay-wall|leaky-paywall|memberpress|mepr|pmpro|paywall-overlay|paywall-layer|restricted-content|subscription-required)[^"\']*["\'][^>]*>.*?</(div|aside|section)>#is',
-      "",
-      $workHtml
-    );
 
-    // Remove scripts from paywall providers (search for paywall in src)
-    $workHtml = preg_replace('#<script[^>]*(src=[\'"][^\'"]*paywall[^\'"]*[\'"])[^>]*>.*?</script>#is', "", $workHtml);
-
-    // Unhide elements with inline styles display:none and data attributes often used to hide content
-    $workHtml = preg_replace_callback(
-      "#<(div|section|article|p|span)[^>]*>#is",
-      function ($m) {
-        $tag = $m[0];
-        // remove style="display:none" or style="visibility:hidden" only if tag contains paywall-related attributes or class names
-        $new = preg_replace('/\sstyle\s*=\s*(["\'])(?:(?!\1).)*\bdisplay\s*:\s*none;?(?:(?!\1).)*\1/i', "", $tag);
-        $new = preg_replace('/\sstyle\s*=\s*(["\'])(?:(?!\1).)*\bvisibility\s*:\s*hidden;?(?:(?!\1).)*\1/i', "", $new);
-        return $new;
-      },
-      $workHtml
-    );
-
-    // Inject CSS to force show content that may have been hidden via classes
-    $showCss =
-      "<style data-zeroad> .paywall, .paywall-hidden, .restricted, .subscription-required, .mepr-access-restricted { display: block !important; visibility: visible !important; height: auto !important; max-height: none !important; }</style>";
-    $workHtml = parent::injectIntoHead($workHtml, $showCss);
-
-    return $workHtml;
+      // Remove scripts from paywall providers (search for paywall in src)
+      '#<script[^>]*(src=[\'"][^\'"]*paywall[^\'"]*[\'"])[^>]*>.*?</script>#is'
+    ]);
   }
 }

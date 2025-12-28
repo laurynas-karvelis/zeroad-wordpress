@@ -98,38 +98,19 @@ class CookieConsent extends Action
       // Termly - GDPR/CCPA Cookie Consent Banner
       ["uk-cookie-consent", "termly", []]
     ]);
+
+    wp_enqueue_style("zero-ad-cookie-consent", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/cookie-consent.css");
   }
 
   public static function outputBufferCallback(string $html): string
   {
-    // Work on the HTML safely — operate on body content only if present
-    $bodyStart = stripos($html, "<body");
-    if ($bodyStart === false) {
-      // fallback: work globally
-      $workHtml = $html;
-    } else {
-      $workHtml = $html;
-    }
-
     // Remove cookie banners/scripts
-
-    // Remove scripts containing 'cookie' or 'consent' in src or inline code variable names
-    $workHtml = preg_replace(
+    return parent::runReplacements($html, [
+      // Remove scripts containing 'cookie' or 'consent' in src or inline code variable names
       '#<script[^>]*(src=[\'"][^\'"]*(cookie|consent|gdpr|ccpa)[^\'"]*[\'"])[^>]*>.*?</script>#is',
-      "",
-      $workHtml
-    );
-    // Remove cookie banner elements by common ids/classes
-    $workHtml = preg_replace(
-      '#<(div|section|aside)[^>]*(id|class)\s*=\s*["\'][^"\']*(cookie|cookie-banner|cookie-consent|cc-window|cookie-modal|cc-banner|complianz|cookieyes)[^"\']*["\'][^>]*>.*?</(div|section|aside)>#is',
-      "",
-      $workHtml
-    );
-    // Inject CSS to hide cookie banners left in DOM
-    $hideConsentCss =
-      "<style data-zeroad> #cookie-consent, .cookie-consent, .cookie-banner, .cc-window, .complianz-consent, .cookieyes-banner { display:none !important; visibility:hidden !important; }</style>";
-    $workHtml = parent::injectIntoHead($workHtml, $hideConsentCss);
 
-    return $workHtml;
+      // Remove cookie banner elements by common ids/classes
+      '#<(div|section|aside)[^>]*(id|class)\s*=\s*["\'][^"\']*(cookie|cookie-banner|cookie-consent|cc-window|cookie-modal|cc-banner|complianz|cookieyes)[^"\']*["\'][^>]*>.*?</(div|section|aside)>#is'
+    ]);
   }
 }

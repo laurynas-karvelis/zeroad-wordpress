@@ -40,5 +40,7 @@ if (function_exists("spl_autoload_register")) {
     }
   });
 
+  define("ZERO_AD_NETWORK_PLUGIN_URL", plugin_dir_url(__FILE__));
+
   \ZeroAd\WP\Config::instance()->run();
 }

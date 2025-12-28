@@ -1,0 +1,11 @@
+.ad,
+.ads,
+[id*="ad-"],
+[class*="ad-"],
+.advert,
+.advertisement,
+.advanced-ads {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+}

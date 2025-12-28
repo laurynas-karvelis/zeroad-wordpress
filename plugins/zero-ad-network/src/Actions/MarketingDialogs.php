@@ -91,37 +91,20 @@ class MarketingDialogs extends Action
       ["wp_ajax_store_email", "store_email_callback"],
       ["wp_ajax_nopriv_store_email", "store_email_callback"]
     ]);
+
+    wp_enqueue_style("zero-ad-marketing-dialogs", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/marketing-dialogs.css");
   }
 
   public static function outputBufferCallback(string $html): string
   {
-    // Work on the HTML safely — operate on body content only if present
-    $bodyStart = stripos($html, "<body");
-    if ($bodyStart === false) {
-      // fallback: work globally
-      $workHtml = $html;
-    } else {
-      $workHtml = $html;
-    }
-
     // Remove/hide popups and modal marketing elements
-
-    // Remove typical popup scripts (OptinMonster, popup-maker, hubspot popups, thrive leads)
-    $workHtml = preg_replace(
+    return parent::runReplacements($html, [
+      // Remove typical popup scripts (OptinMonster, popup-maker, hubspot popups, thrive leads)
       '#<script[^>]*(src=[\'"][^\'"]*(optinmonster|popup-maker|thrive|hubspot|wpforms-popup|convertflow)[^\'"]*[\'"])[^>]*>.*?</script>#is',
-      "",
-      $workHtml
-    );
-    // Remove popup elements and overlays by classes/id
-    $workHtml = preg_replace(
-      '#<(div|section)[^>]*(class|id)\s*=\s*["\'][^"\']*(popup|modal|marketing|optin|om-popup|pum|thrive-leads|hubspot-conversations)[^"\']*["\'][^>]*>.*?</(div|section)>#is',
-      "",
-      $workHtml
-    );
-    // Hide by CSS if anything remains
-    $hidePopCss =
-      "<style data-zeroad> .popup, .modal, .marketing, .optin, .pum-overlay, .thrv-modal { display:none !important; visibility:hidden !important; }</style>";
-    $workHtml = parent::injectIntoHead($workHtml, $hidePopCss);
+
+      // Remove popup elements and overlays by classes/id
+      '#<(div|section)[^>]*(class|id)\s*=\s*["\'][^"\']*(popup|modal|marketing|optin|om-popup|pum|thrive-leads|hubspot-conversations)[^"\']*["\'][^>]*>.*?</(div|section)>#is'
+    ]);
 
     return $workHtml;
   }

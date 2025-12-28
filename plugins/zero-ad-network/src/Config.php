@@ -275,41 +275,8 @@ class Config
 
   public function renderProxyConfigPage(): void
   {
-    ?>
-
-<style>
-    .za-accordion { margin-top: 25px; }
-    .za-item { border: 1px solid #ccc; margin-bottom: 10px; border-radius: 4px; }
-    .za-header {
-        background: #f1f1f1;
-        padding: 12px;
-        cursor: pointer;
-        font-weight: bold;
-        user-select: none;
-        border-radius: 4px 4px 0 0;
-    }
-    .za-body {
-        display: none;
-        padding: 15px;
-        background: #fff;
-    }
-    .wrap pre {
-      border-color: #ccc;
-      padding: 0.4rem 0.6rem;
-      background-color: rgba(0, 0, 0, 0.07);
-    }
-
-    .wrap pre code {
-      background-color: transparent !important;
-    }
-
-    .za-body.open { display: block; border-radius: 0 0 4px 4px; }
-
-    pre {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-</style>
+    wp_enqueue_script(ZERO_AD_NETWORK_PLUGIN_URL, "assets/scripts/admin.js");
+    wp_enqueue_style("zero-ad-admin", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/admin.css");?>
 
 <div class="wrap">
     <h1>Zero Ad Network – Proxy / CDN Cache Configuration Examples</h1>
@@ -461,16 +428,6 @@ X-ZeroAd-Variant
 
     </div>
 </div>
-
-<script>
-document.querySelectorAll(".za-header").forEach(header => {
-    header.addEventListener("click", () => {
-        const body = header.nextElementSibling;
-        body.classList.toggle("open");
-    });
-});
-</script>
-
 <?php
   }
 }

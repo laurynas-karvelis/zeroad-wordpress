@@ -8,6 +8,6 @@
     "destroy": "wp-env destroy"
   },
   "devDependencies": {
-    "@wordpress/env": "^10.36.0"
+    "@wordpress/env": "^10.37.0"
   }
 }

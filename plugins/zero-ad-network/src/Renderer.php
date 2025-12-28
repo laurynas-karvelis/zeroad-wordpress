@@ -24,6 +24,8 @@ class Renderer
   private $options;
   private $site;
   private $tokenContext;
+  private $bufferStarted = false;
+  private int $bufferLevel = 0;
 
   const FEATURE_ACTION_CLASSES = [
     Advertisements::class,
@@ -130,7 +132,28 @@ class Renderer
       return;
     }
 
+    if ($this->bufferStarted) {
+      return;
+    }
+
+    $this->bufferLevel = ob_get_level();
+    $this->bufferStarted = true;
+
     ob_start([$this, "outputBufferCallback"]);
+    add_action("shutdown", [$this, "endBuffer"], 0);
+  }
+
+  public function endBuffer(): void
+  {
+    if (!$this->bufferStarted) {
+      return;
+    }
+
+    $this->bufferStarted = false;
+
+    while (ob_get_level() > $this->bufferLevel) {
+      ob_end_flush();
+    }
   }
 
   /**

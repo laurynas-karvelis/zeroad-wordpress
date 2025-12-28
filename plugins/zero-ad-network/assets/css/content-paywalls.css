@@ -1,0 +1,10 @@
+.paywall,
+.paywall-hidden,
+.restricted,
+.subscription-required,
+.mepr-access-restricted {
+  display: block !important;
+  visibility: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}

@@ -1,0 +1,9 @@
+.popup,
+.modal,
+.marketing,
+.optin,
+.pum-overlay,
+.thrv-modal {
+  display: none !important;
+  visibility: hidden !important;
+}

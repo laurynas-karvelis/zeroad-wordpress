@@ -1,0 +1,9 @@
+#cookie-consent,
+.cookie-consent,
+.cookie-banner,
+.cc-window,
+.complianz-consent,
+.cookieyes-banner {
+  display: none !important;
+  visibility: hidden !important;
+}

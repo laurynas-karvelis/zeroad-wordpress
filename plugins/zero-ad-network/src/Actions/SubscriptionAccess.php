@@ -37,24 +37,9 @@ class SubscriptionAccess extends Action
 
   public static function outputBufferCallback(string $html): string
   {
-    // Work on the HTML safely — operate on body content only if present
-    $bodyStart = stripos($html, "<body");
-    if ($bodyStart === false) {
-      // Fallback: work globally
-      $workHtml = $html;
-    } else {
-      $workHtml = $html;
-    }
-
-    // Try to set membership filters for common membership plugins (also a targeted hook approach is used in registerPluginOverrides)
-    if ($subsOn) {
-      // Indicate in-page to let other scripts know
-      $subNote = '<meta name="zeroad-subscription-access" content="1" />';
-      $workHtml = parent::injectIntoHead($workHtml, $subNote);
-    }
-
-    // Return processed HTML
-    return $workHtml;
+    // Try to set membership filters for common membership plugins
+    // Indicate in-page to let other scripts know
+    return parent::injectIntoHead($html, '<meta name="zeroad-subscription-access" content="1" />');
   }
 
   /**

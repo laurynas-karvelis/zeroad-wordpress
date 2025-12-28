@@ -69,6 +69,15 @@ abstract class Action
     }
   }
 
+  protected static function runReplacements(string $html, array $regexRules = []): string
+  {
+    foreach ($regexRules as $regexRule) {
+      $html = preg_replace($regexRule, "", $html);
+    }
+
+    return $html;
+  }
+
   /**
    * Removes all WordPress actions/filters whose callback name, method, or class
    * starts with a given prefix.

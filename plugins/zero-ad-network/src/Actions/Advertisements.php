@@ -61,6 +61,8 @@ class Advertisements extends Action
     // Google Site Kit Ads
     add_filter("googlesitekit_adsense_tag_blocked", "__return_true", 999);
     add_filter("googlesitekit_adsense_tag_amp_blocked", "__return_true", 999);
+
+    wp_enqueue_style("zero-ad-ads", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/advertisements.css");
   }
 
   public static function registerPluginOverrides(): void
@@ -75,41 +77,18 @@ class Advertisements extends Action
 
   public static function outputBufferCallback(string $html): string
   {
-    // Work on the HTML safely — operate on body content only if present
-    $bodyStart = stripos($html, "<body");
-    if ($bodyStart === false) {
-      // fallback: work globally
-      $workHtml = $html;
-    } else {
-      $workHtml = $html;
-    }
-
     // Remove/neutralize ad elements and common ad scripts
 
-    // Remove typical ad iframe/script tags (adsbygoogle, googlesyndication, doubleclick, adrotate, advanced-ads)
-    $workHtml = preg_replace(
+    return parent::runReplacements($html, [
+      // Remove typical ad iframe/script tags (adsbygoogle, googlesyndication, doubleclick, adrotate, advanced-ads)
       "#<script[^>]*(adsbygoogle|googlesyndication|doubleclick|adservice|adrotate|advanced-ads|adinsert|ad-inserter)[^>]*>.*?</script>#is",
-      "",
-      $workHtml
-    );
-    $workHtml = preg_replace(
       '#<iframe[^>]*src=[\'"][^\'"]*(ads|doubleclick|googlesyndication)[^\'"]*[\'"][^>]*>.*?</iframe>#is',
-      "",
-      $workHtml
-    );
-    // Remove elements with class/id containing 'ad', 'ads', 'advert'
-    $workHtml = preg_replace(
-      '#<(div|section|aside)[^>]*(class|id)\s*=\s*["\'][^"\']*(\bads?\b|\badvert|\bad-inserter|\badvanced-ads\b)[^"\']*["\'][^>]*>.*?</(div|section|aside)>#is',
-      "",
-      $workHtml
-    );
-    // Hide inline Google ad elements e.g. <ins class="adsbygoogle"> ... </ins>
-    $workHtml = preg_replace("#<ins[^>]*(class|id)[^>]*adsbygoogle[^>]*>.*?</ins>#is", "", $workHtml);
-    // Inline CSS: remove .ad related selectors by injecting a small style to hide anything left with ad-related classes/ids
-    $hideAdCss =
-      '<style data-zeroad> .ad, .ads, [id*="ad-"], [class*="ad-"], .advert, .advertisement, .advanced-ads { display:none !important; visibility:hidden !important; height:0 !important; }</style>';
-    $workHtml = parent::injectIntoHead($workHtml, $hideAdCss);
 
-    return $workHtml;
+      // Remove elements with class/id containing 'ad', 'ads', 'advert'
+      '#<(div|section|aside)[^>]*(class|id)\s*=\s*["\'][^"\']*(\bads?\b|\badvert|\bad-inserter|\badvanced-ads\b)[^"\']*["\'][^>]*>.*?</(div|section|aside)>#is',
+
+      // Hide inline Google ad elements e.g. <ins class="adsbygoogle"> ... </ins>
+      "#<ins[^>]*(class|id)[^>]*adsbygoogle[^>]*>.*?</ins>#is"
+    ]);
   }
 }
