@@ -1,11 +1,15 @@
 {
   "private": true,
   "name": "zeroad-wordpress",
+  "version": "0.13.13",
   "scripts": {
     "composer:install": "cd plugins/zero-ad-network && composer install --no-autoloader",
     "start": "wp-env start",
     "stop": "wp-env stop",
-    "destroy": "wp-env destroy"
+    "destroy": "wp-env destroy",
+    "version:sync": "sh ./version-sync.sh",
+    "build": "rsync -a --delete --mkpath plugins/zero-ad-network/ build/zero-ad-network/",
+    "package": "version=$(jq -r '.version' ./package.json) && cd build/ && zip -r zero-ad-network-$version.zip zero-ad-network"
   },
   "devDependencies": {
     "@wordpress/env": "^10.37.0"

@@ -26,13 +26,10 @@ jobs:
 
       - name: Create ZIP
         run: |
-          mkdir build
-          cp -R plugins/zero-ad-network build/zero-ad-network
-          cd build
-          zip -r zero-ad-network.zip zero-ad-network
+          bun version:sync && bun run build && bun run package
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: zeroad-network
-          path: build/zero-ad-network.zip
+          path: build/*.zip
