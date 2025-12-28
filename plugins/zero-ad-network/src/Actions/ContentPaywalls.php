@@ -70,7 +70,12 @@ class ContentPaywalls extends Action
       ["surecart", "SureCart", ["sc_form", "sc_line_item", "sc_buy_button"]]
     ]);
 
-    wp_enqueue_style("zero-ad-ads", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/content-paywalls.css");
+    wp_enqueue_style(
+      "zero-ad-ads",
+      ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/content-paywalls.css",
+      [],
+      ZERO_AD_NETWORK_PLUGIN_VERSION
+    );
   }
 
   public static function outputBufferCallback(string $html): string

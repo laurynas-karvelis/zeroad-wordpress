@@ -62,7 +62,12 @@ class Advertisements extends Action
     add_filter("googlesitekit_adsense_tag_blocked", "__return_true", 999);
     add_filter("googlesitekit_adsense_tag_amp_blocked", "__return_true", 999);
 
-    wp_enqueue_style("zero-ad-ads", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/advertisements.css");
+    wp_enqueue_style(
+      "zero-ad-ads",
+      ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/advertisements.css",
+      [],
+      ZERO_AD_NETWORK_PLUGIN_VERSION
+    );
   }
 
   public static function registerPluginOverrides(): void

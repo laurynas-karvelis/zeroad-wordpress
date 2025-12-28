@@ -3,7 +3,7 @@ Contributors: laurynas-karvelis
 Tags: middleware, ad-free, paywall, content-access, subscription
 Requires at least: 4.9
 Tested up to: 6.9
-Stable tag: 0.13.12
+Stable tag: 0.13.13
 License: Apache 2.0
 License URI: https://www.apache.org/licenses/LICENSE-2.0.txt
 

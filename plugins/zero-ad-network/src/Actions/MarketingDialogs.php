@@ -92,7 +92,12 @@ class MarketingDialogs extends Action
       ["wp_ajax_nopriv_store_email", "store_email_callback"]
     ]);
 
-    wp_enqueue_style("zero-ad-marketing-dialogs", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/marketing-dialogs.css");
+    wp_enqueue_style(
+      "zero-ad-marketing-dialogs",
+      ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/marketing-dialogs.css",
+      [],
+      ZERO_AD_NETWORK_PLUGIN_VERSION
+    );
   }
 
   public static function outputBufferCallback(string $html): string

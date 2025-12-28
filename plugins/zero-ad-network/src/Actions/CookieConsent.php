@@ -99,7 +99,12 @@ class CookieConsent extends Action
       ["uk-cookie-consent", "termly", []]
     ]);
 
-    wp_enqueue_style("zero-ad-cookie-consent", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/cookie-consent.css");
+    wp_enqueue_style(
+      "zero-ad-cookie-consent",
+      ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/cookie-consent.css",
+      [],
+      ZERO_AD_NETWORK_PLUGIN_VERSION
+    );
   }
 
   public static function outputBufferCallback(string $html): string

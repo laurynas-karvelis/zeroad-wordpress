@@ -4,7 +4,7 @@
  * Plugin Name:       Zero Ad Network
  * Plugin URI:        https://zeroad.network
  * Description:       An HTTP-header-based "access / entitlement token" plugin for Zero Ad Network partnering sites using WordPress.
- * Version:           0.13.12
+ * Version:           0.13.13
  * Requires at least: 4.9
  * Requires PHP:      7.2
  * Author:            Explosive Brains Ltd.
@@ -40,6 +40,7 @@ if (function_exists("spl_autoload_register")) {
     }
   });
 
+  define("ZERO_AD_NETWORK_PLUGIN_VERSION", "0.13.13");
   define("ZERO_AD_NETWORK_PLUGIN_URL", plugin_dir_url(__FILE__));
 
   \ZeroAd\WP\Config::instance()->run();

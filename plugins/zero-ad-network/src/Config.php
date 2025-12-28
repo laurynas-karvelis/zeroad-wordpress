@@ -275,8 +275,19 @@ class Config
 
   public function renderProxyConfigPage(): void
   {
-    wp_enqueue_script(ZERO_AD_NETWORK_PLUGIN_URL, "assets/scripts/admin.js");
-    wp_enqueue_style("zero-ad-admin", ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/admin.css");?>
+    wp_enqueue_script(
+      "zero-ad-admin-js",
+      ZERO_AD_NETWORK_PLUGIN_URL . "assets/scripts/admin.js",
+      [],
+      ZERO_AD_NETWORK_PLUGIN_VERSION
+    );
+
+    wp_enqueue_style(
+      "zero-ad-admin-css",
+      ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/admin.css",
+      [],
+      ZERO_AD_NETWORK_PLUGIN_VERSION
+    );?>
 
 <div class="wrap">
     <h1>Zero Ad Network – Proxy / CDN Cache Configuration Examples</h1>

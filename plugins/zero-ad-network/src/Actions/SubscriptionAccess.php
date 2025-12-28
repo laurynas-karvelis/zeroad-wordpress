@@ -35,13 +35,6 @@ class SubscriptionAccess extends Action
     ]);
   }
 
-  public static function outputBufferCallback(string $html): string
-  {
-    // Try to set membership filters for common membership plugins
-    // Indicate in-page to let other scripts know
-    return parent::injectIntoHead($html, '<meta name="zeroad-subscription-access" content="1" />');
-  }
-
   /**
    * Register plugin-specific overrides for major membership/paywall plugins.
    * This is best-effort and checks for existence of plugin-specific hooks/APIs before using them.
