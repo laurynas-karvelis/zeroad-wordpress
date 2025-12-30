@@ -326,16 +326,4 @@
   function initTooltips() {
     // Add tooltip functionality here if needed
   }
-
-  /**
-   * Debug helper (remove in production)
-   */
-  if (window.location.search.includes("zeroad_debug=1")) {
-    console.log("Zero Ad Network Admin JS loaded");
-    window.zeroadDebug = {
-      initAccordions,
-      initCopyButtons,
-      calculateTotalRevenue,
-    };
-  }
 })();

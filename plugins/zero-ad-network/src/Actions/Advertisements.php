@@ -75,13 +75,11 @@ class Advertisements extends Action
     if (!is_admin()) {
       wp_enqueue_style(
         "zero-ad-advertisements",
-        ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/advertisements.css",
+        ZEROAD_PLUGIN_URL . "assets/css/advertisements.css",
         [],
-        ZERO_AD_NETWORK_VERSION
+        ZEROAD_VERSION
       );
     }
-
-    self::debugLog("Advertisement blocking enabled");
   }
 
   public static function outputBufferCallback(string $html): string
@@ -115,19 +113,16 @@ class Advertisements extends Action
     // AdsForWP
     if (class_exists("Adsforwp_Output_Functions")) {
       remove_filter("the_content", ["Adsforwp_Output_Functions", "adsforwp_display_ads"], 10);
-      self::debugLog("Removed AdsForWP content filter");
     }
 
     // Advanced Ads
     if (class_exists("Advanced_Ads")) {
       add_filter("advanced-ads-can-display", "__return_false", 999);
-      self::debugLog("Blocked Advanced Ads display");
     }
 
     // Ad Inserter
     if (defined("AD_INSERTER_NAME")) {
       add_filter("ai_block_insertion_enabled", "__return_false", 999);
-      self::debugLog("Blocked Ad Inserter");
     }
   }
 }

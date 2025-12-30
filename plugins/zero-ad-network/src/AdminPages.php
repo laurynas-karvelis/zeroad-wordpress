@@ -41,7 +41,7 @@ class AdminPages
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
             
-            <?php settings_errors(Settings::OPT_KEY); ?>
+            <?php settings_errors(Settings::OPTION_KEY); ?>
             
             <?php if (!empty($this->options["enabled"]) && !empty($this->options["client_id"])): ?>
                 <div class="notice notice-success inline" style="margin: 20px 0;">
@@ -60,8 +60,8 @@ class AdminPages
             
             <form method="post" action="options.php">
                 <?php
-                settings_fields(Settings::OPT_KEY);
-                do_settings_sections(Settings::OPT_KEY);
+                settings_fields(Settings::OPTION_KEY);
+                do_settings_sections(Settings::OPTION_KEY);
                 submit_button(__("Save Settings", "zero-ad-network"));
                 ?>
             </form>
@@ -112,12 +112,13 @@ class AdminPages
                     <td>
                         <?php if (!empty($this->options["cache_enabled"])): ?>
                             <span style="color: #46b450;">✓</span>
-                            <?php /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
-                            printf(
-                              esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
-                              esc_html((string) ($this->options["cache_ttl"] ?? 5)),
-                              esc_html($this->options["cache_prefix"] ?? "zeroad:")
-                            ); ?>
+                             /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */ /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */<?php
+                          /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
+                          printf(
+                               esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
+                               esc_html((string) ($this->options["cache_ttl"] ?? 5)),
+                               esc_html($this->options["cache_prefix"] ?? "zeroad:")
+                             ); ?>
                         <?php else: ?>
                             <span style="color: #dc3545;">✗</span>
                             <?php esc_html_e("Disabled", "zero-ad-network"); ?>
@@ -184,7 +185,7 @@ class AdminPages
       wp_die(esc_html__("You do not have sufficient permissions to access this page.", "zero-ad-network"));
     }
 
-    include ZERO_AD_NETWORK_PLUGIN_DIR . "templates/admin-cache-config.php";
+    include ZEROAD_PLUGIN_DIR . "templates/admin-cache-config.php";
   }
 
   /**
@@ -196,6 +197,6 @@ class AdminPages
       wp_die(esc_html__("You do not have sufficient permissions to access this page.", "zero-ad-network"));
     }
 
-    include ZERO_AD_NETWORK_PLUGIN_DIR . "templates/admin-about.php";
+    include ZEROAD_PLUGIN_DIR . "templates/admin-about.php";
   }
 }

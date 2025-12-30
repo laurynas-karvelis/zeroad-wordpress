@@ -24,9 +24,9 @@ class ContentPaywalls extends Action
       if (!is_admin()) {
         wp_enqueue_style(
           "zero-ad-content-paywalls",
-          ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/content-paywalls.css",
+          ZEROAD_PLUGIN_URL . "assets/css/content-paywalls.css",
           [],
-          ZERO_AD_NETWORK_VERSION
+          ZEROAD_VERSION
         );
       }
     });
@@ -91,8 +91,6 @@ class ContentPaywalls extends Action
       // WP-Members
       ["wp-members", "wpmem", []]
     ]);
-
-    self::debugLog("Content paywall blocking enabled");
   }
 
   public static function outputBufferCallback(string $html): string
@@ -123,31 +121,26 @@ class ContentPaywalls extends Action
     // Leaky Paywall
     if (class_exists("Leaky_Paywall")) {
       add_filter("leaky_paywall_user_has_access", "__return_true", 999);
-      self::debugLog("Blocked Leaky Paywall");
     }
 
     // Content Control
     if (function_exists("content_control")) {
       add_filter("content_control_user_can_view", "__return_true", 999);
-      self::debugLog("Bypassed Content Control");
     }
 
     // Restrict Content Pro
     if (function_exists("rcp_is_restricted")) {
       add_filter("rcp_is_restricted_content", "__return_false", 999);
-      self::debugLog("Bypassed Restrict Content Pro");
     }
 
     // Simple Membership
     if (class_exists("SwpmAuth")) {
       add_filter("swpm_check_if_valid_post", "__return_true", 999);
-      self::debugLog("Bypassed Simple Membership");
     }
 
     // WP-Members
     if (function_exists("wpmem_is_blocked")) {
       add_filter("wpmem_block", "__return_false", 999);
-      self::debugLog("Bypassed WP-Members");
     }
   }
 }

@@ -108,13 +108,11 @@ class CookieConsent extends Action
     if (!is_admin()) {
       wp_enqueue_style(
         "zero-ad-cookie-consent",
-        ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/cookie-consent.css",
+        ZEROAD_PLUGIN_URL . "assets/css/cookie-consent.css",
         [],
-        ZERO_AD_NETWORK_VERSION
+        ZEROAD_VERSION
       );
     }
-
-    self::debugLog("Cookie consent blocking enabled");
   }
 
   public static function outputBufferCallback(string $html): string
@@ -145,26 +143,22 @@ class CookieConsent extends Action
     // Cookiebot
     if (function_exists("cookiebot_active")) {
       add_filter("cookiebot_active", "__return_false", 999);
-      self::debugLog("Blocked Cookiebot");
     }
 
     // Complianz
     if (function_exists("cmplz_has_consent")) {
       add_filter("cmplz_has_consent", "__return_true", 999);
       add_filter("cmplz_show_banner", "__return_false", 999);
-      self::debugLog("Blocked Complianz banner");
     }
 
     // Cookie Notice
     if (class_exists("Cookie_Notice")) {
       add_filter("cn_is_cookie_accepted", "__return_true", 999);
-      self::debugLog("Set Cookie Notice as accepted");
     }
 
     // Real Cookie Banner
     if (class_exists("DevOwl\\RealCookieBanner\\Core")) {
       add_filter("rcb/consent/created", "__return_true", 999);
-      self::debugLog("Blocked Real Cookie Banner");
     }
   }
 }

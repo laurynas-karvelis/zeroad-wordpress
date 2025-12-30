@@ -61,8 +61,6 @@ class SubscriptionAccess extends Action
       // Subscriptions For WooCommerce
       ["subscriptions-for-woocommerce", "wps_sfw_", ["wps-subscription-dashboard"]]
     ]);
-
-    self::debugLog("Subscription access feature enabled (ONE_PASS)");
   }
 
   /**
@@ -84,8 +82,6 @@ class SubscriptionAccess extends Action
     if (empty($tokenContext) || empty($tokenContext["ENABLE_SUBSCRIPTION_ACCESS"])) {
       return $required; // Not a subscriber, keep password protection
     }
-
-    self::debugLog("Password protection bypassed for post ID: {$post->ID}");
 
     return false; // Bypass password requirement
   }
@@ -159,8 +155,6 @@ class SubscriptionAccess extends Action
         999,
         4
       );
-
-      self::debugLog("Registered Paid Memberships Pro overrides");
     }
 
     // MemberPress
@@ -184,8 +178,6 @@ class SubscriptionAccess extends Action
         999,
         1
       );
-
-      self::debugLog("Registered MemberPress overrides");
     }
 
     // Restrict Content Pro
@@ -201,8 +193,6 @@ class SubscriptionAccess extends Action
 
       // Don't show restricted content messages
       add_filter("rcp_is_restricted_content", "__return_false", 999);
-
-      self::debugLog("Registered Restrict Content Pro overrides");
     }
 
     // WooCommerce Subscriptions
@@ -225,8 +215,6 @@ class SubscriptionAccess extends Action
         999,
         3
       );
-
-      self::debugLog("Registered WooCommerce Subscriptions overrides");
     }
 
     // s2Member
@@ -239,8 +227,6 @@ class SubscriptionAccess extends Action
         999,
         1
       );
-
-      self::debugLog("Registered s2Member overrides");
     }
 
     // Simple Membership
@@ -253,29 +239,21 @@ class SubscriptionAccess extends Action
         999,
         1
       );
-
-      self::debugLog("Registered Simple Membership overrides");
     }
 
     // WP-Members
     if (function_exists("wpmem_is_blocked")) {
       add_filter("wpmem_block", "__return_false", 999);
-
-      self::debugLog("Registered WP-Members overrides");
     }
 
     // Leaky Paywall
     if (class_exists("Leaky_Paywall")) {
       add_filter("leaky_paywall_user_has_access", "__return_true", 999);
-
-      self::debugLog("Registered Leaky Paywall overrides");
     }
 
     // Content Control
     if (function_exists("content_control")) {
       add_filter("content_control_user_can_view", "__return_true", 999);
-
-      self::debugLog("Registered Content Control overrides");
     }
 
     // Generic authorizer (used by some custom membership setups)
@@ -288,8 +266,6 @@ class SubscriptionAccess extends Action
         999,
         1
       );
-
-      self::debugLog("Registered generic Authorizer overrides");
     }
   }
 }

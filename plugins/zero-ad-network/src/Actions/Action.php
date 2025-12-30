@@ -158,11 +158,6 @@ abstract class Action
     if ($found) {
       self::removeCallbacksByPrefix($prefix);
       self::removeShortcodes($shortcodes);
-
-      if (defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
-        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
-        error_log("[Zero Ad Network] Disabled plugin: {$textDomain} (prefix: {$prefix})");
-      }
     }
   }
 
@@ -176,29 +171,12 @@ abstract class Action
   protected static function runReplacements(string $html, array $regexRules = []): string
   {
     foreach ($regexRules as $regexRule) {
-      // Use error suppression and check for errors
+      set_time_limit(5);
       $result = @preg_replace($regexRule, "", $html);
 
-      // Check for regex errors
-      if ($result === null) {
-        $error = preg_last_error();
-        $errorMessages = [
-          PREG_NO_ERROR => "No error",
-          PREG_INTERNAL_ERROR => "Internal error",
-          PREG_BACKTRACK_LIMIT_ERROR => "Backtrack limit exceeded",
-          PREG_RECURSION_LIMIT_ERROR => "Recursion limit exceeded",
-          PREG_BAD_UTF8_ERROR => "Bad UTF8",
-          PREG_BAD_UTF8_OFFSET_ERROR => "Bad UTF8 offset"
-        ];
-
-        $errorMsg = $errorMessages[$error] ?? "Unknown error";
-
-        if (defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
-          // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
-          error_log("[Zero Ad Network] Regex error: {$errorMsg} - Pattern: {$regexRule}");
-        }
-
-        continue;
+      if ($result === null || preg_last_error() !== PREG_NO_ERROR) {
+        // Handle error
+        return $html; // Return original HTML on error
       }
 
       $html = $result;
@@ -286,11 +264,6 @@ abstract class Action
               }
             }
           }
-
-          if ($shouldRemove && defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
-            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
-            error_log("[Zero Ad Network] Removed callback from {$hook_name}: " . json_encode($func));
-          }
         }
       }
     }
@@ -343,22 +316,5 @@ abstract class Action
     self::$pluginsChecked[$name] = $result;
 
     return $result;
-  }
-
-  /**
-   * Debug logging helper
-   *
-   * @param string $message Message to log
-   */
-  protected static function debugLog(string $message): void
-  {
-    $options = get_option(\ZeroAd\WP\Config::OPT_KEY, []);
-
-    if (!empty($options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
-      $calledClass = get_called_class();
-      $className = substr($calledClass, strrpos($calledClass, "\\") + 1);
-      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
-      error_log("[Zero Ad Network - {$className}] " . $message);
-    }
   }
 }

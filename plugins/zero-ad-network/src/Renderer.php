@@ -24,18 +24,22 @@ class Renderer
   private $bufferLevel = 0;
   private $enabledFeatureClasses = [];
 
-  const FEATURE_ACTION_CLASSES = [
-    Advertisements::class,
-    CookieConsent::class,
-    MarketingDialogs::class,
-    ContentPaywalls::class,
-    SubscriptionAccess::class
-  ];
+  // PHP 7.2 compatible constant array
+  public static function getFeatureActionClasses()
+  {
+    return [
+      Advertisements::class,
+      CookieConsent::class,
+      MarketingDialogs::class,
+      ContentPaywalls::class,
+      SubscriptionAccess::class
+    ];
+  }
 
   /**
    * Set the Site instance
    */
-  public function site(?Site $site): void
+  public function setSite(?Site $site): void
   {
     $this->site = $site;
   }
@@ -43,7 +47,7 @@ class Renderer
   /**
    * Set plugin options
    */
-  public function options(array $options): void
+  public function setOptions(array $options): void
   {
     $this->options = $options;
   }
@@ -81,12 +85,10 @@ class Renderer
 
     // Check if headers already sent
     if (headers_sent()) {
-      $this->debugLog("Headers already sent, cannot add server header");
       return;
     }
 
     header("{$this->site->SERVER_HEADER_NAME}: {$this->site->SERVER_HEADER_VALUE}", true);
-    $this->debugLog("Server header sent: {$this->site->SERVER_HEADER_NAME}");
   }
 
   /**
@@ -101,10 +103,7 @@ class Renderer
     $name = esc_attr($this->site->SERVER_HEADER_NAME);
     $value = esc_attr($this->site->SERVER_HEADER_VALUE);
 
-    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Variables already escaped above
     echo sprintf('<meta name="%s" content="%s" data-zeroad="server-identifier" />' . "\n", $name, $value);
-
-    $this->debugLog("Meta tag injected: {$name}");
   }
 
   /**
@@ -122,23 +121,14 @@ class Renderer
       $headerValue = $this->getServerHeader($headerName);
 
       if ($headerValue === null) {
-        $this->debugLog("No client token header found: {$headerName}");
         return;
       }
 
       // Parse and verify the signed token
       $this->tokenContext = $this->site->parseClientToken($headerValue);
-
-      // Make token context available globally
-      $GLOBALS["zeroad_token_context"] = $this->tokenContext;
-
-      $this->debugLog("Client token parsed successfully: " . json_encode($this->tokenContext));
     } catch (\Throwable $e) {
-      $this->debugLog("Token parsing failed: " . $e->getMessage());
-
       // Set empty context so we know parsing was attempted
       $this->tokenContext = [];
-      $GLOBALS["zeroad_token_context"] = [];
     }
   }
 
@@ -151,11 +141,10 @@ class Renderer
       return;
     }
 
-    foreach (self::FEATURE_ACTION_CLASSES as $Class) {
+    foreach (self::get_feature_action_classes() as $Class) {
       if ($Class::enabled($this->tokenContext)) {
         if (method_exists($Class, "registerPluginOverrides")) {
           $Class::registerPluginOverrides($this->tokenContext);
-          $this->debugLog("Registered plugin overrides for: " . $Class);
         }
       }
     }
@@ -175,17 +164,12 @@ class Renderer
 
     $this->enabledFeatureClasses = [];
 
-    foreach (self::FEATURE_ACTION_CLASSES as $Class) {
+    foreach (self::get_feature_action_classes() as $Class) {
       if ($Class::enabled($this->tokenContext)) {
         $this->enabledFeatureClasses[] = $Class;
         $Class::run();
-
-        $this->debugLog("Feature enabled: " . $Class);
       }
     }
-
-    // Store enabled features globally for use in output buffer
-    $GLOBALS["zeroad_enabled_features"] = $this->enabledFeatureClasses;
   }
 
   /**
@@ -200,7 +184,6 @@ class Renderer
 
     // Skip buffering for AJAX and JSON requests
     if (wp_doing_ajax() || $this->isJsonRequest()) {
-      $this->debugLog("Skipping output buffer for AJAX/JSON request");
       return;
     }
 
@@ -215,8 +198,6 @@ class Renderer
 
     ob_start([$this, "outputBufferCallback"]);
     add_action("shutdown", [$this, "endBuffer"], 999); // Run late to ensure content is flushed
-
-    $this->debugLog("Output buffer started at level {$this->bufferLevel}");
   }
 
   /**
@@ -234,8 +215,6 @@ class Renderer
     while (ob_get_level() > $this->bufferLevel) {
       ob_end_flush();
     }
-
-    $this->debugLog("Output buffer ended");
   }
 
   /**
@@ -257,19 +236,13 @@ class Renderer
       try {
         $html = $Class::outputBufferCallback($html);
       } catch (\Throwable $e) {
-        $this->debugLog("Output buffer callback failed for {$Class}: " . $e->getMessage());
+        // Ignore
       }
     }
 
     $processTime = round((microtime(true) - $startTime) * 1000, 2);
     $newLength = strlen($html);
     $reduction = $originalLength - $newLength;
-
-    $this->debugLog(
-      "HTML processed in {$processTime}ms. Size change: {$reduction} bytes (" .
-        round(($reduction / $originalLength) * 100, 2) .
-        "%)"
-    );
 
     return $html;
   }
@@ -279,14 +252,12 @@ class Renderer
    */
   private function getServerHeader(string $name): ?string
   {
-    // Convert header name to server var format (e.g., X-Better-Web => HTTP_X_BETTER_WEB)
     $serverKey = "HTTP_" . str_replace("-", "_", strtoupper($name));
 
-    if (!isset($_SERVER[$serverKey])) {
+    if (!isset($_SERVER[$serverKey]) || !is_string($_SERVER[$serverKey])) {
       return null;
     }
 
-    // Sanitize and return
     return sanitize_text_field(wp_unslash($_SERVER[$serverKey]));
   }
 
@@ -313,22 +284,5 @@ class Renderer
     }
 
     return false;
-  }
-
-  /**
-   * Debug logging helper
-   */
-  private function debugLog(string $message): void
-  {
-    if (
-      !empty($this->options["debug_mode"]) &&
-      defined("WP_DEBUG") &&
-      WP_DEBUG &&
-      defined("WP_DEBUG_LOG") &&
-      WP_DEBUG_LOG
-    ) {
-      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
-      error_log("[Zero Ad Network - Renderer] " . $message);
-    }
   }
 }

@@ -50,8 +50,6 @@ class CacheInterceptor
   {
     $variant = self::buildVariantString($tokenContext);
 
-    self::debugLog("Cache variant: {$variant}");
-
     // Always emit variant header for edge/CDN caching
     add_action(
       "send_headers",
@@ -115,8 +113,6 @@ class CacheInterceptor
       10,
       1
     );
-
-    self::debugLog("Registered WP Super Cache variant");
   }
 
   /**
@@ -138,8 +134,6 @@ class CacheInterceptor
       10,
       1
     );
-
-    self::debugLog("Registered Cachify variant");
   }
 
   /**
@@ -172,8 +166,6 @@ class CacheInterceptor
       10,
       1
     );
-
-    self::debugLog("Registered WP Rocket variant");
   }
 
   /**
@@ -194,8 +186,6 @@ class CacheInterceptor
       10,
       1
     );
-
-    self::debugLog("Registered W3 Total Cache variant");
   }
 
   /**
@@ -216,8 +206,6 @@ class CacheInterceptor
       10,
       1
     );
-
-    self::debugLog("Registered LiteSpeed Cache variant");
   }
 
   /**
@@ -238,20 +226,5 @@ class CacheInterceptor
       10,
       1
     );
-
-    self::debugLog("Registered WP Fastest Cache variant");
-  }
-
-  /**
-   * Debug logging helper
-   */
-  private static function debugLog(string $message): void
-  {
-    $options = get_option(\ZeroAd\WP\Config::OPT_KEY, []);
-
-    if (!empty($options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
-      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
-      error_log("[Zero Ad Network - CacheInterceptor] " . $message);
-    }
   }
 }

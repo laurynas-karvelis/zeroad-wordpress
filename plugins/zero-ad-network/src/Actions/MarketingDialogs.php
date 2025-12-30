@@ -104,13 +104,11 @@ class MarketingDialogs extends Action
     if (!is_admin()) {
       wp_enqueue_style(
         "zero-ad-marketing-dialogs",
-        ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/marketing-dialogs.css",
+        ZEROAD_PLUGIN_URL . "assets/css/marketing-dialogs.css",
         [],
-        ZERO_AD_NETWORK_VERSION
+        ZEROAD_VERSION
       );
     }
-
-    self::debugLog("Marketing dialog blocking enabled");
   }
 
   public static function outputBufferCallback(string $html): string
@@ -141,31 +139,26 @@ class MarketingDialogs extends Action
     // OptinMonster
     if (class_exists("OMAPI")) {
       add_filter("optin_monster_api_is_enabled", "__return_false", 999);
-      self::debugLog("Blocked OptinMonster");
     }
 
     // Popup Maker
     if (function_exists("pum_is_popup_enabled")) {
       add_filter("pum_popup_is_loadable", "__return_false", 999);
-      self::debugLog("Blocked Popup Maker");
     }
 
     // Hustle
     if (class_exists("Hustle_Module_Model")) {
       add_filter("hustle_show_module", "__return_false", 999);
-      self::debugLog("Blocked Hustle");
     }
 
     // Convert Pro / Convert Plus
     if (function_exists("cp_v2_popup_enabled")) {
       add_filter("cp_show_popup", "__return_false", 999);
-      self::debugLog("Blocked Convert Pro");
     }
 
     // Thrive Leads
     if (class_exists("Thrive_Leads")) {
       add_filter("tve_leads_should_display", "__return_false", 999);
-      self::debugLog("Blocked Thrive Leads");
     }
   }
 }
