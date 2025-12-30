@@ -129,11 +129,6 @@ class MarketingDialogs extends Action
     ]);
   }
 
-  /**
-   * Register plugin-specific overrides
-   *
-   * @param array $ctx Token context
-   */
   public static function registerPluginOverrides(array $ctx): void
   {
     // OptinMonster

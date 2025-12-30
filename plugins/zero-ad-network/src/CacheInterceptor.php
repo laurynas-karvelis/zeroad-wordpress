@@ -7,13 +7,6 @@ namespace ZeroAd\WP;
 if (!defined("ABSPATH")) {
   exit();
 }
-
-/**
- * CacheInterceptor - Ensures caching systems vary by feature flags
- *
- * This class registers cache key modifications for popular WordPress caching plugins
- * to ensure pages are cached separately based on the user's token context.
- */
 class CacheInterceptor
 {
   /**
@@ -41,11 +34,6 @@ class CacheInterceptor
     return implode("-", $parts);
   }
 
-  /**
-   * Register cache plugin overrides to vary by token context
-   *
-   * @param array $tokenContext Parsed token context
-   */
   public static function registerPluginOverrides(array $tokenContext): void
   {
     $variant = self::buildVariantString($tokenContext);
@@ -81,9 +69,6 @@ class CacheInterceptor
     self::registerWPFastestCache($variant);
   }
 
-  /**
-   * WP Super Cache integration
-   */
   private static function registerWPSuperCache(string $variant): void
   {
     if (!function_exists("wp_cache_get_cookies_values")) {
@@ -115,9 +100,6 @@ class CacheInterceptor
     );
   }
 
-  /**
-   * Cachify integration
-   */
   private static function registerCachify(string $variant): void
   {
     if (!defined("CACHIFY_VERSION")) {
@@ -136,9 +118,6 @@ class CacheInterceptor
     );
   }
 
-  /**
-   * WP Rocket integration
-   */
   private static function registerWPRocket(string $variant): void
   {
     if (!function_exists("get_rocket_option")) {
@@ -168,9 +147,6 @@ class CacheInterceptor
     );
   }
 
-  /**
-   * W3 Total Cache integration
-   */
   private static function registerW3TotalCache(string $variant): void
   {
     if (!function_exists("w3tc_add_action")) {
@@ -188,9 +164,6 @@ class CacheInterceptor
     );
   }
 
-  /**
-   * LiteSpeed Cache integration
-   */
   private static function registerLiteSpeedCache(string $variant): void
   {
     if (!class_exists("LiteSpeed\\Core")) {
@@ -208,9 +181,6 @@ class CacheInterceptor
     );
   }
 
-  /**
-   * WP Fastest Cache integration
-   */
   private static function registerWPFastestCache(string $variant): void
   {
     if (!class_exists("WpFastestCache")) {

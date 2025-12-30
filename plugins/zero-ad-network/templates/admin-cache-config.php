@@ -1,10 +1,4 @@
 <?php
-/**
- * Admin Template: Cache Configuration Guide
- *
- * This page helps site owners configure their caching infrastructure to properly
- * handle different subscriber variants (Clean Web, One Pass, non-subscribers)
- */
 
 if (!defined("ABSPATH")) {
   exit();

@@ -103,11 +103,6 @@ class Advertisements extends Action
     ]);
   }
 
-  /**
-   * Register plugin-specific overrides
-   *
-   * @param array $ctx Token context
-   */
   public static function registerPluginOverrides(array $ctx): void
   {
     // AdsForWP

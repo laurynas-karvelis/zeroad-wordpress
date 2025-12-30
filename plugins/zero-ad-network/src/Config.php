@@ -1,10 +1,4 @@
 <?php
-/**
- * Config - Main plugin coordinator with dependency injection support.
- *
- * @package ZeroAdNetwork
- * @since 1.0.0
- */
 
 declare(strict_types=1);
 
@@ -16,62 +10,15 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\Token\Site;
 
-/**
- * Class Config
- *
- * Coordinates all plugin components with improved error handling and DI support.
- */
 class Config
 {
-  /**
-   * Singleton instance.
-   *
-   * @var Config|null
-   */
   private static $instance = null;
-
-  /**
-   * Plugin options.
-   *
-   * @var array
-   */
   private $options;
-
-  /**
-   * Settings manager.
-   *
-   * @var Settings
-   */
   private $settings;
-
-  /**
-   * Admin pages handler.
-   *
-   * @var AdminPages
-   */
   private $admin_pages;
-
-  /**
-   * Renderer for frontend.
-   *
-   * @var Renderer
-   */
   private $renderer;
-
-  /**
-   * Cached Site instance.
-   *
-   * @var Site|null
-   */
   private $site_cache = null;
 
-  /**
-   * Private constructor - use instance() method.
-   *
-   * @param Settings|null    $settings    Settings manager (for DI).
-   * @param AdminPages|null  $admin_pages Admin pages handler (for DI).
-   * @param Renderer|null    $renderer    Renderer (for DI).
-   */
   private function __construct(?Settings $settings = null, ?AdminPages $admin_pages = null, ?Renderer $renderer = null)
   {
     $this->options = get_option(Settings::OPTION_KEY, Settings::getDefaults());
@@ -83,11 +30,6 @@ class Config
     $this->renderer->setOptions($this->options);
   }
 
-  /**
-   * Get singleton instance.
-   *
-   * @return Config
-   */
   public static function instance(): Config
   {
     if (self::$instance === null) {
@@ -96,19 +38,11 @@ class Config
     return self::$instance;
   }
 
-  /**
-   * Set instance (for testing).
-   *
-   * @param Config|null $instance The instance to set.
-   */
   public static function setInstance(?Config $instance): void
   {
     self::$instance = $instance;
   }
 
-  /**
-   * Run the plugin - register all hooks.
-   */
   public function run(): void
   {
     // Admin hooks.
@@ -130,9 +64,6 @@ class Config
     $this->renderer->run();
   }
 
-  /**
-   * Initialize Site instance with configuration.
-   */
   public function initializeSite(): void
   {
     try {
@@ -176,11 +107,6 @@ class Config
     }
   }
 
-  /**
-   * Show configuration error notice to admins.
-   *
-   * @param string $message The error message.
-   */
   private function showConfigError(string $message): void
   {
     if (is_admin() && current_user_can("manage_options")) {
@@ -197,12 +123,6 @@ class Config
     }
   }
 
-  /**
-   * Handle options update.
-   *
-   * @param mixed $old_value Old option value.
-   * @param mixed $new_value New option value.
-   */
   public function onOptionsUpdate($old_value, $new_value): void
   {
     // Clear cached Site instance when options change.
@@ -216,18 +136,12 @@ class Config
     }
   }
 
-  /**
-   * Update all components with new options.
-   */
   private function updateComponents(): void
   {
     $this->admin_pages->setOptions($this->options);
     $this->renderer->setOptions($this->options);
   }
 
-  /**
-   * Add admin menu pages.
-   */
   public function addAdminPages(): void
   {
     add_menu_page(
@@ -268,9 +182,6 @@ class Config
     );
   }
 
-  /**
-   * Show welcome notice for new installations.
-   */
   public function maybeShowWelcomeNotice(): void
   {
     if (!current_user_can("manage_options")) {
@@ -338,9 +249,6 @@ class Config
     }
   }
 
-  /**
-   * AJAX handler to dismiss welcome notice.
-   */
   public function ajaxDismissWelcome(): void
   {
     // Check capability FIRST (before nonce).
@@ -364,11 +272,6 @@ class Config
     wp_send_json_success();
   }
 
-  /**
-   * Enqueue admin assets.
-   *
-   * @param string $hook_suffix Current admin page hook suffix.
-   */
   public function enqueueAdminAssets(string $hook_suffix): void
   {
     // Only load on our plugin pages.

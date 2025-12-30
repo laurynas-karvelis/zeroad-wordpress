@@ -1,10 +1,4 @@
 <?php
-/**
- * Settings - Handles WordPress settings registration and validation.
- *
- * @package ZeroAdNetwork
- * @since 1.0.0
- */
 
 declare(strict_types=1);
 
@@ -16,48 +10,18 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\Token\Constants;
 
-/**
- * Class Settings
- *
- * Manages all plugin settings through the WordPress Settings API.
- */
 class Settings
 {
-  /**
-   * Option key in wp_options table.
-   */
   const OPTION_KEY = "zeroad_token_options";
-
-  /**
-   * Maximum Client ID length.
-   */
   const MAX_CLIENT_ID_LENGTH = 255;
-
-  /**
-   * Minimum Client ID length.
-   */
   const MIN_CLIENT_ID_LENGTH = 10;
-
-  /**
-   * Plugin options.
-   *
-   * @var array
-   */
   private $options;
 
-  /**
-   * Constructor.
-   *
-   * @param array $options Current options.
-   */
   public function __construct(array $options)
   {
     $this->options = $options;
   }
 
-  /**
-   * Register all settings.
-   */
   public function register(): void
   {
     register_setting(self::OPTION_KEY, self::OPTION_KEY, [
@@ -69,11 +33,6 @@ class Settings
     $this->registerCacheSection();
   }
 
-  /**
-   * Get default options.
-   *
-   * @return array Default option values.
-   */
   public static function getDefaults(): array
   {
     return [
@@ -87,9 +46,6 @@ class Settings
     ];
   }
 
-  /**
-   * Register main configuration section.
-   */
   private function registerMainSection(): void
   {
     add_settings_section(
@@ -102,9 +58,6 @@ class Settings
     $this->registerMainFields();
   }
 
-  /**
-   * Register main section fields.
-   */
   private function registerMainFields(): void
   {
     $fields = [
@@ -119,9 +72,6 @@ class Settings
     }
   }
 
-  /**
-   * Register cache configuration section.
-   */
   private function registerCacheSection(): void
   {
     add_settings_section(
@@ -483,13 +433,6 @@ class Settings
     return $output;
   }
 
-  /**
-   * Validate client ID.
-   *
-   * @param string $client_id The client ID to validate.
-   * @param array  $errors    Array to collect errors.
-   * @return string Validated client ID or empty string.
-   */
   private function validateClientId(string $client_id, array &$errors): string
   {
     // Check length.
@@ -526,36 +469,18 @@ class Settings
     return $client_id;
   }
 
-  /**
-   * Validate output method.
-   *
-   * @param string $method The output method.
-   * @return string Validated output method.
-   */
   private function validateOutputMethod(string $method): string
   {
     $valid_methods = ["header", "meta"];
     return in_array($method, $valid_methods, true) ? $method : "header";
   }
 
-  /**
-   * Validate cache TTL.
-   *
-   * @param mixed $ttl The TTL value.
-   * @return int Validated TTL.
-   */
   private function validateCacheTtl($ttl): int
   {
     $ttl = intval($ttl);
     return max(1, min(60, $ttl));
   }
 
-  /**
-   * Validate cache prefix.
-   *
-   * @param string $prefix The cache prefix.
-   * @return string Validated cache prefix.
-   */
   private function validateCachePrefix(string $prefix): string
   {
     $prefix = trim(sanitize_text_field($prefix));
@@ -583,14 +508,6 @@ class Settings
     return $prefix;
   }
 
-  /**
-   * Validate features.
-   *
-   * @param mixed $features Array of selected features.
-   * @param bool  $enabled  Whether plugin is enabled.
-   * @param array $errors   Array to collect errors.
-   * @return array Validated features.
-   */
   private function validateFeatures($features, bool $enabled, array &$errors): array
   {
     if (!is_array($features)) {

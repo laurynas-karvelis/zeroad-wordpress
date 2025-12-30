@@ -24,7 +24,6 @@ class Renderer
   private $bufferLevel = 0;
   private $enabledFeatureClasses = [];
 
-  // PHP 7.2 compatible constant array
   public static function getFeatureActionClasses()
   {
     return [
@@ -36,25 +35,16 @@ class Renderer
     ];
   }
 
-  /**
-   * Set the Site instance
-   */
   public function setSite(?Site $site): void
   {
     $this->site = $site;
   }
 
-  /**
-   * Set plugin options
-   */
   public function setOptions(array $options): void
   {
     $this->options = $options;
   }
 
-  /**
-   * Register WordPress hooks
-   */
   public function run(): void
   {
     // Output the server header/meta tag
@@ -74,9 +64,6 @@ class Renderer
     add_action("template_redirect", [$this, "maybeStartOutputBuffer"], 5);
   }
 
-  /**
-   * Send the server header if configured to do so
-   */
   public function maybeSendHeader(): void
   {
     if (!isset($this->site) || is_admin() || ($this->options["output_method"] ?? "header") !== "header") {
@@ -91,9 +78,6 @@ class Renderer
     header("{$this->site->SERVER_HEADER_NAME}: {$this->site->SERVER_HEADER_VALUE}", true);
   }
 
-  /**
-   * Inject meta tag if configured to do so
-   */
   public function maybeInjectMetaTag(): void
   {
     if (!isset($this->site) || is_admin() || ($this->options["output_method"] ?? "header") !== "meta") {
@@ -106,9 +90,6 @@ class Renderer
     echo sprintf('<meta name="%s" content="%s" data-zeroad="server-identifier" />' . "\n", $name, $value);
   }
 
-  /**
-   * Parse and validate the client token from the request header
-   */
   public function parseClientToken(): void
   {
     if (!isset($this->site) || is_admin()) {
@@ -132,9 +113,6 @@ class Renderer
     }
   }
 
-  /**
-   * Register plugin-specific overrides (e.g., membership plugins, cache plugins)
-   */
   public function registerPluginOverrides(): void
   {
     if (empty($this->tokenContext) || is_admin()) {
@@ -153,9 +131,6 @@ class Renderer
     CacheInterceptor::registerPluginOverrides($this->tokenContext);
   }
 
-  /**
-   * Toggle features based on parsed token context
-   */
   public function maybeToggleFeatures(): void
   {
     if (empty($this->tokenContext) || is_admin()) {
@@ -172,9 +147,6 @@ class Renderer
     }
   }
 
-  /**
-   * Start output buffering to post-process HTML
-   */
   public function maybeStartOutputBuffer(): void
   {
     // Only buffer if token parsing happened
@@ -200,9 +172,6 @@ class Renderer
     add_action("shutdown", [$this, "endBuffer"], 999); // Run late to ensure content is flushed
   }
 
-  /**
-   * End output buffering and flush
-   */
   public function endBuffer(): void
   {
     if (!$this->bufferStarted) {
@@ -247,9 +216,6 @@ class Renderer
     return $html;
   }
 
-  /**
-   * Get a server header value safely
-   */
   private function getServerHeader(string $name): ?string
   {
     $serverKey = "HTTP_" . str_replace("-", "_", strtoupper($name));
@@ -261,9 +227,6 @@ class Renderer
     return sanitize_text_field(wp_unslash($_SERVER[$serverKey]));
   }
 
-  /**
-   * Check if current request expects JSON response
-   */
   private function isJsonRequest(): bool
   {
     // Check if REST API request

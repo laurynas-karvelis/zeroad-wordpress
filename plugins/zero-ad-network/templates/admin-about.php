@@ -1,10 +1,4 @@
 <?php
-/**
- * Admin Template: About Zero Ad Network
- *
- * Educational page explaining what Zero Ad Network is, how it works,
- * and how site owners benefit from the partnership
- */
 
 if (!defined("ABSPATH")) {
   exit();

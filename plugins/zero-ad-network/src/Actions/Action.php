@@ -8,57 +8,19 @@ if (!defined("ABSPATH")) {
   exit();
 }
 
-/**
- * Base class for feature actions
- *
- * Each feature (Advertisements, CookieConsent, etc.) extends this class
- * and implements the enabled(), run(), and outputBufferCallback() methods.
- */
 abstract class Action
 {
   private static $plugins = null;
   private static $pluginsChecked = [];
 
-  /**
-   * Check if this action should be enabled based on token context
-   *
-   * @param array $ctx Token context with feature flags
-   * @return bool True if action should run
-   */
   abstract public static function enabled(array $ctx): bool;
-
-  /**
-   * Run the action - register hooks, disable plugins, enqueue assets
-   */
   abstract public static function run(): void;
-
-  /**
-   * Process HTML output buffer to remove/modify elements
-   *
-   * @param string $html The HTML content to process
-   * @return string Modified HTML content
-   */
   abstract public static function outputBufferCallback(string $html): string;
-
-  /**
-   * Optional: Register plugin-specific overrides
-   * Override this method if the action needs to hook into specific plugins
-   *
-   * @param array $ctx Token context with feature flags
-   */
   public static function registerPluginOverrides(array $ctx): void
   {
     // Default: no overrides
   }
 
-  /**
-   * Inject a string into the <head> section (before </head>),
-   * or at start if head tag not present.
-   *
-   * @param string $html The full HTML content
-   * @param string $inject The string to inject
-   * @return string Modified HTML
-   */
   protected static function injectIntoHead(string $html, string $inject): string
   {
     if (stripos($html, "</head>") !== false) {
@@ -69,11 +31,6 @@ abstract class Action
     return $inject . $html;
   }
 
-  /**
-   * Add multiple WordPress filters at once
-   *
-   * @param array $list Array of [hook_name, callback, priority] arrays
-   */
   protected static function addFilters(array $list): void
   {
     foreach ($list as $value) {
@@ -89,11 +46,6 @@ abstract class Action
     }
   }
 
-  /**
-   * Remove multiple WordPress actions at once
-   *
-   * @param array $list Array of [hook_name, callback, priority] arrays
-   */
   protected static function removeActions(array $list): void
   {
     foreach ($list as $value) {
@@ -109,11 +61,6 @@ abstract class Action
     }
   }
 
-  /**
-   * Remove multiple shortcodes at once
-   *
-   * @param array $list Array of shortcode names
-   */
   protected static function removeShortcodes(array $list): void
   {
     foreach ($list as $shortcode) {
@@ -123,11 +70,6 @@ abstract class Action
     }
   }
 
-  /**
-   * Disable multiple plugins by their text domain and prefix
-   *
-   * @param array $list Array of [textDomain, prefix, shortcodes] arrays
-   */
   protected static function disablePlugins(array $list): void
   {
     foreach ($list as $rules) {
@@ -161,13 +103,6 @@ abstract class Action
     }
   }
 
-  /**
-   * Run multiple regex replacements on HTML
-   *
-   * @param string $html The HTML to process
-   * @param array $regexRules Array of regex patterns
-   * @return string Modified HTML
-   */
   protected static function runReplacements(string $html, array $regexRules = []): string
   {
     foreach ($regexRules as $regexRule) {
@@ -175,8 +110,7 @@ abstract class Action
       $result = @preg_replace($regexRule, "", $html);
 
       if ($result === null || preg_last_error() !== PREG_NO_ERROR) {
-        // Handle error
-        return $html; // Return original HTML on error
+        return $html;
       }
 
       $html = $result;
@@ -185,12 +119,6 @@ abstract class Action
     return $html;
   }
 
-  /**
-   * Remove all WordPress actions/filters whose callback name, method, or class
-   * starts with a given prefix (case-insensitive).
-   *
-   * @param string $prefix String to match at the start of function/method/class name
-   */
   protected static function removeCallbacksByPrefix(string $prefix): void
   {
     global $wp_filter;
@@ -269,12 +197,6 @@ abstract class Action
     }
   }
 
-  /**
-   * Check if a plugin is active by its text domain
-   *
-   * @param string $name Plugin text domain
-   * @return bool True if plugin is active
-   */
   protected static function isPluginActiveByTextDomain(string $name): bool
   {
     // Check cache first
