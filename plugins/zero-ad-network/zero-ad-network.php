@@ -11,17 +11,26 @@
  * License:           Apache 2.0
  * License URI:       https://www.apache.org/licenses/LICENSE-2.0.txt
  * Text Domain:       zero-ad-network
+ * Domain Path:       /languages
  */
 
 if (!defined("ABSPATH")) {
   exit();
 }
 
+// Define plugin constants
+define("ZERO_AD_NETWORK_VERSION", "0.13.13");
+define("ZERO_AD_NETWORK_PLUGIN_FILE", __FILE__);
+define("ZERO_AD_NETWORK_PLUGIN_DIR", plugin_dir_path(__FILE__));
+define("ZERO_AD_NETWORK_PLUGIN_URL", plugin_dir_url(__FILE__));
+define("ZERO_AD_NETWORK_PLUGIN_BASENAME", plugin_basename(__FILE__));
+
+// Autoloader
 if (function_exists("spl_autoload_register")) {
   spl_autoload_register(function ($class) {
     $namespaces = [
-      "ZeroAd\\WP\\" => __DIR__ . "/src/",
-      "ZeroAd\\Token\\" => __DIR__ . "/vendor/zeroad.network/token/src/"
+      "ZeroAd\\WP\\" => ZERO_AD_NETWORK_PLUGIN_DIR . "src/",
+      "ZeroAd\\Token\\" => ZERO_AD_NETWORK_PLUGIN_DIR . "vendor/zeroad.network/token/src/"
     ];
 
     foreach ($namespaces as $prefix => $base_dir) {
@@ -39,9 +48,90 @@ if (function_exists("spl_autoload_register")) {
       }
     }
   });
-
-  define("ZERO_AD_NETWORK_PLUGIN_VERSION", "0.13.13");
-  define("ZERO_AD_NETWORK_PLUGIN_URL", plugin_dir_url(__FILE__));
-
-  \ZeroAd\WP\Config::instance()->run();
 }
+
+/**
+ * Activation hook - Check system requirements
+ */
+register_activation_hook(__FILE__, function () {
+  // Check PHP version
+  if (version_compare(PHP_VERSION, "7.2.0", "<")) {
+    deactivate_plugins(ZERO_AD_NETWORK_PLUGIN_BASENAME);
+    wp_die(
+      esc_html__("Zero Ad Network requires PHP 7.2 or higher. Please upgrade your PHP version.", "zero-ad-network"),
+      esc_html__("Plugin Activation Error", "zero-ad-network"),
+      ["back_link" => true]
+    );
+  }
+
+  // Check sodium extension
+  if (!extension_loaded("sodium")) {
+    deactivate_plugins(ZERO_AD_NETWORK_PLUGIN_BASENAME);
+    wp_die(
+      esc_html__(
+        "Zero Ad Network requires the Sodium PHP extension. Please install/enable libsodium (included in PHP 7.2+).",
+        "zero-ad-network"
+      ),
+      esc_html__("Plugin Activation Error", "zero-ad-network"),
+      ["back_link" => true]
+    );
+  }
+
+  // Set default options
+  $default_options = [
+    "enabled" => false,
+    "client_id" => "",
+    "features" => [],
+    "output_method" => "header",
+    "debug_mode" => false
+  ];
+
+  if (!get_option(\ZeroAd\WP\Config::OPT_KEY)) {
+    add_option(\ZeroAd\WP\Config::OPT_KEY, $default_options);
+  }
+
+  // Log activation
+  if (defined("WP_DEBUG") && WP_DEBUG) {
+    error_log("Zero Ad Network plugin activated successfully");
+  }
+});
+
+/**
+ * Deactivation hook - Cleanup
+ */
+register_deactivation_hook(__FILE__, function () {
+  // Clean up transients
+  delete_transient("zeroad_site_instance");
+  delete_transient("zeroad_cache_variant");
+
+  // Log deactivation
+  if (defined("WP_DEBUG") && WP_DEBUG) {
+    error_log("Zero Ad Network plugin deactivated");
+  }
+});
+
+/**
+ * Initialize the plugin
+ */
+add_action("plugins_loaded", function () {
+  // Load text domain for translations
+  load_plugin_textdomain("zero-ad-network", false, dirname(ZERO_AD_NETWORK_PLUGIN_BASENAME) . "/languages");
+
+  // Initialize the main config
+  try {
+    \ZeroAd\WP\Config::instance()->run();
+  } catch (\Throwable $e) {
+    if (defined("WP_DEBUG") && WP_DEBUG) {
+      error_log("Zero Ad Network initialization error: " . $e->getMessage());
+    }
+
+    add_action("admin_notices", function () use ($e) {
+      if (current_user_can("manage_options")) {
+        echo '<div class="notice notice-error"><p>';
+        echo esc_html__("Zero Ad Network failed to initialize: ", "zero-ad-network");
+        echo esc_html($e->getMessage());
+        echo "</p></div>";
+      }
+    });
+  }
+});

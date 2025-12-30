@@ -9,23 +9,20 @@ if (!defined("ABSPATH")) {
 }
 
 use ZeroAd\Token\Site;
-use ZeroAd\Token\Constants;
-
-use ZeroAd\WP\Config;
 use ZeroAd\WP\Actions\Advertisements;
 use ZeroAd\WP\Actions\ContentPaywalls;
 use ZeroAd\WP\Actions\CookieConsent;
 use ZeroAd\WP\Actions\MarketingDialogs;
 use ZeroAd\WP\Actions\SubscriptionAccess;
 
-// cspell:words unslash
 class Renderer
 {
   private $options;
   private $site;
   private $tokenContext;
   private $bufferStarted = false;
-  private int $bufferLevel = 0;
+  private $bufferLevel = 0;
+  private $enabledFeatureClasses = [];
 
   const FEATURE_ACTION_CLASSES = [
     Advertisements::class,
@@ -35,58 +32,83 @@ class Renderer
     SubscriptionAccess::class
   ];
 
-  public function site(Site $site)
+  /**
+   * Set the Site instance
+   */
+  public function site(?Site $site): void
   {
     $this->site = $site;
   }
 
-  public function options(array $options)
+  /**
+   * Set plugin options
+   */
+  public function options(array $options): void
   {
     $this->options = $options;
   }
 
+  /**
+   * Register WordPress hooks
+   */
   public function run(): void
   {
-    add_action("wp_head", [$this, "maybeInjectMetaTag"]);
+    // Output the server header/meta tag
     add_action("send_headers", [$this, "maybeSendHeader"], 20);
+    add_action("wp_head", [$this, "maybeInjectMetaTag"], 1);
 
+    // Parse incoming client token
     add_action("init", [$this, "parseClientToken"], 2);
+
+    // Register plugin-specific overrides
     add_action("init", [$this, "registerPluginOverrides"], 3);
+
+    // Toggle features based on token
     add_action("template_redirect", [$this, "maybeToggleFeatures"], 2);
 
-    // Start output buffering after template redirect so we can post-process HTML
+    // Start output buffering for HTML post-processing
     add_action("template_redirect", [$this, "maybeStartOutputBuffer"], 5);
-    // add_filter("the_content", [$this, "prependTokenContextToContent"]); // For debug purposes only
   }
 
-  // public function prependTokenContextToContent($content)
-  // {
-  //   if (!empty($this->tokenContext)) {
-  //     $debug = '<pre style="background:#eee;padding:8px;">' . esc_html(print_r($this->tokenContext, true)) . "</pre>";
-  //     $content = $debug . $content;
-  //   }
-
-  //   return $content;
-  // }
-
+  /**
+   * Send the server header if configured to do so
+   */
   public function maybeSendHeader(): void
   {
     if (!isset($this->site) || is_admin() || ($this->options["output_method"] ?? "header") !== "header") {
       return;
     }
 
-    header("{$this->site->SERVER_HEADER_NAME}: {$this->site->SERVER_HEADER_VALUE}");
+    // Check if headers already sent
+    if (headers_sent()) {
+      $this->debugLog("Headers already sent, cannot add server header");
+      return;
+    }
+
+    header("{$this->site->SERVER_HEADER_NAME}: {$this->site->SERVER_HEADER_VALUE}", true);
+    $this->debugLog("Server header sent: {$this->site->SERVER_HEADER_NAME}");
   }
 
+  /**
+   * Inject meta tag if configured to do so
+   */
   public function maybeInjectMetaTag(): void
   {
     if (!isset($this->site) || is_admin() || ($this->options["output_method"] ?? "header") !== "meta") {
       return;
     }
+
+    $name = esc_attr($this->site->SERVER_HEADER_NAME);
     $value = esc_attr($this->site->SERVER_HEADER_VALUE);
-    echo "<meta name='" . esc_html($this->site->SERVER_HEADER_NAME) . "' content='" . esc_html($value) . "' />\n";
+
+    echo sprintf('<meta name="%s" content="%s" data-zeroad="server-identifier" />' . "\n", $name, $value);
+
+    $this->debugLog("Meta tag injected: {$name}");
   }
 
+  /**
+   * Parse and validate the client token from the request header
+   */
   public function parseClientToken(): void
   {
     if (!isset($this->site) || is_admin()) {
@@ -94,87 +116,34 @@ class Renderer
     }
 
     try {
-      // Parse & verify the signed token
-      $headerValue = !empty($_SERVER[$this->site->CLIENT_HEADER_NAME])
-        ? sanitize_text_field(wp_unslash($_SERVER[$this->site->CLIENT_HEADER_NAME]))
-        : null;
+      // Get the client header value
+      $headerName = $this->site->CLIENT_HEADER_NAME;
+      $headerValue = $this->getServerHeader($headerName);
+
+      if ($headerValue === null) {
+        $this->debugLog("No client token header found: {$headerName}");
+        return;
+      }
+
+      // Parse and verify the signed token
       $this->tokenContext = $this->site->parseClientToken($headerValue);
 
-      // Make `tokenContext` available globally to everyone
+      // Make token context available globally
       $GLOBALS["zeroad_token_context"] = $this->tokenContext;
+
+      $this->debugLog("Client token parsed successfully: " . json_encode($this->tokenContext));
     } catch (\Throwable $e) {
-      // Give up
-    }
-  }
+      $this->debugLog("Token parsing failed: " . $e->getMessage());
 
-  public function maybeToggleFeatures(): void
-  {
-    if (empty($this->tokenContext) || is_admin()) {
-      return;
-    }
-
-    foreach (self::FEATURE_ACTION_CLASSES as $Class) {
-      if ($Class::enabled($this->tokenContext)) {
-        $Class::run();
-      }
-    }
-  }
-
-  public function maybeStartOutputBuffer(): void
-  {
-    // Only buffer if token parsing happened
-    if (!isset($this->tokenContext) || is_admin()) {
-      return;
-    }
-
-    // Only buffer for front-end HTML responses
-    if (wp_doing_ajax() || wp_is_json_request()) {
-      return;
-    }
-
-    if ($this->bufferStarted) {
-      return;
-    }
-
-    $this->bufferLevel = ob_get_level();
-    $this->bufferStarted = true;
-
-    ob_start([$this, "outputBufferCallback"]);
-    add_action("shutdown", [$this, "endBuffer"], 0);
-  }
-
-  public function endBuffer(): void
-  {
-    if (!$this->bufferStarted) {
-      return;
-    }
-
-    $this->bufferStarted = false;
-
-    while (ob_get_level() > $this->bufferLevel) {
-      ob_end_flush();
+      // Set empty context so we know parsing was attempted
+      $this->tokenContext = [];
+      $GLOBALS["zeroad_token_context"] = [];
     }
   }
 
   /**
-   * Output buffer callback — modify HTML before sending to client.
+   * Register plugin-specific overrides (e.g., membership plugins, cache plugins)
    */
-  public function outputBufferCallback(string $html): string
-  {
-    if (empty($this->tokenContext)) {
-      return $html;
-    }
-
-    foreach (self::FEATURE_ACTION_CLASSES as $Class) {
-      if ($Class::enabled($this->tokenContext)) {
-        $html = $Class::outputBufferCallback($html);
-      }
-    }
-
-    // Return processed HTML
-    return $html;
-  }
-
   public function registerPluginOverrides(): void
   {
     if (empty($this->tokenContext) || is_admin()) {
@@ -184,31 +153,174 @@ class Renderer
     foreach (self::FEATURE_ACTION_CLASSES as $Class) {
       if ($Class::enabled($this->tokenContext)) {
         if (method_exists($Class, "registerPluginOverrides")) {
-          $Class::registerPluginOverrides();
+          $Class::registerPluginOverrides($this->tokenContext);
+          $this->debugLog("Registered plugin overrides for: " . $Class);
         }
       }
     }
 
+    // Register cache interceptor
     CacheInterceptor::registerPluginOverrides($this->tokenContext);
   }
-}
 
-if (!function_exists("wp_is_json_request")) {
-  function wp_is_json_request(): bool
+  /**
+   * Toggle features based on parsed token context
+   */
+  public function maybeToggleFeatures(): void
   {
-    // Check if the request is for REST API
+    if (empty($this->tokenContext) || is_admin()) {
+      return;
+    }
+
+    $this->enabledFeatureClasses = [];
+
+    foreach (self::FEATURE_ACTION_CLASSES as $Class) {
+      if ($Class::enabled($this->tokenContext)) {
+        $this->enabledFeatureClasses[] = $Class;
+        $Class::run();
+
+        $this->debugLog("Feature enabled: " . $Class);
+      }
+    }
+
+    // Store enabled features globally for use in output buffer
+    $GLOBALS["zeroad_enabled_features"] = $this->enabledFeatureClasses;
+  }
+
+  /**
+   * Start output buffering to post-process HTML
+   */
+  public function maybeStartOutputBuffer(): void
+  {
+    // Only buffer if token parsing happened
+    if (!isset($this->tokenContext) || is_admin()) {
+      return;
+    }
+
+    // Skip buffering for AJAX and JSON requests
+    if (wp_doing_ajax() || $this->isJsonRequest()) {
+      $this->debugLog("Skipping output buffer for AJAX/JSON request");
+      return;
+    }
+
+    // Avoid double-buffering
+    if ($this->bufferStarted) {
+      return;
+    }
+
+    // Remember the buffer level before we start
+    $this->bufferLevel = ob_get_level();
+    $this->bufferStarted = true;
+
+    ob_start([$this, "outputBufferCallback"]);
+    add_action("shutdown", [$this, "endBuffer"], 999); // Run late to ensure content is flushed
+
+    $this->debugLog("Output buffer started at level {$this->bufferLevel}");
+  }
+
+  /**
+   * End output buffering and flush
+   */
+  public function endBuffer(): void
+  {
+    if (!$this->bufferStarted) {
+      return;
+    }
+
+    $this->bufferStarted = false;
+
+    // Flush all buffers we started
+    while (ob_get_level() > $this->bufferLevel) {
+      ob_end_flush();
+    }
+
+    $this->debugLog("Output buffer ended");
+  }
+
+  /**
+   * Output buffer callback - modify HTML before sending to client
+   */
+  public function outputBufferCallback(string $html): string
+  {
+    if (empty($this->tokenContext)) {
+      return $html;
+    }
+
+    $startTime = microtime(true);
+    $originalLength = strlen($html);
+
+    // Use cached enabled features
+    $enabledClasses = $this->enabledFeatureClasses;
+
+    foreach ($enabledClasses as $Class) {
+      try {
+        $html = $Class::outputBufferCallback($html);
+      } catch (\Throwable $e) {
+        $this->debugLog("Output buffer callback failed for {$Class}: " . $e->getMessage());
+      }
+    }
+
+    $processTime = round((microtime(true) - $startTime) * 1000, 2);
+    $newLength = strlen($html);
+    $reduction = $originalLength - $newLength;
+
+    $this->debugLog(
+      "HTML processed in {$processTime}ms. Size change: {$reduction} bytes (" .
+        round(($reduction / $originalLength) * 100, 2) .
+        "%)"
+    );
+
+    return $html;
+  }
+
+  /**
+   * Get a server header value safely
+   */
+  private function getServerHeader(string $name): ?string
+  {
+    // Convert header name to server var format (e.g., X-Better-Web => HTTP_X_BETTER_WEB)
+    $serverKey = "HTTP_" . str_replace("-", "_", strtoupper($name));
+
+    if (!isset($_SERVER[$serverKey])) {
+      return null;
+    }
+
+    // Sanitize and return
+    return sanitize_text_field(wp_unslash($_SERVER[$serverKey]));
+  }
+
+  /**
+   * Check if current request expects JSON response
+   */
+  private function isJsonRequest(): bool
+  {
+    // Check if REST API request
     if (defined("REST_REQUEST") && REST_REQUEST) {
       return true;
     }
 
-    // Check headers
-    $accept = isset($_SERVER["HTTP_ACCEPT"]) ? sanitize_text_field(wp_unslash($_SERVER["HTTP_ACCEPT"])) : "";
-    $content_type = isset($_SERVER["CONTENT_TYPE"]) ? sanitize_text_field(wp_unslash($_SERVER["CONTENT_TYPE"])) : "";
+    // Check Accept header
+    $accept = $this->getServerHeader("Accept") ?? "";
+    if (stripos($accept, "application/json") !== false) {
+      return true;
+    }
 
-    if (strpos($accept, "application/json") !== false || strpos($content_type, "application/json") !== false) {
+    // Check Content-Type header
+    $contentType = $this->getServerHeader("Content-Type") ?? "";
+    if (stripos($contentType, "application/json") !== false) {
       return true;
     }
 
     return false;
+  }
+
+  /**
+   * Debug logging helper
+   */
+  private function debugLog(string $message): void
+  {
+    if (!empty($this->options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG) {
+      error_log("[Zero Ad Network - Renderer] " . $message);
+    }
   }
 }

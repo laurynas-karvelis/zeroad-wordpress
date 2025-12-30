@@ -10,7 +10,6 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\WP\Actions\Action;
 
-// cspell:words CCPA  CNCB  Complianz Moove Pressidium  cacsp cmplz cookieadmin cookiebot cookieyes cybot optout  webtoffee wpconsent
 class CookieConsent extends Action
 {
   public static function enabled(array $ctx): bool
@@ -20,10 +19,10 @@ class CookieConsent extends Action
 
   public static function run(): void
   {
-    // COOKIE CONSENT SCREENS
+    // Disable cookie consent plugins
     self::disablePlugins([
       // Cookie Bot
-      ["cookiebot", "cybot\cookiebot", ["cookie_declaration", "uc_embedding"]],
+      ["cookiebot", "cybot\\cookiebot", ["cookie_declaration", "uc_embedding"]],
 
       // Beautiful and responsive cookie consent
       ["bar-cookie-consent", "nsc_bar_", ["cc_show_cookie_banner_nsc_bar"]],
@@ -31,15 +30,15 @@ class CookieConsent extends Action
       // Real Cookie Banner
       [
         "real-cookie-banner",
-        "DevOwl\RealCookieBanner",
-        ["rcb-consent", "rcb-consent-history-uuids", "rcb-consent-print-uuid", "rcb-cookie-policy", ""]
+        "DevOwl\\RealCookieBanner",
+        ["rcb-consent", "rcb-consent-history-uuids", "rcb-consent-print-uuid", "rcb-cookie-policy"]
       ],
 
       // GDPR cookie consent
       ["gdpr-cookie-consent", "Gdpr_", ["wpl_data_request", "wpl_cookie_details", "youtube"]],
 
       // Pressidium Cookie Consent
-      ["pressidium-cookie-consent", "Pressidium\WP\CookieConsent", []],
+      ["pressidium-cookie-consent", "Pressidium\\WP\\CookieConsent", []],
 
       // WPConsent
       ["wpconsent-cookies-banner-privacy-suite", "WPConsent_", ["wpconsent_cookie_policy"]],
@@ -96,26 +95,76 @@ class CookieConsent extends Action
       ["cookies-and-content-security-policy", "cacsp_", []],
 
       // Termly - GDPR/CCPA Cookie Consent Banner
-      ["uk-cookie-consent", "termly", []]
+      ["uk-cookie-consent", "termly", []],
+
+      // GDPR Cookie Consent
+      ["gdpr", "GDPR_", []],
+
+      // Cookie Consent Box by Supsystic
+      ["gdpr-cookie-consent-by-supsystic", "supsystic", []]
     ]);
 
-    wp_enqueue_style(
-      "zero-ad-cookie-consent",
-      ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/cookie-consent.css",
-      [],
-      ZERO_AD_NETWORK_PLUGIN_VERSION
-    );
+    // Enqueue CSS to hide cookie banners
+    if (!is_admin()) {
+      wp_enqueue_style(
+        "zero-ad-cookie-consent",
+        ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/cookie-consent.css",
+        [],
+        ZERO_AD_NETWORK_VERSION
+      );
+    }
+
+    self::debugLog("Cookie consent blocking enabled");
   }
 
   public static function outputBufferCallback(string $html): string
   {
-    // Remove cookie banners/scripts
+    // Remove cookie consent banners and scripts from HTML
     return parent::runReplacements($html, [
-      // Remove scripts containing 'cookie' or 'consent' in src or inline code variable names
-      '#<script[^>]*(src=[\'"][^\'"]*(cookie|consent|gdpr|ccpa)[^\'"]*[\'"])[^>]*>.*?</script>#is',
+      // Remove cookie/consent/GDPR/CCPA scripts (limit backtracking)
+      '#<script[^>]{0,500}(src=[\'"][^\'"]{0,500}(cookie|consent|gdpr|ccpa)[^\'"]{0,200}[\'"]|[^>]{0,300}(cookie|consent|gdpr|ccpa))[^>]{0,200}>(?:(?!</script>).){0,10000}</script>#is',
 
-      // Remove cookie banner elements by common ids/classes
-      '#<(div|section|aside)[^>]*(id|class)\s*=\s*["\'][^"\']*(cookie|cookie-banner|cookie-consent|cc-window|cookie-modal|cc-banner|complianz|cookieyes)[^"\']*["\'][^>]*>.*?</(div|section|aside)>#is'
+      // Remove cookie banner containers (limit size)
+      '#<(div|section|aside)[^>]{0,300}(id|class)\s*=\s*["\'][^"\']{0,200}(cookie|cookie-banner|cookie-consent|cc-window|cookie-modal|cc-banner|complianz|cookieyes|gdpr|ccpa)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</\1>).){0,5000}</\1>#is',
+
+      // Remove Cookiebot scripts
+      "#<script[^>]{0,500}id=['\"]Cookiebot['\"][^>]{0,200}>(?:(?!</script>).){0,5000}</script>#is",
+
+      // Remove cookie consent meta tags
+      '#<meta[^>]{0,300}name=["\']?[^"\']{0,100}(cookie|consent)[^"\']{0,100}["\']?[^>]{0,200}>#is'
     ]);
+  }
+
+  /**
+   * Register plugin-specific overrides
+   *
+   * @param array $ctx Token context
+   */
+  public static function registerPluginOverrides(array $ctx): void
+  {
+    // Cookiebot
+    if (function_exists("cookiebot_active")) {
+      add_filter("cookiebot_active", "__return_false", 999);
+      self::debugLog("Blocked Cookiebot");
+    }
+
+    // Complianz
+    if (function_exists("cmplz_has_consent")) {
+      add_filter("cmplz_has_consent", "__return_true", 999);
+      add_filter("cmplz_show_banner", "__return_false", 999);
+      self::debugLog("Blocked Complianz banner");
+    }
+
+    // Cookie Notice
+    if (class_exists("Cookie_Notice")) {
+      add_filter("cn_is_cookie_accepted", "__return_true", 999);
+      self::debugLog("Set Cookie Notice as accepted");
+    }
+
+    // Real Cookie Banner
+    if (class_exists("DevOwl\\RealCookieBanner\\Core")) {
+      add_filter("rcb/consent/created", "__return_true", 999);
+      self::debugLog("Blocked Real Cookie Banner");
+    }
   }
 }

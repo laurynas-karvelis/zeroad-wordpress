@@ -10,7 +10,6 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\WP\Actions\Action;
 
-// cspell:words Divi  Foobox  Icegram OMAPI Optin POPTIN  Popupaoc  SGPM  Supsystic convertflow hubspot mailoptin nksnewslettersubscriber nopriv  optinmonster  paoc  sgpb  thrv  wpforms wppopup
 class MarketingDialogs extends Action
 {
   public static function enabled(array $ctx): bool
@@ -20,7 +19,7 @@ class MarketingDialogs extends Action
 
   public static function run(): void
   {
-    // POPUPS
+    // Disable popup/modal plugins
     parent::disablePlugins([
       // Popup Maker
       ["popup-maker", "Pum_", []],
@@ -46,19 +45,19 @@ class MarketingDialogs extends Action
       // Popup Box
       ["ays-popup-box", "Ays_Pb_", ["ays_pb"]],
 
-      // Depicter — Popup & Slider Builder
+      // Depicter – Popup & Slider Builder
       ["depicter", "depicter_", ["depicter"]],
 
       // FooBox Image Lightbox
       ["foobox-image-lightbox", "Foobox_", []],
 
       // MailOptin - Lite
-      ["mailoptin", "MailOptin", ["mo-mailchimp-interests", "posts-loop", "mo-optin-form-wrapper", ""]],
+      ["mailoptin", "MailOptin", ["mo-mailchimp-interests", "posts-loop", "mo-optin-form-wrapper"]],
 
       // Poptin
       ["poptin", "POPTIN_", ["poptin-form"]],
 
-      // Popup Builder - Create highly converting, mobile friendly marketing popups.
+      // Popup Builder
       ["popup-builder", "sgpb", ["sg_popup"]],
 
       // Popups for Divi
@@ -74,43 +73,99 @@ class MarketingDialogs extends Action
         ["wppopup-template", "spu-facebook", "spu-facebook-page", "spu-twitter", "spu-close", "spu"]
       ],
 
-      // Icegram Express - Email Subscribers, Newsletters and Marketing Automation Plugin
+      // Icegram Express
       [
         "email-subscribers",
         "Email_Subscribers_",
         ["email-subscribers", "email-subscribers-advanced-form", "email-subscribers-form"]
-      ]
+      ],
+
+      // Convert Pro
+      ["convertpro", "Convert_Plug", []],
+
+      // Newsletter Popup
+      ["newsletter-popup", "NLP_", []],
+
+      // Ninja Popups
+      ["ninja-popups", "NinjaPopups", []]
     ]);
 
-    // Email Subscribe
+    // Remove email subscription actions
     parent::removeActions([
-      ["wp_footer", "addModalPopupHtmlToWpFooter"],
-      ["wp_enqueue_scripts", "email_subscription_popup_load_styles_and_js"],
-      ["wp_ajax_getEmailTemplate", "getEmailTemplate"],
-      ["widgets_init", "nksnewslettersubscriberSet"],
-      ["wp_ajax_store_email", "store_email_callback"],
-      ["wp_ajax_nopriv_store_email", "store_email_callback"]
+      ["wp_footer", "addModalPopupHtmlToWpFooter", 10],
+      ["wp_enqueue_scripts", "email_subscription_popup_load_styles_and_js", 10],
+      ["wp_ajax_getEmailTemplate", "getEmailTemplate", 10],
+      ["widgets_init", "nksnewslettersubscriberSet", 10],
+      ["wp_ajax_store_email", "store_email_callback", 10],
+      ["wp_ajax_nopriv_store_email", "store_email_callback", 10]
     ]);
 
-    wp_enqueue_style(
-      "zero-ad-marketing-dialogs",
-      ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/marketing-dialogs.css",
-      [],
-      ZERO_AD_NETWORK_PLUGIN_VERSION
-    );
+    // Enqueue CSS to hide popups
+    if (!is_admin()) {
+      wp_enqueue_style(
+        "zero-ad-marketing-dialogs",
+        ZERO_AD_NETWORK_PLUGIN_URL . "assets/css/marketing-dialogs.css",
+        [],
+        ZERO_AD_NETWORK_VERSION
+      );
+    }
+
+    self::debugLog("Marketing dialog blocking enabled");
   }
 
   public static function outputBufferCallback(string $html): string
   {
-    // Remove/hide popups and modal marketing elements
+    // Remove popup scripts and modal elements from HTML
     return parent::runReplacements($html, [
-      // Remove typical popup scripts (OptinMonster, popup-maker, hubspot popups, thrive leads)
-      '#<script[^>]*(src=[\'"][^\'"]*(optinmonster|popup-maker|thrive|hubspot|wpforms-popup|convertflow)[^\'"]*[\'"])[^>]*>.*?</script>#is',
+      // Remove popup/modal scripts (limit backtracking)
+      '#<script[^>]{0,500}(src=[\'"][^\'"]{0,500}(optinmonster|popup-maker|thrive|hubspot|wpforms-popup|convertflow|mailchimp|newsletter)[^\'"]{0,200}[\'"])[^>]{0,200}>(?:(?!</script>).){0,10000}</script>#is',
 
-      // Remove popup elements and overlays by classes/id
-      '#<(div|section)[^>]*(class|id)\s*=\s*["\'][^"\']*(popup|modal|marketing|optin|om-popup|pum|thrive-leads|hubspot-conversations)[^"\']*["\'][^>]*>.*?</(div|section)>#is'
+      // Remove popup containers (limit size)
+      '#<(div|section|aside)[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(popup|modal|marketing|optin|om-popup|pum|thrive-leads|hustle|newsletter|subscribe)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</\1>).){0,10000}</\1>#is',
+
+      // Remove popup overlays
+      '#<div[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(overlay|backdrop|modal-backdrop)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</div>).){0,5000}</div>#is',
+
+      // Remove HubSpot chat/conversations widget
+      '#<script[^>]{0,500}src=[\'"][^\'"]{0,500}hubspot[^\'"]{0,200}[\'"][^>]{0,200}>(?:(?!</script>).){0,2000}</script>#is'
     ]);
+  }
 
-    return $workHtml;
+  /**
+   * Register plugin-specific overrides
+   *
+   * @param array $ctx Token context
+   */
+  public static function registerPluginOverrides(array $ctx): void
+  {
+    // OptinMonster
+    if (class_exists("OMAPI")) {
+      add_filter("optin_monster_api_is_enabled", "__return_false", 999);
+      self::debugLog("Blocked OptinMonster");
+    }
+
+    // Popup Maker
+    if (function_exists("pum_is_popup_enabled")) {
+      add_filter("pum_popup_is_loadable", "__return_false", 999);
+      self::debugLog("Blocked Popup Maker");
+    }
+
+    // Hustle
+    if (class_exists("Hustle_Module_Model")) {
+      add_filter("hustle_show_module", "__return_false", 999);
+      self::debugLog("Blocked Hustle");
+    }
+
+    // Convert Pro / Convert Plus
+    if (function_exists("cp_v2_popup_enabled")) {
+      add_filter("cp_show_popup", "__return_false", 999);
+      self::debugLog("Blocked Convert Pro");
+    }
+
+    // Thrive Leads
+    if (class_exists("Thrive_Leads")) {
+      add_filter("tve_leads_should_display", "__return_false", 999);
+      self::debugLog("Blocked Thrive Leads");
+    }
   }
 }
