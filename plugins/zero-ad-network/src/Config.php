@@ -113,11 +113,11 @@ class Config
       add_action("admin_notices", function () use ($message) {
         printf(
           '<div class="notice notice-error"><p><strong>%s</strong> %s <a href="%s">%s</a></p></div>',
-          esc_html__("Zero Ad Network:", ZEROAD_TEXT_DOMAIN),
+          esc_html__("Zero Ad Network:", "zero-ad-network"),
           /* translators: %s: Error message */
-          sprintf(esc_html__("Configuration error: %s", ZEROAD_TEXT_DOMAIN), esc_html($message)),
+          sprintf(esc_html__("Configuration error: %s", "zero-ad-network"), esc_html($message)),
           esc_url(admin_url("admin.php?page=zeroad-token")),
-          esc_html__("Check settings →", ZEROAD_TEXT_DOMAIN)
+          esc_html__("Check settings →", "zero-ad-network")
         );
       });
     }
@@ -145,8 +145,8 @@ class Config
   public function addAdminPages(): void
   {
     add_menu_page(
-      __("Zero Ad Network", ZEROAD_TEXT_DOMAIN),
-      __("Zero Ad Network", ZEROAD_TEXT_DOMAIN),
+      __("Zero Ad Network", "zero-ad-network"),
+      __("Zero Ad Network", "zero-ad-network"),
       "manage_options",
       "zeroad-token",
       [$this->admin_pages, "renderSettingsPage"],
@@ -156,8 +156,8 @@ class Config
 
     add_submenu_page(
       "zeroad-token",
-      __("Settings", ZEROAD_TEXT_DOMAIN),
-      __("Settings", ZEROAD_TEXT_DOMAIN),
+      __("Settings", "zero-ad-network"),
+      __("Settings", "zero-ad-network"),
       "manage_options",
       "zeroad-token",
       [$this->admin_pages, "renderSettingsPage"]
@@ -165,8 +165,8 @@ class Config
 
     add_submenu_page(
       "zeroad-token",
-      __("Cache Configuration", ZEROAD_TEXT_DOMAIN),
-      __("Cache Configuration", ZEROAD_TEXT_DOMAIN),
+      __("Cache Configuration", "zero-ad-network"),
+      __("Cache Configuration", "zero-ad-network"),
       "manage_options",
       "zeroad-cache-config",
       [$this->admin_pages, "renderCacheConfigPage"]
@@ -174,8 +174,8 @@ class Config
 
     add_submenu_page(
       "zeroad-token",
-      __("About", ZEROAD_TEXT_DOMAIN),
-      __("About", ZEROAD_TEXT_DOMAIN),
+      __("About", "zero-ad-network"),
+      __("About", "zero-ad-network"),
       "manage_options",
       "zeroad-about",
       [$this->admin_pages, "renderAboutPage"]
@@ -196,11 +196,11 @@ class Config
             <div class="notice notice-info is-dismissible zeroad-welcome-notice" data-dismiss-nonce="<?php echo esc_attr(
               $nonce
             ); ?>">
-                <h3><?php esc_html_e("Welcome to Zero Ad Network!", ZEROAD_TEXT_DOMAIN); ?></h3>
+                <h3><?php esc_html_e("Welcome to Zero Ad Network!", "zero-ad-network"); ?></h3>
                 <p>
                     <?php esc_html_e(
                       "Thank you for installing Zero Ad Network! To start earning revenue from subscriber engagement:",
-                      ZEROAD_TEXT_DOMAIN
+                      "zero-ad-network"
                     ); ?>
                 </p>
                 <ol>
@@ -210,7 +210,7 @@ class Config
                             /* translators: %s: URL to Zero Ad Network registration page */
                             __(
                               'Register your site at <a href="%s" target="_blank" rel="noopener noreferrer">zeroad.network</a> to get your Client ID',
-                              ZEROAD_TEXT_DOMAIN
+                              "zero-ad-network"
                             ),
                             ["a" => ["href" => [], "target" => [], "rel" => []]]
                           ),
@@ -221,7 +221,7 @@ class Config
                         <?php printf(
                           wp_kses(
                             /* translators: %s: URL to plugin settings page */
-                            __('Enter your Client ID in the <a href="%s">plugin settings</a>', ZEROAD_TEXT_DOMAIN),
+                            __('Enter your Client ID in the <a href="%s">plugin settings</a>', "zero-ad-network"),
                             ["a" => ["href" => []]]
                           ),
                           esc_url(admin_url("admin.php?page=zeroad-token"))
@@ -229,19 +229,19 @@ class Config
                     </li>
                     <li><?php esc_html_e(
                       "Select which features to enable (Clean Web, One Pass, or both)",
-                      ZEROAD_TEXT_DOMAIN
+                      "zero-ad-network"
                     ); ?></li>
                     <li><?php esc_html_e(
                       "Save settings and subscribers will enjoy an improved experience on your site while you earn revenue!",
-                      ZEROAD_TEXT_DOMAIN
+                      "zero-ad-network"
                     ); ?></li>
                 </ol>
                 <p>
                     <a href="https://docs.zeroad.network" target="_blank" rel="noopener noreferrer" class="button button-primary">
-                        <?php esc_html_e("View Documentation", ZEROAD_TEXT_DOMAIN); ?>
+                        <?php esc_html_e("View Documentation", "zero-ad-network"); ?>
                     </a>
                     <a href="<?php echo esc_url(admin_url("admin.php?page=zeroad-token")); ?>" class="button">
-                        <?php esc_html_e("Go to Settings", ZEROAD_TEXT_DOMAIN); ?>
+                        <?php esc_html_e("Go to Settings", "zero-ad-network"); ?>
                     </a>
                 </p>
             </div>

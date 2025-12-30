@@ -40,9 +40,9 @@ class AdminPages
     } ?>
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-            
+
             <?php settings_errors(Settings::OPTION_KEY); ?>
-            
+
             <?php if (!empty($this->options["enabled"]) && !empty($this->options["client_id"])): ?>
                 <div class="notice notice-success inline" style="margin: 20px 0;">
                     <p>
@@ -57,7 +57,7 @@ class AdminPages
                     </p>
                 </div>
             <?php endif; ?>
-            
+
             <form method="post" action="options.php">
                 <?php
                 settings_fields(Settings::OPTION_KEY);
@@ -65,7 +65,7 @@ class AdminPages
                 submit_button(__("Save Settings", "zero-ad-network"));
                 ?>
             </form>
-            
+
             <?php if (!empty($this->options["enabled"]) && !empty($this->options["client_id"])): ?>
                 <?php $this->renderStatusTable(); ?>
             <?php endif; ?>
@@ -80,7 +80,7 @@ class AdminPages
   {
     ?>
         <hr style="margin: 30px 0;">
-        
+
         <h2><?php esc_html_e("Integration Status", "zero-ad-network"); ?></h2>
         <table class="widefat striped" style="max-width: 800px;">
             <tbody>
@@ -112,13 +112,12 @@ class AdminPages
                     <td>
                         <?php if (!empty($this->options["cache_enabled"])): ?>
                             <span style="color: #46b450;">✓</span>
-                             /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */ /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */<?php
-                          /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
-                          printf(
-                               esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
-                               esc_html((string) ($this->options["cache_ttl"] ?? 5)),
-                               esc_html($this->options["cache_prefix"] ?? "zeroad:")
-                             ); ?>
+                            <?php /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
+                            printf(
+                              esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
+                              esc_html((string) ($this->options["cache_ttl"] ?? 5)),
+                              esc_html($this->options["cache_prefix"] ?? "zeroad:")
+                            ); ?>
                         <?php else: ?>
                             <span style="color: #dc3545;">✗</span>
                             <?php esc_html_e("Disabled", "zero-ad-network"); ?>
@@ -166,7 +165,7 @@ class AdminPages
                 </tr>
             </tbody>
         </table>
-        
+
         <p class="description" style="margin-top: 15px; max-width: 800px;">
             <?php esc_html_e(
               "Revenue is distributed monthly based on the time subscribers spend on your site compared to all partner sites. The more engaging your content, the more you earn!",

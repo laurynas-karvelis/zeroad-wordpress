@@ -106,6 +106,7 @@ abstract class Action
   protected static function runReplacements(string $html, array $regexRules = []): string
   {
     foreach ($regexRules as $regexRule) {
+      // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Intentionally used to prevent runaway regex
       set_time_limit(5);
       $result = @preg_replace($regexRule, "", $html);
 

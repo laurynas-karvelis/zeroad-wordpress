@@ -50,7 +50,7 @@ class Settings
   {
     add_settings_section(
       "zeroad_main",
-      __("Configuration", ZEROAD_TEXT_DOMAIN),
+      __("Configuration", "zero-ad-network"),
       [$this, "renderMainSectionDescription"],
       self::OPTION_KEY
     );
@@ -61,10 +61,10 @@ class Settings
   private function registerMainFields(): void
   {
     $fields = [
-      "enabled" => ["renderEnabled", __("Enable Plugin", ZEROAD_TEXT_DOMAIN)],
-      "client_id" => ["renderClientId", __("Client ID", ZEROAD_TEXT_DOMAIN)],
-      "features" => ["renderFeatures", __("Enabled Features", ZEROAD_TEXT_DOMAIN)],
-      "output_method" => ["renderOutputMethod", __("Welcome Header Method", ZEROAD_TEXT_DOMAIN)]
+      "enabled" => ["renderEnabled", __("Enable Plugin", "zero-ad-network")],
+      "client_id" => ["renderClientId", __("Client ID", "zero-ad-network")],
+      "features" => ["renderFeatures", __("Enabled Features", "zero-ad-network")],
+      "output_method" => ["renderOutputMethod", __("Welcome Header Method", "zero-ad-network")]
     ];
 
     foreach ($fields as $field => $entry) {
@@ -76,15 +76,15 @@ class Settings
   {
     add_settings_section(
       "zeroad_cache",
-      __("Performance & Caching", ZEROAD_TEXT_DOMAIN),
+      __("Performance & Caching", "zero-ad-network"),
       [$this, "renderCacheSectionDescription"],
       self::OPTION_KEY
     );
 
     $fields = [
-      "cache_enabled" => ["renderCacheEnabled", __("Enable APCu Caching", ZEROAD_TEXT_DOMAIN)],
-      "cache_ttl" => ["renderCacheTtl", __("Cache TTL (seconds)", ZEROAD_TEXT_DOMAIN)],
-      "cache_prefix" => ["renderCachePrefix", __("Cache Key Prefix", ZEROAD_TEXT_DOMAIN)]
+      "cache_enabled" => ["renderCacheEnabled", __("Enable APCu Caching", "zero-ad-network")],
+      "cache_ttl" => ["renderCacheTtl", __("Cache TTL (seconds)", "zero-ad-network")],
+      "cache_prefix" => ["renderCachePrefix", __("Cache Key Prefix", "zero-ad-network")]
     ];
 
     foreach ($fields as $field => $entry) {
@@ -104,7 +104,7 @@ class Settings
     echo '<p class="description">';
     esc_html_e(
       "Configure your Zero Ad Network partnership settings. Subscribers with valid tokens will experience your site according to the features you enable.",
-      ZEROAD_TEXT_DOMAIN
+      "zero-ad-network"
     );
     echo "</p>";
   }
@@ -117,7 +117,7 @@ class Settings
     echo '<p class="description">';
     esc_html_e(
       "Configure APCu token caching for improved performance. When enabled, validated tokens are cached for faster subsequent requests.",
-      ZEROAD_TEXT_DOMAIN
+      "zero-ad-network"
     );
     echo "</p>";
 
@@ -126,8 +126,8 @@ class Settings
     $notice_class = $apcu_available ? "notice-success" : "notice-warning";
     $icon = $apcu_available ? "✅" : "⚠️";
     $title = $apcu_available
-      ? __("APCu Extension Available", ZEROAD_TEXT_DOMAIN)
-      : __("APCu Extension Not Available", ZEROAD_TEXT_DOMAIN);
+      ? __("APCu Extension Available", "zero-ad-network")
+      : __("APCu Extension Not Available", "zero-ad-network");
 
     printf(
       '<div class="notice %s inline" style="margin: 15px 0;"><p><strong>%s %s</strong><br>',
@@ -139,12 +139,12 @@ class Settings
     if ($apcu_available) {
       esc_html_e(
         "APCu is installed and ready. Enable caching below for ~10x faster token validation.",
-        ZEROAD_TEXT_DOMAIN
+        "zero-ad-network"
       );
     } else {
       esc_html_e(
         "The APCu PHP extension is not installed or enabled. Token caching will be disabled. Install APCu for 10x performance improvement.",
-        ZEROAD_TEXT_DOMAIN
+        "zero-ad-network"
       );
     }
 
@@ -162,16 +162,16 @@ class Settings
   {
     $enabled = !empty($this->options["enabled"]); ?>
         <label>
-            <input type="checkbox" 
+            <input type="checkbox"
                    name="<?php echo esc_attr(self::OPTION_KEY); ?>[enabled]"
                    value="1"
                    <?php checked($enabled, true); ?>>
-            <?php esc_html_e("Activate Zero Ad Network integration on this site", ZEROAD_TEXT_DOMAIN); ?>
+            <?php esc_html_e("Activate Zero Ad Network integration on this site", "zero-ad-network"); ?>
         </label>
         <p class="description">
             <?php esc_html_e(
               "When enabled, the plugin will verify subscriber tokens and apply the configured features for Zero Ad Network subscribers.",
-              ZEROAD_TEXT_DOMAIN
+              "zero-ad-network"
             ); ?>
         </p>
         <?php
@@ -183,19 +183,19 @@ class Settings
   public function renderClientId(): void
   {
     $value = $this->options["client_id"] ?? ""; ?>
-        <input type="text" 
+        <input type="text"
                name="<?php echo esc_attr(self::OPTION_KEY); ?>[client_id]"
                value="<?php echo esc_attr($value); ?>"
                class="regular-text code"
                maxlength="<?php echo esc_attr((string) self::MAX_CLIENT_ID_LENGTH); ?>"
-               placeholder="<?php esc_attr_e("abc123DEF456_ghi789-jkl", ZEROAD_TEXT_DOMAIN); ?>">
+               placeholder="<?php esc_attr_e("abc123DEF456_ghi789-jkl", "zero-ad-network"); ?>">
         <p class="description">
             <?php printf(
-              /* translators: %s: URL to Zero Ad Network dashboard */
               wp_kses(
+                /* translators: %s: URL to Zero Ad Network dashboard */
                 __(
                   'Your unique Client ID from the <a href="%s" target="_blank" rel="noopener noreferrer">Zero Ad Network dashboard</a>. This is used to identify your site and verify subscriber tokens.',
-                  ZEROAD_TEXT_DOMAIN
+                  "zero-ad-network"
                 ),
                 ["a" => ["href" => [], "target" => [], "rel" => []]]
               ),
@@ -215,18 +215,18 @@ class Settings
 
     $feature_descriptions = [
       Constants::FEATURE["CLEAN_WEB"] => [
-        "name" => __("Clean Web", ZEROAD_TEXT_DOMAIN),
+        "name" => __("Clean Web", "zero-ad-network"),
         "description" => __(
           'Hide advertisements, cookie consent screens, marketing dialogs, and disable non-functional tracking for Clean Web subscribers ($6/month plan).',
-          ZEROAD_TEXT_DOMAIN
+          "zero-ad-network"
         ),
         "revenue" => 5
       ],
       Constants::FEATURE["ONE_PASS"] => [
-        "name" => __("One Pass", ZEROAD_TEXT_DOMAIN),
+        "name" => __("One Pass", "zero-ad-network"),
         "description" => __(
           'Grant access to premium/member-only content for One Pass subscribers ($12/month plan) without requiring separate subscriptions.',
-          ZEROAD_TEXT_DOMAIN
+          "zero-ad-network"
         ),
         "revenue" => 10
       ]
@@ -243,7 +243,7 @@ class Settings
       ?>
             <div class="zeroad-feature-box <?php echo $checked ? "selected" : ""; ?>">
                 <label class="zeroad-feature-label">
-                    <input type="checkbox" 
+                    <input type="checkbox"
                            name="<?php echo esc_attr(self::OPTION_KEY); ?>[features]array()"
                            value="<?php echo esc_attr((string) $value); ?>"
                            <?php checked($checked, true); ?>
@@ -254,7 +254,7 @@ class Settings
                 <p class="zeroad-feature-revenue">
                     <?php printf(
                       /* translators: %d: Monthly revenue amount in dollars */
-                      esc_html__('Earn up to $%d per subscriber per month (based on engagement)', ZEROAD_TEXT_DOMAIN),
+                      esc_html__('Earn up to $%d per subscriber per month (based on engagement)', "zero-ad-network"),
                       esc_html((string) $info["revenue"])
                     ); ?>
                 </p>
@@ -265,7 +265,7 @@ class Settings
     echo '<p class="description" style="margin-top: 15px;">';
     esc_html_e(
       'Select at least one feature. The Freedom plan ($18/month) includes both Clean Web and One Pass, providing the maximum revenue opportunity.',
-      ZEROAD_TEXT_DOMAIN
+      "zero-ad-network"
     );
     echo "</p>";
   }
@@ -278,16 +278,16 @@ class Settings
     $value = $this->options["output_method"] ?? "header"; ?>
         <select name="<?php echo esc_attr(self::OPTION_KEY); ?>[output_method]">
             <option value="header" <?php selected($value, "header"); ?>>
-                <?php esc_html_e("HTTP Response Header", ZEROAD_TEXT_DOMAIN); ?>
+                <?php esc_html_e("HTTP Response Header", "zero-ad-network"); ?>
             </option>
             <option value="meta" <?php selected($value, "meta"); ?>>
-                <?php esc_html_e("HTML Meta Tag", ZEROAD_TEXT_DOMAIN); ?>
+                <?php esc_html_e("HTML Meta Tag", "zero-ad-network"); ?>
             </option>
         </select>
         <p class="description">
             <?php esc_html_e(
               'How to send the "X-Better-Web-Welcome" identifier to the subscriber\'s browser extension. HTTP header is recommended for better performance with page caching.',
-              ZEROAD_TEXT_DOMAIN
+              "zero-ad-network"
             ); ?>
         </p>
         <?php
@@ -302,31 +302,31 @@ class Settings
     $apcu_available = extension_loaded("apcu") && apcu_enabled();
     ?>
         <label>
-            <input type="checkbox" 
+            <input type="checkbox"
                    name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_enabled]"
                    value="1"
                    <?php checked($enabled, true); ?>
                    <?php disabled(!$apcu_available); ?>>
-            <?php esc_html_e("Enable APCu token caching", ZEROAD_TEXT_DOMAIN); ?>
+            <?php esc_html_e("Enable APCu token caching", "zero-ad-network"); ?>
         </label>
         <p class="description">
             <?php esc_html_e(
               "Caches validated tokens in APCu (shared memory) for faster subsequent requests. Improves performance by ~10x (2ms → 0.2ms per validation).",
-              ZEROAD_TEXT_DOMAIN
+              "zero-ad-network"
             ); ?>
             <br>
-            <strong><?php esc_html_e("Performance Impact:", ZEROAD_TEXT_DOMAIN); ?></strong>
+            <strong><?php esc_html_e("Performance Impact:", "zero-ad-network"); ?></strong>
             <?php esc_html_e(
               "Without cache: ~2ms per token validation. With cache: ~0.2ms (cache hit).",
-              ZEROAD_TEXT_DOMAIN
+              "zero-ad-network"
             ); ?>
         </p>
         <?php if (!$apcu_available): ?>
             <p class="description" style="color: #d63638;">
-                <strong><?php esc_html_e("⚠️ APCu not available.", ZEROAD_TEXT_DOMAIN); ?></strong>
+                <strong><?php esc_html_e("⚠️ APCu not available.", "zero-ad-network"); ?></strong>
                 <?php esc_html_e(
                   "Install with: sudo apt-get install php-apcu or sudo pecl install apcu",
-                  ZEROAD_TEXT_DOMAIN
+                  "zero-ad-network"
                 ); ?>
             </p>
         <?php endif;
@@ -338,24 +338,24 @@ class Settings
   public function renderCacheTtl(): void
   {
     $value = intval($this->options["cache_ttl"] ?? ZEROAD_DEFAULT_CACHE_TTL); ?>
-        <input type="number" 
+        <input type="number"
                name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_ttl]"
                value="<?php echo esc_attr((string) $value); ?>"
                min="1"
                max="60"
                step="1"
                class="small-text">
-        <span><?php esc_html_e("seconds", ZEROAD_TEXT_DOMAIN); ?></span>
+        <span><?php esc_html_e("seconds", "zero-ad-network"); ?></span>
         <p class="description">
             <?php esc_html_e(
               "How long to cache validated tokens. Recommended: 5-10 seconds. Lower = more accurate token expiration checking. Higher = better performance.",
-              ZEROAD_TEXT_DOMAIN
+              "zero-ad-network"
             ); ?>
             <br>
-            <strong><?php esc_html_e("Note:", ZEROAD_TEXT_DOMAIN); ?></strong>
+            <strong><?php esc_html_e("Note:", "zero-ad-network"); ?></strong>
             <?php esc_html_e(
               "Tokens are automatically removed from cache when they expire, regardless of TTL setting.",
-              ZEROAD_TEXT_DOMAIN
+              "zero-ad-network"
             ); ?>
         </p>
         <?php
@@ -367,7 +367,7 @@ class Settings
   public function renderCachePrefix(): void
   {
     $value = $this->options["cache_prefix"] ?? "zeroad:"; ?>
-        <input type="text" 
+        <input type="text"
                name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_prefix]"
                value="<?php echo esc_attr($value); ?>"
                maxlength="50"
@@ -376,12 +376,12 @@ class Settings
         <p class="description">
             <?php esc_html_e(
               "Prefix for cache keys to avoid conflicts with other plugins. Change only if you have multiple WordPress installations sharing APCu.",
-              ZEROAD_TEXT_DOMAIN
+              "zero-ad-network"
             ); ?>
             <br>
-            <strong><?php esc_html_e("Example:", ZEROAD_TEXT_DOMAIN); ?></strong>
+            <strong><?php esc_html_e("Example:", "zero-ad-network"); ?></strong>
             <code>zeroad:wp1:</code>, <code>zeroad:wp2:</code>
-            <?php esc_html_e("for different sites", ZEROAD_TEXT_DOMAIN); ?>
+            <?php esc_html_e("for different sites", "zero-ad-network"); ?>
         </p>
         <?php
   }
@@ -441,7 +441,7 @@ class Settings
         /* translators: %d: minimum length */
         __(
           "Client ID is too short (minimum %d characters). Please verify you copied it correctly from the Zero Ad Network dashboard.",
-          ZEROAD_TEXT_DOMAIN
+          "zero-ad-network"
         ),
         self::MIN_CLIENT_ID_LENGTH
       );
@@ -451,7 +451,7 @@ class Settings
     if (strlen($client_id) > self::MAX_CLIENT_ID_LENGTH) {
       $errors[] = sprintf(
         /* translators: %d: maximum length */
-        __("Client ID is too long (maximum %d characters).", ZEROAD_TEXT_DOMAIN),
+        __("Client ID is too long (maximum %d characters).", "zero-ad-network"),
         self::MAX_CLIENT_ID_LENGTH
       );
       return "";
@@ -461,7 +461,7 @@ class Settings
     if (!preg_match('/^[A-Za-z0-9_-]+$/', $client_id)) {
       $errors[] = __(
         "Client ID contains invalid characters. It should only contain letters, numbers, hyphens (-), and underscores (_).",
-        ZEROAD_TEXT_DOMAIN
+        "zero-ad-network"
       );
       return "";
     }
@@ -494,7 +494,7 @@ class Settings
       add_settings_error(
         self::OPTION_KEY,
         "cache_prefix_invalid",
-        __("Cache prefix contains invalid characters. Using default.", ZEROAD_TEXT_DOMAIN),
+        __("Cache prefix contains invalid characters. Using default.", "zero-ad-network"),
         "warning"
       );
       return "zeroad:";
@@ -528,7 +528,7 @@ class Settings
     if (empty($valid_features) && $enabled) {
       $errors[] = __(
         "You must select at least one feature (Clean Web or One Pass) when the plugin is enabled.",
-        ZEROAD_TEXT_DOMAIN
+        "zero-ad-network"
       );
     }
 

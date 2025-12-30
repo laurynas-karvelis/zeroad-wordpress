@@ -87,6 +87,7 @@ class Renderer
     $name = esc_attr($this->site->SERVER_HEADER_NAME);
     $value = esc_attr($this->site->SERVER_HEADER_VALUE);
 
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $name and $value are escaped above
     echo sprintf('<meta name="%s" content="%s" data-zeroad="server-identifier" />' . "\n", $name, $value);
   }
 

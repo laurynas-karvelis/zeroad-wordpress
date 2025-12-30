@@ -10,7 +10,6 @@
  * License:           Apache 2.0
  * License URI:       https://www.apache.org/licenses/LICENSE-2.0.txt
  * Text Domain:       zero-ad-network
- * Domain Path:       /languages
  *
  * @package ZeroAdNetwork
  */
@@ -65,8 +64,8 @@ register_activation_hook(__FILE__, function () {
   if (version_compare(PHP_VERSION, "7.2.0", "<")) {
     deactivate_plugins(ZEROAD_PLUGIN_BASENAME);
     wp_die(
-      esc_html__("Zero Ad Network requires PHP 7.2 or higher. Please upgrade your PHP version.", ZEROAD_TEXT_DOMAIN),
-      esc_html__("Plugin Activation Error", ZEROAD_TEXT_DOMAIN),
+      esc_html__("Zero Ad Network requires PHP 7.2 or higher. Please upgrade your PHP version.", "zero-ad-network"),
+      esc_html__("Plugin Activation Error", "zero-ad-network"),
       ["back_link" => true]
     );
   }
@@ -76,9 +75,9 @@ register_activation_hook(__FILE__, function () {
     wp_die(
       esc_html__(
         "Zero Ad Network requires the Sodium PHP extension. Please install/enable libsodium (included in PHP 7.2+).",
-        ZEROAD_TEXT_DOMAIN
+        "zero-ad-network"
       ),
-      esc_html__("Plugin Activation Error", ZEROAD_TEXT_DOMAIN),
+      esc_html__("Plugin Activation Error", "zero-ad-network"),
       ["back_link" => true]
     );
   }
@@ -124,7 +123,7 @@ function zeroad_show_admin_notice($type, $message)
       printf(
         '<div class="notice notice-%s"><p><strong>%s</strong> %s</p></div>',
         esc_attr($type),
-        esc_html__("Zero Ad Network:", ZEROAD_TEXT_DOMAIN),
+        esc_html__("Zero Ad Network:", "zero-ad-network"),
         esc_html($message)
       );
     }
