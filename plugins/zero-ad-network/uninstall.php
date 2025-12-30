@@ -22,16 +22,14 @@ function zeroad_uninstall_cleanup()
   delete_transient("zeroad_site_instance");
   delete_transient("zeroad_cache_variant");
 
-  // Clean up any other stored data
-  global $wpdb;
-
-  // Delete any custom user meta if added in future versions
-  $wpdb->query("DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'zeroad_%'");
-
-  // Log cleanup if debug is enabled
-  if (defined("WP_DEBUG") && WP_DEBUG) {
-    error_log("Zero Ad Network: Plugin data cleaned up during uninstall");
+  // Delete user meta using WordPress API
+  $users = get_users(["fields" => "ID"]);
+  foreach ($users as $user_id) {
+    delete_user_meta($user_id, "zeroad_welcome_dismissed");
   }
+
+  // Clear any cached data
+  wp_cache_flush();
 }
 
 /**
@@ -39,10 +37,8 @@ function zeroad_uninstall_cleanup()
  */
 function zeroad_uninstall_multisite_cleanup()
 {
-  global $wpdb;
-
-  // Get all blog IDs
-  $blog_ids = $wpdb->get_col("SELECT blog_id FROM {$wpdb->blogs}");
+  // Get all blog IDs using WordPress function
+  $blog_ids = get_sites(["fields" => "ids"]);
 
   foreach ($blog_ids as $blog_id) {
     switch_to_blog($blog_id);

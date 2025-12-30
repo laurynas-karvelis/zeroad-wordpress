@@ -57,6 +57,9 @@ class Config
     add_action("admin_enqueue_scripts", [$this, "enqueueAdminAssets"]);
     add_action("admin_notices", [$this, "maybeShowWelcomeNotice"]);
 
+    // AJAX handler for dismissing welcome notice
+    add_action("wp_ajax_zeroad_dismiss_welcome", [$this, "ajaxDismissWelcome"]);
+
     // Initialize Site instance for token verification
     add_action("init", [$this, "initializeSite"], 1);
 
@@ -123,6 +126,7 @@ class Config
         add_action("admin_notices", function () use ($e) {
           echo '<div class="notice notice-error"><p>';
           echo "<strong>" . esc_html__("Zero Ad Network:", "zero-ad-network") . "</strong> ";
+          /* translators: %s: Error message describing the configuration problem */
           printf(esc_html__("Configuration error: %s", "zero-ad-network"), esc_html($e->getMessage()));
           echo ' <a href="' . esc_url(admin_url("admin.php?page=zeroad-token")) . '">';
           esc_html_e("Check settings →", "zero-ad-network");
@@ -209,9 +213,15 @@ class Config
       return;
     }
 
-    // Only show if plugin is not configured yet
-    if (empty($this->options["client_id"]) && !get_transient("zeroad_welcome_dismissed")) { ?>
-            <div class="notice notice-info is-dismissible" data-zeroad-notice="welcome">
+    // Check if already dismissed
+    $dismissed = get_user_meta(get_current_user_id(), "zeroad_welcome_dismissed", true);
+
+    // Only show if plugin is not configured yet and not dismissed
+    if (empty($this->options["client_id"]) && !$dismissed) {
+      $nonce = wp_create_nonce("zeroad_dismiss_welcome"); ?>
+            <div class="notice notice-info is-dismissible zeroad-welcome-notice" data-dismiss-nonce="<?php echo esc_attr(
+              $nonce
+            ); ?>">
                 <h3><?php esc_html_e("Welcome to Zero Ad Network!", "zero-ad-network"); ?></h3>
                 <p>
                     <?php esc_html_e(
@@ -223,22 +233,24 @@ class Config
                     <li>
                         <?php printf(
                           wp_kses(
+                            /* translators: %s: URL to Zero Ad Network registration page */
                             __(
                               'Register your site at <a href="%s" target="_blank">zeroad.network</a> to get your Client ID',
                               "zero-ad-network"
                             ),
                             ["a" => ["href" => [], "target" => []]]
                           ),
-                          "https://zeroad.network"
+                          esc_url("https://zeroad.network")
                         ); ?>
                     </li>
                     <li>
                         <?php printf(
                           wp_kses(
+                            /* translators: %s: URL to plugin settings page */
                             __('Enter your Client ID in the <a href="%s">plugin settings</a>', "zero-ad-network"),
                             ["a" => ["href" => []]]
                           ),
-                          admin_url("admin.php?page=zeroad-token")
+                          esc_url(admin_url("admin.php?page=zeroad-token"))
                         ); ?>
                     </li>
                     <li><?php esc_html_e(
@@ -259,7 +271,26 @@ class Config
                     </a>
                 </p>
             </div>
-            <?php }
+            <?php
+    }
+  }
+
+  /**
+   * AJAX handler to dismiss welcome notice
+   */
+  public function ajaxDismissWelcome(): void
+  {
+    check_ajax_referer("zeroad_dismiss_welcome", "nonce");
+
+    if (!current_user_can("manage_options")) {
+      wp_send_json_error("Unauthorized");
+      return;
+    }
+
+    // Save dismissed state per user
+    update_user_meta(get_current_user_id(), "zeroad_welcome_dismissed", true);
+
+    wp_send_json_success();
   }
 
   /**
@@ -285,6 +316,12 @@ class Config
       ZERO_AD_NETWORK_VERSION,
       true
     );
+
+    // Localize script to provide ajaxurl and nonces
+    wp_localize_script("zero-ad-admin-js", "zeroadAdmin", [
+      "ajaxurl" => admin_url("admin-ajax.php"),
+      "nonce" => wp_create_nonce("zeroad_admin")
+    ]);
   }
 
   /**
@@ -292,7 +329,14 @@ class Config
    */
   private function debugLog(string $message): void
   {
-    if (!empty($this->options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG) {
+    if (
+      !empty($this->options["debug_mode"]) &&
+      defined("WP_DEBUG") &&
+      WP_DEBUG &&
+      defined("WP_DEBUG_LOG") &&
+      WP_DEBUG_LOG
+    ) {
+      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
       error_log("[Zero Ad Network] " . $message);
     }
   }

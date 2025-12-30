@@ -112,10 +112,11 @@ class AdminPages
                     <td>
                         <?php if (!empty($this->options["cache_enabled"])): ?>
                             <span style="color: #46b450;">✓</span>
-                            <?php printf(
-                              esc_html__("Enabled (TTL: %ds, Prefix: %s)", "zero-ad-network"),
-                              $this->options["cache_ttl"] ?? 5,
-                              $this->options["cache_prefix"] ?? "zeroad:"
+                            <?php /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
+                            printf(
+                              esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
+                              esc_html((string) ($this->options["cache_ttl"] ?? 5)),
+                              esc_html($this->options["cache_prefix"] ?? "zeroad:")
                             ); ?>
                         <?php else: ?>
                             <span style="color: #dc3545;">✗</span>
@@ -154,8 +155,9 @@ class AdminPages
                               }
                             }
                             printf(
+                              /* translators: %s: Revenue amount per subscriber */
                               esc_html__("$%s per subscriber (based on engagement)", "zero-ad-network"),
-                              number_format($revenue, 0)
+                              esc_html(number_format($revenue, 0))
                             );
                             ?>
                         </strong>

@@ -159,7 +159,8 @@ abstract class Action
       self::removeCallbacksByPrefix($prefix);
       self::removeShortcodes($shortcodes);
 
-      if (defined("WP_DEBUG") && WP_DEBUG) {
+      if (defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
         error_log("[Zero Ad Network] Disabled plugin: {$textDomain} (prefix: {$prefix})");
       }
     }
@@ -192,7 +193,8 @@ abstract class Action
 
         $errorMsg = $errorMessages[$error] ?? "Unknown error";
 
-        if (defined("WP_DEBUG") && WP_DEBUG) {
+        if (defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
+          // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
           error_log("[Zero Ad Network] Regex error: {$errorMsg} - Pattern: {$regexRule}");
         }
 
@@ -285,7 +287,8 @@ abstract class Action
             }
           }
 
-          if ($shouldRemove && defined("WP_DEBUG") && WP_DEBUG) {
+          if ($shouldRemove && defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
             error_log("[Zero Ad Network] Removed callback from {$hook_name}: " . json_encode($func));
           }
         }
@@ -351,9 +354,10 @@ abstract class Action
   {
     $options = get_option(\ZeroAd\WP\Config::OPT_KEY, []);
 
-    if (!empty($options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG) {
+    if (!empty($options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
       $calledClass = get_called_class();
       $className = substr($calledClass, strrpos($calledClass, "\\") + 1);
+      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
       error_log("[Zero Ad Network - {$className}] " . $message);
     }
   }

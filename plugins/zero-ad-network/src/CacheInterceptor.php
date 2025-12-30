@@ -249,7 +249,8 @@ class CacheInterceptor
   {
     $options = get_option(\ZeroAd\WP\Config::OPT_KEY, []);
 
-    if (!empty($options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG) {
+    if (!empty($options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
+      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
       error_log("[Zero Ad Network - CacheInterceptor] " . $message);
     }
   }

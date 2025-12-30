@@ -101,6 +101,7 @@ class Renderer
     $name = esc_attr($this->site->SERVER_HEADER_NAME);
     $value = esc_attr($this->site->SERVER_HEADER_VALUE);
 
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Variables already escaped above
     echo sprintf('<meta name="%s" content="%s" data-zeroad="server-identifier" />' . "\n", $name, $value);
 
     $this->debugLog("Meta tag injected: {$name}");
@@ -319,7 +320,14 @@ class Renderer
    */
   private function debugLog(string $message): void
   {
-    if (!empty($this->options["debug_mode"]) && defined("WP_DEBUG") && WP_DEBUG) {
+    if (
+      !empty($this->options["debug_mode"]) &&
+      defined("WP_DEBUG") &&
+      WP_DEBUG &&
+      defined("WP_DEBUG_LOG") &&
+      WP_DEBUG_LOG
+    ) {
+      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
       error_log("[Zero Ad Network - Renderer] " . $message);
     }
   }

@@ -165,30 +165,54 @@
    * Handle welcome notice dismissal
    */
   function initWelcomeNotice() {
-    const dismissButton = document.querySelector(".zeroad-welcome-dismiss");
+    const welcomeNotice = document.querySelector(".zeroad-welcome-notice");
 
-    if (dismissButton) {
-      dismissButton.addEventListener("click", function (e) {
-        e.preventDefault();
+    if (welcomeNotice && typeof zeroadAdmin !== "undefined") {
+      // WordPress automatically handles the dismiss button click for is-dismissible notices
+      // We just need to save the state when the notice is dismissed
 
-        const notice = this.closest(".notice");
+      // Observe when the notice is removed from DOM
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.removedNodes.forEach((node) => {
+            if (node === welcomeNotice) {
+              // Notice was dismissed, send AJAX to save state
+              const nonce = welcomeNotice.dataset.dismissNonce;
 
-        // Send AJAX request to dismiss permanently
-        if (typeof wp !== "undefined" && wp.ajax) {
-          wp.ajax.post("zeroad_dismiss_welcome", {
-            nonce: this.dataset.nonce || "",
+              if (nonce && zeroadAdmin.ajaxurl) {
+                fetch(zeroadAdmin.ajaxurl, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                  },
+                  body: new URLSearchParams({
+                    action: "zeroad_dismiss_welcome",
+                    nonce: nonce,
+                  }),
+                })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    if (window.console && data.success) {
+                      console.log("Zero Ad Network: Welcome notice dismissed");
+                    }
+                  })
+                  .catch((error) => {
+                    if (window.console) {
+                      console.error("Zero Ad Network: Failed to dismiss notice", error);
+                    }
+                  });
+              }
+
+              observer.disconnect();
+            }
           });
-        }
-
-        // Fade out and remove
-        if (notice) {
-          notice.style.transition = "opacity 0.3s";
-          notice.style.opacity = "0";
-          setTimeout(() => {
-            notice.remove();
-          }, 300);
-        }
+        });
       });
+
+      // Start observing the parent for removals
+      if (welcomeNotice.parentNode) {
+        observer.observe(welcomeNotice.parentNode, { childList: true });
+      }
     }
   }
 

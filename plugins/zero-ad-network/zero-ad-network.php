@@ -11,7 +11,6 @@
  * License:           Apache 2.0
  * License URI:       https://www.apache.org/licenses/LICENSE-2.0.txt
  * Text Domain:       zero-ad-network
- * Domain Path:       /languages
  */
 
 if (!defined("ABSPATH")) {
@@ -89,12 +88,13 @@ register_activation_hook(__FILE__, function () {
     "cache_prefix" => "zeroad:"
   ];
 
-  if (!get_option(\ZeroAd\WP\Config::OPT_KEY)) {
-    add_option(\ZeroAd\WP\Config::OPT_KEY, $default_options);
+  if (!get_option(\ZeroAd\WP\Settings::OPT_KEY)) {
+    add_option(\ZeroAd\WP\Settings::OPT_KEY, $default_options);
   }
 
   // Log activation
-  if (defined("WP_DEBUG") && WP_DEBUG) {
+  if (defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
+    // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
     error_log("Zero Ad Network plugin activated successfully");
   }
 });
@@ -108,7 +108,8 @@ register_deactivation_hook(__FILE__, function () {
   delete_transient("zeroad_cache_variant");
 
   // Log deactivation
-  if (defined("WP_DEBUG") && WP_DEBUG) {
+  if (defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
+    // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
     error_log("Zero Ad Network plugin deactivated");
   }
 });
@@ -117,14 +118,15 @@ register_deactivation_hook(__FILE__, function () {
  * Initialize the plugin
  */
 add_action("plugins_loaded", function () {
-  // Load text domain for translations
-  load_plugin_textdomain("zero-ad-network", false, dirname(ZERO_AD_NETWORK_PLUGIN_BASENAME) . "/languages");
+  // Note: load_plugin_textdomain() is not needed for plugins hosted on WordPress.org
+  // WordPress automatically loads translations from translate.wordpress.org
 
   // Initialize the main config
   try {
     \ZeroAd\WP\Config::instance()->run();
   } catch (\Throwable $e) {
-    if (defined("WP_DEBUG") && WP_DEBUG) {
+    if (defined("WP_DEBUG") && WP_DEBUG && defined("WP_DEBUG_LOG") && WP_DEBUG_LOG) {
+      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Conditional debug logging
       error_log("Zero Ad Network initialization error: " . $e->getMessage());
     }
 

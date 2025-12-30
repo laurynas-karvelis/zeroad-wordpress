@@ -211,13 +211,14 @@ class Settings
         <p class="description">
             <?php printf(
               wp_kses(
+                /* translators: %s: URL to Zero Ad Network dashboard */
                 __(
                   'Your unique Client ID from the <a href="%s" target="_blank">Zero Ad Network dashboard</a>. This is used to identify your site and verify subscriber tokens.',
                   "zero-ad-network"
                 ),
                 ["a" => ["href" => [], "target" => []]]
               ),
-              "https://zeroad.network/dashboard"
+              esc_url("https://zeroad.network/dashboard")
             ); ?>
         </p>
         <?php
@@ -240,7 +241,7 @@ class Settings
       Constants::FEATURE["ONE_PASS"] => [
         "name" => __("One Pass", "zero-ad-network"),
         "description" => __(
-          "Remove paywalls and grant free access to your base subscription plan for One Pass subscribers ($12/month plan).",
+          "Unlock paywalled content for One Pass subscribers, granting access to premium articles and membership-restricted areas ($12/month plan).",
           "zero-ad-network"
         ),
         "revenue" => 12
@@ -258,14 +259,15 @@ class Settings
                            name="<?php echo esc_attr(self::OPT_KEY); ?>[features][]"
                            value="<?php echo esc_attr($value); ?>"
                            <?php checked($checked); ?>
-                           data-revenue="<?php echo esc_attr($info["revenue"]); ?>">
+                           data-revenue="<?php echo esc_attr((string) $info["revenue"]); ?>">
                     <span class="zeroad-feature-name"><?php echo esc_html($info["name"]); ?></span>
                 </label>
                 <p class="zeroad-feature-description"><?php echo esc_html($info["description"]); ?></p>
                 <p class="zeroad-feature-revenue">
                     <?php printf(
+                      /* translators: %d: Monthly revenue amount in dollars */
                       esc_html__("Earn up to $%d per subscriber per month (based on engagement)", "zero-ad-network"),
-                      $info["revenue"]
+                      esc_html((string) $info["revenue"])
                     ); ?>
                 </p>
             </div>
@@ -360,7 +362,7 @@ class Settings
     $value = intval($this->options["cache_ttl"] ?? 5); ?>
         <input type="number" 
                name="<?php echo esc_attr(self::OPT_KEY); ?>[cache_ttl]"
-               value="<?php echo esc_attr($value); ?>"
+               value="<?php echo esc_attr((string) $value); ?>"
                min="1"
                max="60"
                step="1"
