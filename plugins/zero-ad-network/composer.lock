@@ -4,28 +4,31 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25cba6714c0babf5ce60d463c37d04dd",
+    "content-hash": "2fcfec4109afb556d64baf3b3a24744c",
     "packages": [
         {
             "name": "zeroad.network/token",
-            "version": "0.13.13",
+            "version": "0.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laurynas-karvelis/zeroad-token-php.git",
-                "reference": "de7f5f70cadfb3c4815b1bec37d5024050868c6d"
+                "reference": "016ebb24edd790648cab3bc52ced454dd689d86e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laurynas-karvelis/zeroad-token-php/zipball/de7f5f70cadfb3c4815b1bec37d5024050868c6d",
-                "reference": "de7f5f70cadfb3c4815b1bec37d5024050868c6d",
+                "url": "https://api.github.com/repos/laurynas-karvelis/zeroad-token-php/zipball/016ebb24edd790648cab3bc52ced454dd689d86e",
+                "reference": "016ebb24edd790648cab3bc52ced454dd689d86e",
                 "shasum": ""
             },
             "require": {
                 "ext-sodium": "*",
-                "php": ">=7.2.0"
+                "php": "^7.2 || ^8.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^8.5"
+            },
+            "suggest": {
+                "ext-apcu": "For improved caching performance using APCu"
             },
             "type": "library",
             "autoload": {
@@ -72,9 +75,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laurynas-karvelis/zeroad-token-php/issues",
-                "source": "https://github.com/laurynas-karvelis/zeroad-token-php/tree/0.13.13"
+                "source": "https://github.com/laurynas-karvelis/zeroad-token-php/tree/0.14.0"
             },
-            "time": "2025-12-16T20:39:40+00:00"
+            "time": "2025-12-30T13:20:52+00:00"
         }
     ],
     "packages-dev": [],

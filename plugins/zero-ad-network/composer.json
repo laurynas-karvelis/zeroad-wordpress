@@ -4,7 +4,7 @@
   "require": {
     "php": ">=7.2",
     "ext-sodium": "*",
-    "zeroad.network/token": "^0.13.13"
+    "zeroad.network/token": "^0.14.0"
   },
   "autoload": {}
 }

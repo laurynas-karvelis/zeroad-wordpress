@@ -31,19 +31,19 @@
         const item = this.parentElement;
         const body = this.nextElementSibling;
 
-        // Close other accordions (optional - remove if you want multiple open)
-        // const allItems = document.querySelectorAll(".za-item");
-        // allItems.forEach((otherItem) => {
-        //   if (otherItem !== item) {
-        //     otherItem.classList.remove("open");
-        //   }
-        // });
-
         // Toggle current accordion
-        item.classList.toggle("open");
+        const isOpen = item.classList.contains("open");
 
-        // Scroll into view if opening and not fully visible
-        if (item.classList.contains("open")) {
+        if (isOpen) {
+          // Close
+          item.classList.remove("open");
+          body.classList.remove("open");
+        } else {
+          // Open
+          item.classList.add("open");
+          body.classList.add("open");
+
+          // Scroll into view if opening and not fully visible
           setTimeout(() => {
             const rect = item.getBoundingClientRect();
             const isFullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
@@ -209,15 +209,6 @@
         checkbox.addEventListener("change", function () {
           updateBoxState(box, this.checked);
           calculateTotalRevenue();
-        });
-
-        // Make entire box clickable
-        box.addEventListener("click", function (e) {
-          // Don't trigger if clicking on the checkbox itself
-          if (e.target !== checkbox) {
-            checkbox.checked = !checkbox.checked;
-            checkbox.dispatchEvent(new Event("change"));
-          }
         });
       }
     });

@@ -30,7 +30,7 @@ if (!defined("ABSPATH")) {
         
         <div class="zeroad-comparison-grid">
             <div class="zeroad-comparison-box negative">
-                <h3 style="color: #dc3545; margin-top: 0;">
+                <h3>
                     <?php esc_html_e("For Users", "zero-ad-network"); ?>
                 </h3>
                 <ul style="line-height: 1.8;">
@@ -42,8 +42,8 @@ if (!defined("ABSPATH")) {
                 </ul>
             </div>
 
-            <div style="padding: 20px; border: 2px solid #dc3545; border-radius: 8px;">
-                <h3 style="color: #dc3545; margin-top: 0;">
+            <div class="zeroad-comparison-box negative">
+                <h3>
                     <?php esc_html_e("For Site Owners", "zero-ad-network"); ?>
                 </h3>
                 <ul style="line-height: 1.8;">
@@ -78,8 +78,8 @@ if (!defined("ABSPATH")) {
         </p>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0;">
-            <div style="padding: 25px; background: #d4edda; border: 2px solid #28a745; border-radius: 8px;">
-                <h3 style="color: #155724; margin-top: 0;">
+            <div class="zeroad-comparison-box positive">
+                <h3>
                     <?php esc_html_e("For Users", "zero-ad-network"); ?>
                 </h3>
                 <ul style="line-height: 1.8; color: #155724;">
@@ -91,8 +91,8 @@ if (!defined("ABSPATH")) {
                 </ul>
             </div>
 
-            <div style="padding: 25px; background: #d4edda; border: 2px solid #28a745; border-radius: 8px;">
-                <h3 style="color: #155724; margin-top: 0;">
+            <div class="zeroad-comparison-box positive">
+                <h3>
                     <?php esc_html_e("For Site Owners", "zero-ad-network"); ?>
                 </h3>
                 <ul style="line-height: 1.8; color: #155724;">
@@ -323,7 +323,7 @@ if (!defined("ABSPATH")) {
                   "Create an account at zeroad.network and register your WordPress site",
                   "zero-ad-network"
                 ); ?></p>
-                <a href="https://zeroad.network/register" target="_blank" class="button button-primary">
+                <a href="https://zeroad.network/login" target="_blank" class="button button-primary">
                     <?php esc_html_e("Register Now", "zero-ad-network"); ?>
                 </a>
             </div>
@@ -382,7 +382,7 @@ if (!defined("ABSPATH")) {
             <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
                 <h3><?php esc_html_e("Get Help", "zero-ad-network"); ?></h3>
                 <ul style="line-height: 2;">
-                    <li><a href="https://zeroad.network/faq" target="_blank"><?php esc_html_e(
+                    <li><a href="https://zeroad.network/#faq" target="_blank"><?php esc_html_e(
                       "FAQs",
                       "zero-ad-network"
                     ); ?></a></li>
@@ -390,7 +390,7 @@ if (!defined("ABSPATH")) {
                       "Email Support",
                       "zero-ad-network"
                     ); ?></a></li>
-                    <li><a href="https://zeroad.network/contact" target="_blank"><?php esc_html_e(
+                    <li><a href="https://zeroad.network/terms" target="_blank"><?php esc_html_e(
                       "Contact Us",
                       "zero-ad-network"
                     ); ?></a></li>
