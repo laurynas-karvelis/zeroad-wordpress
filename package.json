@@ -12,6 +12,6 @@
     "package": "version=$(jq -r '.version' ./package.json) && cd build/ && zip -r zero-ad-network-$version.zip zero-ad-network"
   },
   "devDependencies": {
-    "@wordpress/env": "^10.37.0"
+    "@wordpress/env": "^10.38.0"
   }
 }
