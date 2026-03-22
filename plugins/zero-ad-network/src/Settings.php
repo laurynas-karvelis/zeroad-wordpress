@@ -13,8 +13,8 @@ use ZeroAd\Token\Constants;
 class Settings
 {
     const OPTION_KEY = "zeroad_token_options";
-    const MAX_CLIENT_ID_LENGTH = 255;
-    const MIN_CLIENT_ID_LENGTH = 10;
+    const MAX_CLIENT_ID_LENGTH = 20;
+    const MIN_CLIENT_ID_LENGTH = 20;
     private $options;
 
     public function __construct(array $options)
@@ -96,10 +96,6 @@ class Settings
             add_settings_field($field, $entry[1], [$this, $entry[0]], self::OPTION_KEY, "zeroad_cache");
         }
     }
-
-    // ========================================================================
-    // Section Descriptions
-    // ========================================================================
 
     /**
      * Render main section description.
@@ -306,35 +302,42 @@ class Settings
         $enabled = !empty($this->options["cache_enabled"]);
         $apcu_available = extension_loaded("apcu") && apcu_enabled();
         ?>
-        <label>
-            <input type="checkbox"
-                   name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_enabled]"
-                   value="1"
-                   <?php checked($enabled, true); ?>
-                   <?php disabled(!$apcu_available); ?>>
-            <?php esc_html_e("Enable APCu token caching", "zero-ad-network"); ?>
-        </label>
-        <p class="description">
-            <?php esc_html_e(
-                "Caches validated tokens in APCu (shared memory) for faster subsequent requests. Improves performance by ~10x (2ms → 0.2ms per validation).",
-                "zero-ad-network"
-            ); ?>
-            <br>
-            <strong><?php esc_html_e("Performance Impact:", "zero-ad-network"); ?></strong>
-            <?php esc_html_e(
-                "Without cache: ~2ms per token validation. With cache: ~0.2ms (cache hit).",
-                "zero-ad-network"
-            ); ?>
-        </p>
-        <?php if (!$apcu_available): ?>
-            <p class="description" style="color: #d63638;">
-                <strong><?php esc_html_e("⚠️ APCu not available.", "zero-ad-network"); ?></strong>
-                <?php esc_html_e(
-                    "Install with: sudo apt-get install php-apcu or sudo pecl install apcu",
-                    "zero-ad-network"
-                ); ?>
-            </p>
-        <?php endif;
+             <div class="zeroad-feature-box <?php echo $enabled ? "selected" : ""; ?>">
+                <label class="zeroad-feature-label">
+                    <input type="checkbox"
+                            name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_enabled]"
+                            value="1"
+                            <?php checked($enabled, true); ?>
+                            <?php disabled(!$apcu_available); ?>>
+                    <span class="zeroad-feature-name"><?php esc_html_e(
+                        "Enable APCu token caching",
+                        "zero-ad-network"
+                    ); ?></span>
+                </label>
+                <p class="zeroad-feature-description">
+                    <?php esc_html_e(
+                        "Caches validated tokens in APCu (shared memory) for faster subsequent requests. Improves performance by ~10x (2ms → 0.2ms per validation).",
+                        "zero-ad-network"
+                    ); ?>
+                    <br>
+                    <strong><?php esc_html_e("Performance Impact:", "zero-ad-network"); ?></strong>
+                    <?php esc_html_e(
+                        "Without cache: ~2ms per token validation. With cache: ~0.2ms (cache hit).",
+                        "zero-ad-network"
+                    ); ?>
+                </p>
+        
+            <?php if (!$apcu_available): ?>
+                <p class="zeroad-feature-description" style="color: #d63638;">
+                    <strong><?php esc_html_e("⚠️ APCu not available.", "zero-ad-network"); ?></strong>
+                    <?php esc_html_e(
+                        "Install with: sudo apt-get install php-apcu or sudo pecl install apcu",
+                        "zero-ad-network"
+                    ); ?>
+                </p>
+            <?php endif; ?>
+            </div>
+    <?php
     }
 
     /**
