@@ -129,10 +129,11 @@
   padding: 10px 20px;
   margin: 20px 0;
   border-radius: 4px;
-  ul {
-    list-style: disc;
-    margin-left: 20px;
-  }
+}
+
+ul.zeroad-ul {
+  list-style: disc;
+  margin-left: 20px;
 }
 
 .zeroad-warning-box {

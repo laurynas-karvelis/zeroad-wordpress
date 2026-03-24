@@ -17,7 +17,7 @@ class Config
     private $settings;
     private $admin_pages;
     private $renderer;
-    private $site_cache = null;
+    private $site = null;
 
     private function __construct(
         ?Settings $settings = null,
@@ -26,7 +26,6 @@ class Config
     ) {
         $this->options = get_option(Settings::OPTION_KEY, Settings::getDefaults());
 
-        // Support dependency injection for testing.
         $this->settings = $settings ?? new Settings($this->options);
         $this->admin_pages = $admin_pages ?? new AdminPages($this->options);
         $this->renderer = $renderer ?? new Renderer();
@@ -81,7 +80,7 @@ class Config
                 !empty($this->options["features"]) &&
                 count($this->options["features"]) > 0
             ) {
-                if ($this->site_cache === null) {
+                if ($this->site === null) {
                     $cache_config = null;
                     if (!empty($this->options["cache_enabled"])) {
                         $cache_config = [
@@ -90,14 +89,14 @@ class Config
                         ];
                     }
 
-                    $this->site_cache = new Site([
+                    $this->site = new Site([
                         "clientId" => $this->options["client_id"],
                         "features" => $this->options["features"],
                         "cacheConfig" => $cache_config
                     ]);
                 }
 
-                $this->renderer->setSite($this->site_cache);
+                $this->renderer->setSite($this->site);
             } else {
                 $this->renderer->setSite(null);
             }
@@ -119,7 +118,7 @@ class Config
                     esc_html__("Zero Ad Network:", "zero-ad-network"),
                     /* translators: %s: Error message */
                     sprintf(esc_html__("Configuration error: %s", "zero-ad-network"), esc_html($message)),
-                    esc_url(admin_url("admin.php?page=zeroad-token")),
+                    esc_url(admin_url("admin.php?page=zeroad-config")),
                     esc_html__("Check settings →", "zero-ad-network")
                 );
             });
@@ -128,8 +127,8 @@ class Config
 
     public function onOptionsUpdate($old_value, $new_value): void
     {
-        // Clear cached Site instance when options change.
-        $this->site_cache = null;
+        // Clear Site instance when options change.
+        $this->site = null;
         $this->options = $new_value;
         $this->updateComponents();
 
@@ -152,23 +151,23 @@ class Config
             __("Zero Ad Network", "zero-ad-network"),
             __("Zero Ad Network", "zero-ad-network"),
             "manage_options",
-            "zeroad-token",
+            "zeroad-config",
             [$this->admin_pages, "renderSettingsPage"],
             "dashicons-admin-site-alt3",
             80
         );
 
         add_submenu_page(
-            "zeroad-token",
+            "zeroad-config",
             __("Settings", "zero-ad-network"),
             __("Settings", "zero-ad-network"),
             "manage_options",
-            "zeroad-token",
+            "zeroad-config",
             [$this->admin_pages, "renderSettingsPage"]
         );
 
         add_submenu_page(
-            "zeroad-token",
+            "zeroad-config",
             __("Cache Configuration", "zero-ad-network"),
             __("Cache Configuration", "zero-ad-network"),
             "manage_options",
@@ -177,7 +176,7 @@ class Config
         );
 
         add_submenu_page(
-            "zeroad-token",
+            "zeroad-config",
             __("About", "zero-ad-network"),
             __("About", "zero-ad-network"),
             "manage_options",
@@ -228,7 +227,7 @@ class Config
                                 __('Enter your Client ID in the <a href="%s">plugin settings</a>', "zero-ad-network"),
                                 ["a" => ["href" => []]]
                             ),
-                            esc_url(admin_url("admin.php?page=zeroad-token"))
+                            esc_url(admin_url("admin.php?page=zeroad-config"))
                         ); ?>
                     </li>
                     <li><?php esc_html_e(
@@ -244,7 +243,7 @@ class Config
                     <a href="https://docs.zeroad.network" target="_blank" rel="noopener noreferrer" class="button button-primary">
                         <?php esc_html_e("View Documentation", "zero-ad-network"); ?>
                     </a>
-                    <a href="<?php echo esc_url(admin_url("admin.php?page=zeroad-token")); ?>" class="button">
+                    <a href="<?php echo esc_url(admin_url("admin.php?page=zeroad-config")); ?>" class="button">
                         <?php esc_html_e("Go to Settings", "zero-ad-network"); ?>
                     </a>
                 </p>
@@ -269,7 +268,7 @@ class Config
     public function enqueueAdminAssets(string $hook_suffix): void
     {
         // Only load on our plugin pages.
-        $our_pages = ["zeroad-token", "zeroad-cache-config", "zeroad-about"];
+        $our_pages = ["zeroad-config", "zeroad-cache-config", "zeroad-about"];
         $is_our_page = false;
 
         foreach ($our_pages as $page) {

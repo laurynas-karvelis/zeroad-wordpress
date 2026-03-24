@@ -1,7 +1,7 @@
 <?php
 
 if (!defined("ABSPATH")) {
-  exit();
+    exit();
 } ?>
 
 <div class="wrap zeroad-cache-config">
@@ -11,14 +11,14 @@ if (!defined("ABSPATH")) {
         <h3 class="zeroad-mt-0"><?php esc_html_e("Why Cache Configuration Matters", "zero-ad-network"); ?></h3>
         <p>
             <?php esc_html_e(
-              "Zero Ad Network subscribers see different versions of your pages based on their subscription plan. Proper cache configuration ensures:",
-              "zero-ad-network"
+                "Zero Ad Network subscribers see different versions of your pages based on their subscription plan. Proper cache configuration ensures:",
+                "zero-ad-network"
             ); ?>
         </p>
-        <ul>
+        <ul class="zeroad-ul">
             <li><?php esc_html_e(
-              "Clean Web subscribers don't see ads, cookie banners, or marketing popups",
-              "zero-ad-network"
+                "Clean Web subscribers don't see ads, cookie banners, or marketing popups",
+                "zero-ad-network"
             ); ?></li>
             <li><?php esc_html_e("One Pass subscribers can access paywalled content", "zero-ad-network"); ?></li>
             <li><?php esc_html_e("Regular visitors see the standard version of your site", "zero-ad-network"); ?></li>
@@ -31,8 +31,8 @@ if (!defined("ABSPATH")) {
         
         <p class="description">
             <?php esc_html_e(
-              "The Zero Ad Network plugin sends a special header called X-ZeroAd-Variant with every response. This header identifies which version of the page should be cached:",
-              "zero-ad-network"
+                "The Zero Ad Network plugin sends a special header called X-ZeroAd-Variant with every response. This header identifies which version of the page should be cached:",
+                "zero-ad-network"
             ); ?>
         </p>
 
@@ -51,38 +51,38 @@ if (!defined("ABSPATH")) {
                         <td><strong><?php esc_html_e("Regular Visitor", "zero-ad-network"); ?></strong></td>
                         <td><code>clean_web0-one_pass0</code></td>
                         <td><?php esc_html_e(
-                          "Ads, cookie banners, paywalls (standard experience)",
-                          "zero-ad-network"
+                            "Ads, cookie banners, paywalls (standard experience)",
+                            "zero-ad-network"
                         ); ?></td>
                     </tr>
                     <tr>
                         <td><strong><?php esc_html_e(
-                          "Clean Web Subscriber ($6/mo)",
-                          "zero-ad-network"
+                            "Clean Web Subscriber ($6/mo)",
+                            "zero-ad-network"
                         ); ?></strong></td>
                         <td><code>clean_web1-one_pass0</code></td>
                         <td><?php esc_html_e(
-                          "No ads, no cookie banners, but paywalls still active",
-                          "zero-ad-network"
+                            "No ads, no cookie banners, but paywalls still active",
+                            "zero-ad-network"
                         ); ?></td>
                     </tr>
                     <tr>
                         <td><strong><?php esc_html_e(
-                          "One Pass Subscriber ($12/mo)",
-                          "zero-ad-network"
+                            "One Pass Subscriber ($12/mo)",
+                            "zero-ad-network"
                         ); ?></strong></td>
                         <td><code>clean_web0-one_pass1</code></td>
                         <td><?php esc_html_e(
-                          "Paywalls removed, subscription content unlocked, but ads shown",
-                          "zero-ad-network"
+                            "Paywalls removed, subscription content unlocked, but ads shown",
+                            "zero-ad-network"
                         ); ?></td>
                     </tr>
                     <tr>
                         <td><strong><?php esc_html_e("Freedom Subscriber ($18/mo)", "zero-ad-network"); ?></strong></td>
                         <td><code>clean_web1-one_pass1</code></td>
                         <td><?php esc_html_e(
-                          "No ads, no paywalls, full access (best experience)",
-                          "zero-ad-network"
+                            "No ads, no paywalls, full access (best experience)",
+                            "zero-ad-network"
                         ); ?></td>
                     </tr>
                 </tbody>
@@ -92,8 +92,8 @@ if (!defined("ABSPATH")) {
         <p class="description zeroad-mt-2">
             <strong><?php esc_html_e("Important:", "zero-ad-network"); ?></strong>
             <?php esc_html_e(
-              "Your caching system (plugin, CDN, or server) must cache different versions of each page based on this X-ZeroAd-Variant header. Without proper configuration, all visitors might see the same cached version!",
-              "zero-ad-network"
+                "Your caching system (plugin, CDN, or server) must cache different versions of each page based on this X-ZeroAd-Variant header. Without proper configuration, all visitors might see the same cached version!",
+                "zero-ad-network"
             ); ?>
         </p>
     </div>
@@ -104,8 +104,8 @@ if (!defined("ABSPATH")) {
     
     <p class="description zeroad-mb-2">
         <?php esc_html_e(
-          "Choose the configuration that matches your setup. If you're not sure which caching system you use, check your plugins or contact your hosting provider.",
-          "zero-ad-network"
+            "Choose the configuration that matches your setup. If you're not sure which caching system you use, check your plugins or contact your hosting provider.",
+            "zero-ad-network"
         ); ?>
     </p>
 
@@ -117,14 +117,14 @@ if (!defined("ABSPATH")) {
             <div class="za-header"><?php esc_html_e("WP Super Cache", "zero-ad-network"); ?></div>
             <div class="za-body">
                 <p><?php esc_html_e(
-                  "WP Super Cache is automatically configured by our plugin. The X-ZeroAd-Variant value is added to the cache key.",
-                  "zero-ad-network"
+                    "WP Super Cache is automatically configured by our plugin. The X-ZeroAd-Variant value is added to the cache key.",
+                    "zero-ad-network"
                 ); ?></p>
                 <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
                 <p class="description">
                     <?php esc_html_e(
-                      "Our plugin hooks into WP Super Cache's wp_cache_get_cookies_values filter to ensure proper variant caching.",
-                      "zero-ad-network"
+                        "Our plugin hooks into WP Super Cache's wp_cache_get_cookies_values filter to ensure proper variant caching.",
+                        "zero-ad-network"
                     ); ?>
                 </p>
             </div>
@@ -138,8 +138,8 @@ if (!defined("ABSPATH")) {
                 <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
                 <p class="description">
                     <?php esc_html_e(
-                      "Our plugin adds zeroad_variant to WP Rocket's dynamic cookie list for automatic cache variation.",
-                      "zero-ad-network"
+                        "Our plugin adds zeroad_variant to WP Rocket's dynamic cookie list for automatic cache variation.",
+                        "zero-ad-network"
                     ); ?>
                 </p>
             </div>
@@ -150,14 +150,14 @@ if (!defined("ABSPATH")) {
             <div class="za-header"><?php esc_html_e("W3 Total Cache", "zero-ad-network"); ?></div>
             <div class="za-body">
                 <p><?php esc_html_e(
-                  "W3 Total Cache is automatically configured by our plugin.",
-                  "zero-ad-network"
+                    "W3 Total Cache is automatically configured by our plugin.",
+                    "zero-ad-network"
                 ); ?></p>
                 <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
                 <p class="description">
                     <?php esc_html_e(
-                      "Our plugin modifies the cache key using W3TC's filters to include the variant.",
-                      "zero-ad-network"
+                        "Our plugin modifies the cache key using W3TC's filters to include the variant.",
+                        "zero-ad-network"
                     ); ?>
                 </p>
             </div>
@@ -168,8 +168,8 @@ if (!defined("ABSPATH")) {
             <div class="za-header"><?php esc_html_e("LiteSpeed Cache", "zero-ad-network"); ?></div>
             <div class="za-body">
                 <p><?php esc_html_e(
-                  "LiteSpeed Cache is automatically configured by our plugin.",
-                  "zero-ad-network"
+                    "LiteSpeed Cache is automatically configured by our plugin.",
+                    "zero-ad-network"
                 ); ?></p>
                 <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
             </div>
@@ -180,8 +180,8 @@ if (!defined("ABSPATH")) {
             <div class="za-header"><?php esc_html_e("Nginx (Server-Level Caching)", "zero-ad-network"); ?></div>
             <div class="za-body">
                 <p><?php esc_html_e(
-                  "If your hosting uses Nginx with fastcgi_cache or proxy_cache, add this configuration:",
-                  "zero-ad-network"
+                    "If your hosting uses Nginx with fastcgi_cache or proxy_cache, add this configuration:",
+                    "zero-ad-network"
                 ); ?></p>
 <pre><code class="language-nginx"># Nginx proxy_cache example
 proxy_cache_path /var/cache/nginx keys_zone=pagecache:50m;
@@ -270,8 +270,8 @@ sub vcl_backend_response {
                     <li><?php esc_html_e("Go to Caching → Cache Rules", "zero-ad-network"); ?></li>
                     <li><?php esc_html_e("Create a new Cache Rule", "zero-ad-network"); ?></li>
                     <li><?php esc_html_e(
-                      "Under 'Custom Cache Key', select 'Query String' → 'Include header'",
-                      "zero-ad-network"
+                        "Under 'Custom Cache Key', select 'Query String' → 'Include header'",
+                        "zero-ad-network"
                     ); ?></li>
                     <li><?php esc_html_e("Add header: X-ZeroAd-Variant", "zero-ad-network"); ?></li>
                 </ol>
@@ -324,31 +324,31 @@ async function handleRequest(request) {
     <div class="zeroad-warning-box zeroad-mt-3">
         <h3 class="zeroad-mt-0"><?php esc_html_e("⚠️ Testing Your Cache Configuration", "zero-ad-network"); ?></h3>
         <p><?php esc_html_e(
-          "After configuring your cache, test it to ensure it's working correctly:",
-          "zero-ad-network"
+            "After configuring your cache, test it to ensure it's working correctly:",
+            "zero-ad-network"
         ); ?></p>
         <ol>
             <li><?php esc_html_e("Clear all caches (plugin cache, server cache, CDN cache)", "zero-ad-network"); ?></li>
             <li><?php esc_html_e(
-              "Visit your site as a regular user (no Zero Ad subscription)",
-              "zero-ad-network"
+                "Visit your site as a regular user (no Zero Ad subscription)",
+                "zero-ad-network"
             ); ?></li>
             <li><?php esc_html_e("Check that ads and cookie banners appear normally", "zero-ad-network"); ?></li>
             <li><?php esc_html_e(
-              "Install Zero Ad browser extension and subscribe to Clean Web",
-              "zero-ad-network"
+                "Install Zero Ad browser extension and subscribe to Clean Web",
+                "zero-ad-network"
             ); ?></li>
             <li><?php esc_html_e("Visit your site again - ads and banners should be gone", "zero-ad-network"); ?></li>
             <li><?php esc_html_e(
-              "Check browser dev tools → Network tab → Response Headers for X-ZeroAd-Variant",
-              "zero-ad-network"
+                "Check browser dev tools → Network tab → Response Headers for X-ZeroAd-Variant",
+                "zero-ad-network"
             ); ?></li>
         </ol>
         <p>
             <strong><?php esc_html_e("Need help?", "zero-ad-network"); ?></strong>
             <a href="https://docs.zeroad.network" target="_blank"><?php esc_html_e(
-              "Visit our documentation →",
-              "zero-ad-network"
+                "Visit our documentation →",
+                "zero-ad-network"
             ); ?></a>
         </p>
     </div>
