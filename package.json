@@ -3,15 +3,15 @@
   "name": "zeroad-wordpress",
   "version": "0.14.0",
   "scripts": {
-    "composer:install": "cd plugins/zero-ad-network && composer install --no-autoloader",
+    "composer:install": "cd plugins/zero-ad-network && composer install --no-autoloader --no-dev",
     "start": "wp-env start",
     "stop": "wp-env stop",
     "destroy": "wp-env destroy",
     "version:sync": "sh ./version-sync.sh",
-    "build": "rsync -a --delete --mkpath plugins/zero-ad-network/ build/zero-ad-network/",
+    "build": "rsync -a --delete --mkpath --filter=':- .gitignore' plugins/zero-ad-network/ build/zero-ad-network/",
     "package": "version=$(jq -r '.version' ./package.json) && cd build/ && zip -r zero-ad-network-$version.zip zero-ad-network"
   },
   "devDependencies": {
-    "@wordpress/env": "^11.2.0"
+    "@wordpress/env": "^11.4.0"
   }
 }

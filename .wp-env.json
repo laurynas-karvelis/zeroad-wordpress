@@ -1,7 +1,8 @@
 {
-  "core": "WordPress/WordPress#6.9",
+  "core": "WordPress/WordPress#6.9.4",
   "phpVersion": "8.5",
   "plugins": ["./plugins/zero-ad-network"],
+  "testsEnvironment": false,
   "config": {
     "WP_DEBUG": true
   },

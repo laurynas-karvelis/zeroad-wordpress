@@ -2,16 +2,14 @@
 /**
  * Plugin Name:       Zero Ad Network
  * Plugin URI:        https://zeroad.network
- * Description:       An HTTP-header-based "access / entitlement token" plugin for Zero Ad Network partnering sites using WordPress.
+ * Description:       Get paid by providing ad-free, clean web experience to Zero Ad Network users.
  * Version:           0.14.0
  * Requires at least: 4.9
  * Requires PHP:      7.2
  * Author:            Explosive Brains Ltd.
- * License:           Apache 2.0
- * License URI:       https://www.apache.org/licenses/LICENSE-2.0.txt
+ * License:           GPLv3
+ * License URI:       https://www.gnu.org/licenses/gpl-3.0.txt
  * Text Domain:       zero-ad-network
- *
- * @package ZeroAdNetwork
  */
 
 if (!defined("ABSPATH")) {
@@ -23,7 +21,6 @@ define("ZEROAD_PLUGIN_FILE", __FILE__);
 define("ZEROAD_PLUGIN_DIR", plugin_dir_path(__FILE__));
 define("ZEROAD_PLUGIN_URL", plugin_dir_url(__FILE__));
 define("ZEROAD_PLUGIN_BASENAME", plugin_basename(__FILE__));
-define("ZEROAD_TEXT_DOMAIN", "zero-ad-network");
 
 define("ZEROAD_DEFAULT_CACHE_TTL", 10);
 
