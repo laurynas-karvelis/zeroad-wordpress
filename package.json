@@ -8,8 +8,7 @@
     "stop": "wp-env stop",
     "destroy": "wp-env destroy",
     "version:sync": "bun ./version-sync.js",
-    "build": "rsync -a --delete --mkpath --exclude-from='.distignore' plugins/zero-ad-network/ build/zero-ad-network/",
-    "package": "version=$(jq -r '.version' ./package.json) && cd build/ && zip -r zero-ad-network-$version.zip zero-ad-network"
+    "build": "rsync -a --delete --mkpath --exclude-from='.distignore' plugins/zero-ad-network/ build/zero-ad-network/"
   },
   "devDependencies": {
     "@wordpress/env": "^11.4.0"

@@ -24,12 +24,16 @@ jobs:
         run: |
           bun composer:install
 
-      - name: Create ZIP
+      - name: Create a build
         run: |
-          bun version:sync && bun run build && bun run package
+          bun version:sync && bun run build
+
+      - name: Work out plugin version
+        id: version
+        run: echo "version=$(jq -r '.version' package.json)" >> $PACKAGE_VERSION
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: zeroad-network
-          path: build/*.zip
+          name: zero-ad-network-${{ steps.version.outputs.version }}
+          path: build/zero-ad-network/
