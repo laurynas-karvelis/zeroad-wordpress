@@ -1,4 +1,4 @@
-name: Build Plugin ZIP
+name: Build & publish
 
 on:
   workflow_dispatch:
