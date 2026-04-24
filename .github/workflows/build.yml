@@ -28,6 +28,32 @@ jobs:
         run: |
           bun version:sync && bun run build
 
+      - name: Deploy to WordPress.org SVN
+        env:
+          SVN_USERNAME: ${{ secrets.WPORG_SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.WPORG_SVN_PASSWORD }}
+        run: |
+          svn checkout https://plugins.svn.wordpress.org/zero-ad-network/ svn --depth immediates
+          svn update --set-depth infinity svn/trunk
+          svn update --set-depth infinity svn/assets
+
+          # sync plugin files into trunk
+          rsync -a --delete --exclude-from='.distignore' build/zero-ad-network/ svn/trunk/
+
+          # sync promo assets (banners, icons, screenshots)
+          rsync -a --delete PROMO_MATERIALS/ svn/assets/
+
+          # stage all changes
+          svn add --force svn/trunk/ svn/assets/
+          svn status svn | grep '^\!' | awk '{print $2}' | xargs -r svn delete
+
+          VERSION=$(jq -r '.version' package.json)
+          svn commit svn -m "Release $VERSION" --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --non-interactive
+
+          svn update --set-depth infinity svn/tags/$VERSION || true
+          svn copy svn/trunk svn/tags/$VERSION
+          svn commit svn/tags/$VERSION -m "Tag $VERSION" --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --non-interactive
+
       - name: Work out plugin version
         id: version
         run: echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
