@@ -112,9 +112,8 @@ class AdminPages
                     <td>
                         <?php if (!empty($this->options["cache_enabled"])): ?>
                             <span style="color: #46b450;">✓</span>
-                             /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */ /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */<?php
-                            /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
-                            printf(
+                             /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */ /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */<?php /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
+                             printf(
                                  esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
                                  esc_html((string) ($this->options["cache_ttl"] ?? 5)),
                                  esc_html($this->options["cache_prefix"] ?? "zeroad:")
