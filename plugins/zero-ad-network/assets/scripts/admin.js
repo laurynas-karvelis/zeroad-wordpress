@@ -1,6 +1,4 @@
-;(function () {
-  "use strict"
-
+;(() => {
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init()
 
   function init() {
@@ -50,7 +48,10 @@
     notice.addEventListener("click", (e) => {
       if (e.target.classList.contains("notice-dismiss")) {
         fetch(zeroadAdmin.ajaxurl, {
-          body: new URLSearchParams({ action: "zeroad_dismiss_welcome", nonce }),
+          body: new URLSearchParams({
+            action: "zeroad_dismiss_welcome",
+            nonce,
+          }),
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           method: "POST",
         })
