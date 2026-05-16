@@ -11,6 +11,6 @@
     "build": "rsync -a --delete --mkpath --exclude-from='.distignore' plugins/zero-ad-network/ build/zero-ad-network/"
   },
   "devDependencies": {
-    "@wordpress/env": "^11.4.0"
+    "@wordpress/env": "^11.6.0"
   }
 }
