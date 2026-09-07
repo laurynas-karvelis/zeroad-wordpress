@@ -30,7 +30,7 @@ if (!defined("ABSPATH")) {
         
         <p class="description">
             <?php esc_html_e(
-                "The Zero Ad Network plugin sends a special header called X-ZeroAd-Variant with every response. This header identifies which version of the page should be cached:",
+                "On every response the plugin sets a zeroad_variant cookie and a matching X-ZeroAd-Variant / Vary header. Both carry the same value, identifying which version of the page should be cached. WordPress page-cache plugins vary on the cookie; CDNs and reverse proxies vary on the header.",
                 "zero-ad-network"
             ); ?>
         </p>
@@ -69,10 +69,18 @@ if (!defined("ABSPATH")) {
         <p class="description zeroad-mt-2">
             <strong><?php esc_html_e("Important:", "zero-ad-network"); ?></strong>
             <?php esc_html_e(
-                "Your caching system (plugin, CDN, or server) must cache different versions of each page based on this X-ZeroAd-Variant header. Without proper configuration, all visitors might see the same cached version!",
+                "Your caching system (plugin, CDN, or server) must key its cache on the zeroad_variant cookie or the X-ZeroAd-Variant header. Without that, all visitors may be served the same cached version.",
                 "zero-ad-network"
             ); ?>
         </p>
+
+        <div class="zeroad-warning-box zeroad-mt-2">
+            <strong><?php esc_html_e("A note on full-page caching:", "zero-ad-network"); ?></strong>
+            <?php esc_html_e(
+                "Full-page cache plugins serve a cache hit before WordPress loads, so on a hit this plugin never runs to verify the token. The split then relies entirely on the zeroad_variant cookie your cache is configured to vary on. A brand-new subscriber may be served the standard cached page on their very first visit, until the cookie is set on a request that reaches PHP; from then on they get the subscriber version.",
+                "zero-ad-network"
+            ); ?>
+        </div>
     </div>
 
     <hr class="zeroad-mt-3 zeroad-mb-3">
@@ -94,13 +102,12 @@ if (!defined("ABSPATH")) {
             <div class="za-header"><?php esc_html_e("WP Super Cache", "zero-ad-network"); ?></div>
             <div class="za-body">
                 <p><?php esc_html_e(
-                    "WP Super Cache is automatically configured by our plugin. The X-ZeroAd-Variant value is added to the cache key.",
+                    "Our plugin folds the variant into WP Super Cache's cache key via its wp_cache_get_cookies_values filter, so subscriber and regular pages are cached separately.",
                     "zero-ad-network"
                 ); ?></p>
-                <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
                 <p class="description">
                     <?php esc_html_e(
-                        "Our plugin hooks into WP Super Cache's wp_cache_get_cookies_values filter to ensure proper variant caching.",
+                        "For this to also apply on cache hits (which WP Super Cache serves before WordPress loads), add zeroad_variant to Settings → WP Super Cache → Advanced → \"Cache cookies\" so its early cache layer keys on the same cookie.",
                         "zero-ad-network"
                     ); ?>
                 </p>
@@ -111,11 +118,11 @@ if (!defined("ABSPATH")) {
         <div class="za-item">
             <div class="za-header"><?php esc_html_e("WP Rocket", "zero-ad-network"); ?></div>
             <div class="za-body">
-                <p><?php esc_html_e("WP Rocket is automatically configured by our plugin.", "zero-ad-network"); ?></p>
+                <p><?php esc_html_e("WP Rocket is configured automatically.", "zero-ad-network"); ?></p>
                 <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
                 <p class="description">
                     <?php esc_html_e(
-                        "Our plugin adds zeroad_variant to WP Rocket's dynamic cookie list for automatic cache variation.",
+                        "Our plugin registers zeroad_variant on WP Rocket's dynamic (mandatory) cookies list, and sets that cookie, so WP Rocket caches a separate copy per variant.",
                         "zero-ad-network"
                     ); ?>
                 </p>

@@ -142,12 +142,12 @@ class Settings
 
         if ($apcu_available) {
             esc_html_e(
-                "APCu is installed and ready. Enable caching below for ~10x faster token validation.",
+                "APCu is installed and ready. Enable caching below to share verified tokens across PHP workers, so a returning subscriber's token isn't re-verified on every request.",
                 "zero-ad-network"
             );
         } else {
             esc_html_e(
-                "The APCu PHP extension is not installed or enabled. Token caching will be disabled. Install APCu for 10x performance improvement.",
+                "The APCu PHP extension is not installed or enabled, so verified tokens can't be shared across requests. Verification still runs per request (about 0.09ms) - installing APCu simply avoids repeating it.",
                 "zero-ad-network"
             );
         }
@@ -254,13 +254,13 @@ class Settings
                 </label>
                 <p class="zeroad-feature-description">
                     <?php esc_html_e(
-                        "Caches validated tokens in APCu (shared memory) for faster subsequent requests. Improves performance by ~10x (2ms → 0.2ms per validation).",
+                        "Caches verified tokens in APCu (shared memory) so a returning subscriber's token is reused across requests and PHP workers instead of being re-verified each time.",
                         "zero-ad-network"
                     ); ?>
                     <br>
                     <strong><?php esc_html_e("Performance Impact:", "zero-ad-network"); ?></strong>
                     <?php esc_html_e(
-                        "Without cache: ~2ms per token validation. With cache: ~0.2ms (cache hit).",
+                        "A cold verification is about 0.09ms; an APCu cache hit is a shared-memory lookup, a few microseconds. Either way it is negligible - caching mainly avoids repeating the work under load.",
                         "zero-ad-network"
                     ); ?>
                 </p>

@@ -1,2 +1,5 @@
 .DS_Store
 vendor/composer
+tests
+phpunit.xml
+composer.lock

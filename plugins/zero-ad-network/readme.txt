@@ -36,7 +36,7 @@ The more engaging your site, the more you earn.
 
 = How It Works Technically =
 
-The subscriber's browser extension sends a signed `Better-Web-Token` request header with a cryptographic token on every page load. The plugin verifies the token using an ED25519 public key — no outbound API calls, no round trips. The token is bound to your hostname, so a token harvested on another site cannot be replayed against yours. Validation happens entirely on your server in ~2ms, or a fraction of that on a cache hit.
+The subscriber's browser extension sends a signed `Better-Web-Token` request header with a cryptographic token on every page load. The plugin verifies the token using an ED25519 public key — no outbound API calls, no round trips. The token is bound to your hostname, so a token harvested on another site cannot be replayed against yours. Verification happens entirely on your server in about 0.09ms (two Ed25519 checks via the Sodium extension); with APCu enabled a returning subscriber's token is reused from shared memory in a few microseconds.
 
 The plugin outputs a `Better-Web-Publisher` identifier (via HTTP response header or HTML meta tag) so the extension knows your site is a partner and can credit visits to you.
 
