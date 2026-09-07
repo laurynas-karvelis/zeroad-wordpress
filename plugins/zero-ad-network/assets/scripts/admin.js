@@ -41,7 +41,7 @@
 
   function initWelcomeNotice() {
     const notice = document.querySelector(".zeroad-welcome-notice")
-    if (!notice || zeroadAdmin === undefined) return
+    if (!notice || typeof zeroadAdmin === "undefined") return
 
     const nonce = notice.dataset.dismissNonce
 

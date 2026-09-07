@@ -154,9 +154,13 @@ abstract class Action
                     $func = $callback_data["function"];
                     $shouldRemove = false;
 
+                    // Prefixes name real PHP identifiers (class/function names), which are case-sensitive,
+                    // so matching is too: `strpos(...) === 0`. A case-insensitive match would let a short
+                    // prefix like `ai_` sweep up unrelated callbacks from other plugins.
+
                     // Case 1: Simple named function string
                     if (is_string($func)) {
-                        if (stripos($func, $prefix) === 0) {
+                        if (strpos($func, $prefix) === 0) {
                             $shouldRemove = true;
                             remove_filter($hook_name, $func, $priority);
                         }
@@ -166,7 +170,7 @@ abstract class Action
                         $class = get_class($func[0]);
                         $method = $func[1];
 
-                        if (stripos($class, $prefix) === 0 || stripos($method, $prefix) === 0) {
+                        if (strpos($class, $prefix) === 0 || strpos($method, $prefix) === 0) {
                             $shouldRemove = true;
                             remove_filter($hook_name, [$func[0], $method], $priority);
                         }
@@ -176,7 +180,7 @@ abstract class Action
                         $class = $func[0];
                         $method = $func[1];
 
-                        if (stripos($class, $prefix) === 0 || stripos($method, $prefix) === 0) {
+                        if (strpos($class, $prefix) === 0 || strpos($method, $prefix) === 0) {
                             $shouldRemove = true;
                             remove_filter($hook_name, [$class, $method], $priority);
                         }
@@ -187,7 +191,7 @@ abstract class Action
                         if (count($parts) === 2) {
                             [$class, $method] = $parts;
 
-                            if (stripos($class, $prefix) === 0 || stripos($method, $prefix) === 0) {
+                            if (strpos($class, $prefix) === 0 || strpos($method, $prefix) === 0) {
                                 $shouldRemove = true;
                                 remove_filter($hook_name, $func, $priority);
                             }

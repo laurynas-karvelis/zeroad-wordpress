@@ -99,8 +99,7 @@ register_activation_hook(__FILE__, function () {
 });
 
 register_deactivation_hook(__FILE__, function () {
-    delete_transient("zeroad_site_instance");
-    delete_transient("zeroad_cache_variant");
+    wp_cache_flush();
 });
 
 add_action("plugins_loaded", function () {

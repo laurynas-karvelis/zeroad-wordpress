@@ -142,7 +142,7 @@ class Renderer
 
     public function registerCacheVariant(): void
     {
-        if ($this->publisher === null || is_admin()) {
+        if ($this->publisher === null || !$this->isPageRequest()) {
             return;
         }
 
@@ -151,7 +151,7 @@ class Renderer
 
     public function registerPluginOverrides(): void
     {
-        if (empty($this->tokenContext) || is_admin()) {
+        if (empty($this->tokenContext) || !$this->isPageRequest()) {
             return;
         }
 
@@ -164,7 +164,7 @@ class Renderer
 
     public function maybeToggleFeatures(): void
     {
-        if (empty($this->tokenContext) || is_admin()) {
+        if (empty($this->tokenContext) || !$this->isPageRequest()) {
             return;
         }
 
@@ -180,12 +180,7 @@ class Renderer
 
     public function maybeStartOutputBuffer(): void
     {
-        if (empty($this->tokenContext) || is_admin()) {
-            return;
-        }
-
-        // Skip buffering for AJAX and JSON requests.
-        if (wp_doing_ajax() || $this->isJsonRequest()) {
+        if (empty($this->tokenContext) || !$this->isPageRequest()) {
             return;
         }
 
@@ -229,6 +224,16 @@ class Renderer
         }
 
         return $html;
+    }
+
+    /**
+     * A normal front-end page render - the only place applying the clean experience makes sense.
+     * Excludes wp-admin, AJAX, the REST API and any request negotiating JSON, so we never disable
+     * plugins or rewrite output for a machine-readable response.
+     */
+    private function isPageRequest(): bool
+    {
+        return !is_admin() && !wp_doing_ajax() && !$this->isJsonRequest();
     }
 
     private function getServerValue(string $key): ?string

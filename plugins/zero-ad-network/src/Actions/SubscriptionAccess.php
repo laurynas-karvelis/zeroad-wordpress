@@ -102,16 +102,12 @@ class SubscriptionAccess extends Action
             return $html;
         }
 
-        // Remove paywall overlays and subscription requirement notices
+        // Only paywall-specific blur styles. Access is granted at the source via the membership-plugin
+        // filters in registerPluginOverrides(), so the protected content renders normally; deleting
+        // overlay/subscribe `<div>`s by class would corrupt nested markup and strip legitimate sections.
         return parent::runReplacements($html, [
-            // Remove paywall overlay containers (limited size to prevent catastrophic backtracking)
-            '#<(div|aside|section)[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(paywall|pay-wall|subscription-required|premium-content|locked-content|member-only)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</\1>).){0,8000}</\1>#is',
-
             // Remove blur/fade effects used by paywalls
-            "#<style[^>]{0,200}>[^<]{0,500}(paywall|restricted|premium)[^<]{0,500}(blur|opacity|fade)[^<]{0,500}</style>#is",
-
-            // Remove subscription prompts
-            '#<div[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(subscribe|subscription|premium-access|membership-required)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</div>).){0,5000}</div>#is'
+            "#<style[^>]{0,200}>[^<]{0,500}(paywall|restricted|premium)[^<]{0,500}(blur|opacity|fade)[^<]{0,500}</style>#is"
         ]);
     }
 

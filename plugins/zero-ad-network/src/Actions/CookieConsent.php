@@ -117,16 +117,15 @@ class CookieConsent extends Action
 
     public static function outputBufferCallback(string $html): string
     {
-        // Remove cookie consent banners and scripts from HTML
+        // Scripts and meta only. Banner containers are hidden by cookie-consent.css rather than deleted:
+        // a regex that removes a `<div>` and its contents breaks on nested markup and false-matches, and
+        // the consent plugins themselves are already disabled server-side in run().
         return parent::runReplacements($html, [
-            // Remove cookie/consent/GDPR/CCPA scripts (limit backtracking)
-            '#<script[^>]{0,500}(src=[\'"][^\'"]{0,500}(cookie|consent|gdpr|ccpa)[^\'"]{0,200}[\'"]|[^>]{0,300}(cookie|consent|gdpr|ccpa))[^>]{0,200}>(?:(?!</script>).){0,10000}</script>#is',
-
-            // Remove cookie banner containers (limit size)
-            '#<(div|section|aside)[^>]{0,300}(id|class)\s*=\s*["\'][^"\']{0,200}(cookie|cookie-banner|cookie-consent|cc-window|cookie-modal|cc-banner|complianz|cookieyes|gdpr|ccpa)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</\1>).){0,5000}</\1>#is',
+            // Remove cookie/consent/GDPR/CCPA scripts (lazy `.*?` stops at the first </script>)
+            '#<script[^>]{0,500}(src=[\'"][^\'"]{0,500}(cookie|consent|gdpr|ccpa)[^\'"]{0,200}[\'"]|[^>]{0,300}(cookie|consent|gdpr|ccpa))[^>]{0,200}>.*?</script>#is',
 
             // Remove Cookiebot scripts
-            "#<script[^>]{0,500}id=['\"]Cookiebot['\"][^>]{0,200}>(?:(?!</script>).){0,5000}</script>#is",
+            "#<script[^>]{0,500}id=['\"]Cookiebot['\"][^>]{0,200}>.*?</script>#is",
 
             // Remove cookie consent meta tags
             '#<meta[^>]{0,300}name=["\']?[^"\']{0,100}(cookie|consent)[^"\']{0,100}["\']?[^>]{0,200}>#is'

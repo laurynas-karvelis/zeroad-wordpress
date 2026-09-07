@@ -127,7 +127,7 @@ class Config
     private function resolveCacheOptions()
     {
         if (empty($this->options["cache_enabled"])) {
-            return ["store" => "memory"];
+            return false;
         }
 
         return [

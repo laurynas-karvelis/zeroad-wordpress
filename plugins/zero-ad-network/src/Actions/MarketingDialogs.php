@@ -113,19 +113,15 @@ class MarketingDialogs extends Action
 
     public static function outputBufferCallback(string $html): string
     {
-        // Remove popup scripts and modal elements from HTML
+        // Popup/marketing scripts only. Container and overlay removal is left to marketing-dialogs.css:
+        // deleting `<div>`s by class ("modal", "overlay", "subscribe", "newsletter") both corrupts nested
+        // markup and strips legitimate site elements that merely share those very common class names.
         return parent::runReplacements($html, [
-            // Remove popup/modal scripts (limit backtracking)
-            '#<script[^>]{0,500}(src=[\'"][^\'"]{0,500}(optinmonster|popup-maker|thrive|hubspot|wpforms-popup|convertflow|mailchimp|newsletter)[^\'"]{0,200}[\'"])[^>]{0,200}>(?:(?!</script>).){0,10000}</script>#is',
-
-            // Remove popup containers (limit size)
-            '#<(div|section|aside)[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(popup|modal|marketing|optin|om-popup|pum|thrive-leads|hustle|newsletter|subscribe)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</\1>).){0,10000}</\1>#is',
-
-            // Remove popup overlays
-            '#<div[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(overlay|backdrop|modal-backdrop)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</div>).){0,5000}</div>#is',
+            // Remove popup/modal scripts (lazy `.*?` stops at the first </script>)
+            '#<script[^>]{0,500}(src=[\'"][^\'"]{0,500}(optinmonster|popup-maker|thrive|hubspot|wpforms-popup|convertflow|mailchimp|newsletter)[^\'"]{0,200}[\'"])[^>]{0,200}>.*?</script>#is',
 
             // Remove HubSpot chat/conversations widget
-            '#<script[^>]{0,500}src=[\'"][^\'"]{0,500}hubspot[^\'"]{0,200}[\'"][^>]{0,200}>(?:(?!</script>).){0,2000}</script>#is'
+            '#<script[^>]{0,500}src=[\'"][^\'"]{0,500}hubspot[^\'"]{0,200}[\'"][^>]{0,200}>.*?</script>#is'
         ]);
     }
 

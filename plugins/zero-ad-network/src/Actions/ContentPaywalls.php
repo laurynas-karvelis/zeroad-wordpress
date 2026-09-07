@@ -95,19 +95,16 @@ class ContentPaywalls extends Action
 
     public static function outputBufferCallback(string $html): string
     {
-        // Remove paywall overlays and related elements from HTML
+        // Paywall scripts and paywall-specific blur styles only. The membership/paywall plugins are
+        // disabled and their access filters overridden in run()/registerPluginOverrides(), so protected
+        // content is served unlocked at the source. Deleting overlay `<div>`s by class here would corrupt
+        // nested markup and strip legitimate "subscribe"/"subscription" sections, so it is not done.
         return parent::runReplacements($html, [
-            // Remove paywall overlay containers (limit size to prevent catastrophic backtracking)
-            '#<(div|aside|section)[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(paywall|pay-wall|leaky-paywall|memberpress|mepr|pmpro|paywall-overlay|paywall-layer|restricted-content|subscription-required|premium-content|locked-content)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</\1>).){0,8000}</\1>#is',
-
-            // Remove paywall scripts
-            '#<script[^>]{0,500}(src=[\'"][^\'"]{0,500}paywall[^\'"]{0,200}[\'"])[^>]{0,200}>(?:(?!</script>).){0,5000}</script>#is',
+            // Remove paywall scripts (lazy `.*?` stops at the first </script>)
+            '#<script[^>]{0,500}(src=[\'"][^\'"]{0,500}paywall[^\'"]{0,200}[\'"])[^>]{0,200}>.*?</script>#is',
 
             // Remove blur/fade effects commonly used for paywalls
-            "#<style[^>]{0,200}>[^<]{0,500}(paywall|restricted|premium)[^<]{0,500}(blur|opacity|fade)[^<]{0,500}</style>#is",
-
-            // Remove subscription prompts
-            '#<div[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(subscribe|subscription|premium-access|membership-required)[^"\']{0,200}["\'][^>]{0,300}>(?:(?!</div>).){0,5000}</div>#is'
+            "#<style[^>]{0,200}>[^<]{0,500}(paywall|restricted|premium)[^<]{0,500}(blur|opacity|fade)[^<]{0,500}</style>#is"
         ]);
     }
 

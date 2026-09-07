@@ -84,7 +84,11 @@ class Advertisements extends Action
 
     public static function outputBufferCallback(string $html): string
     {
-        // Remove ad scripts and elements from HTML
+        // Only surgical, self-contained removals here: ad scripts, iframes and AdSense `<ins>` blocks,
+        // none of which nest. Container removal by class name is deliberately NOT done - the CSS in
+        // advertisements.css hides ad containers, and a regex that tries to delete a `<div>` and its
+        // contents breaks on nested `<div>`s (it stops at the first `</div>`) and false-matches innocent
+        // class names, corrupting the page for a paying subscriber.
         return parent::runReplacements($html, [
             // Remove ad scripts (limit backtracking with quantifiers)
             "#<script[^>]{0,500}(adsbygoogle|googlesyndication|doubleclick|adservice|adrotate|advanced-ads|adinsert|ad-inserter)[^>]{0,200}>.*?</script>#is",
@@ -92,14 +96,11 @@ class Advertisements extends Action
             // Remove ad iframes (limit backtracking)
             '#<iframe[^>]{0,500}src=[\'"][^\'"]{0,500}(ads|doubleclick|googlesyndication)[^\'"]{0,200}[\'"][^>]{0,200}>.*?</iframe>#is',
 
-            // Remove ad containers by class/id (limit size to 5000 chars)
-            '#<(div|section|aside)[^>]{0,300}(class|id)\s*=\s*["\'][^"\']{0,200}(\bads?\b|\badvert|\bad-inserter|\badvanced-ads\b)[^"\']{0,200}["\'][^>]{0,200}>(?:(?!</\1>).){0,5000}</\1>#is',
-
             // Remove Google AdSense ins elements
-            "#<ins[^>]{0,300}(class|id)[^>]{0,200}adsbygoogle[^>]{0,200}>(?:(?!</ins>).){0,2000}</ins>#is",
+            "#<ins[^>]{0,300}(class|id)[^>]{0,200}adsbygoogle[^>]{0,200}>.*?</ins>#is",
 
-            // Remove ad-related meta tags
-            '#<meta[^>]{0,300}(name|property)=["\']?[^"\']{0,100}(ad|advertisement|adsense)[^"\']{0,100}["\']?[^>]{0,200}>#is'
+            // Remove ad-network meta tags (kept specific: bare "ad" would match innocent meta names)
+            '#<meta[^>]{0,300}(name|property)=["\']?[^"\']{0,100}(advertisement|adsense|doubleclick)[^"\']{0,100}["\']?[^>]{0,200}>#is'
         ]);
     }
 
