@@ -8,8 +8,6 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-use ZeroAd\Token\Constants;
-
 /**
  * AdminPages - Handles admin page rendering
  */
@@ -43,7 +41,7 @@ class AdminPages
 
             <?php settings_errors(); ?>
 
-            <?php if (!empty($this->options["enabled"]) && !empty($this->options["client_id"])): ?>
+            <?php if (!empty($this->options["enabled"]) && !empty($this->options["publisher_id"])): ?>
                 <div class="notice notice-success inline" style="margin: 20px 0;">
                     <p>
                         <strong><?php esc_html_e(
@@ -66,7 +64,7 @@ class AdminPages
                 ?>
             </form>
 
-            <?php if (!empty($this->options["enabled"]) && !empty($this->options["client_id"])): ?>
+            <?php if (!empty($this->options["enabled"]) && !empty($this->options["publisher_id"])): ?>
                 <?php $this->renderStatusTable(); ?>
             <?php endif; ?>
         </div>
@@ -92,13 +90,13 @@ class AdminPages
                     </td>
                 </tr>
                 <tr>
-                    <th><?php esc_html_e("Client ID", "zero-ad-network"); ?></th>
+                    <th><?php esc_html_e("Publisher ID", "zero-ad-network"); ?></th>
                     <td>
-                        <code style="font-size: 13px;"><?php echo esc_html($this->options["client_id"]); ?></code>
+                        <code style="font-size: 13px;"><?php echo esc_html($this->options["publisher_id"]); ?></code>
                     </td>
                 </tr>
                 <tr>
-                    <th><?php esc_html_e("Welcome Header Method", "zero-ad-network"); ?></th>
+                    <th><?php esc_html_e("Publisher Header Method", "zero-ad-network"); ?></th>
                     <td>
                         <?php echo esc_html(
                             $this->options["output_method"] === "header"
@@ -112,12 +110,13 @@ class AdminPages
                     <td>
                         <?php if (!empty($this->options["cache_enabled"])): ?>
                             <span style="color: #46b450;">✓</span>
-                             /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */ /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */<?php /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
-                             printf(
-                                 esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
-                                 esc_html((string) ($this->options["cache_ttl"] ?? 5)),
-                                 esc_html($this->options["cache_prefix"] ?? "zeroad:")
-                             ); ?>
+                            <?php
+                            /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
+                            printf(
+                                esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
+                                esc_html((string) ($this->options["cache_ttl"] ?? 5)),
+                                esc_html($this->options["cache_prefix"] ?? "zeroad:")
+                            ); ?>
                         <?php else: ?>
                             <span style="color: #dc3545;">✗</span>
                             <?php esc_html_e("Disabled", "zero-ad-network"); ?>
@@ -125,42 +124,12 @@ class AdminPages
                     </td>
                 </tr>
                 <tr>
-                    <th><?php esc_html_e("Enabled Features", "zero-ad-network"); ?></th>
+                    <th><?php esc_html_e("Subscriber Experience", "zero-ad-network"); ?></th>
                     <td>
-                        <?php
-                        $featureNames = [
-                            Constants::FEATURE["CLEAN_WEB"] => __("Clean Web ($6/month)", "zero-ad-network"),
-                            Constants::FEATURE["ONE_PASS"] => __("One Pass ($12/month)", "zero-ad-network")
-                        ];
-                        $enabled = [];
-                        foreach ($this->options["features"] as $feature) {
-                            $enabled[] = $featureNames[$feature] ?? $feature;
-                        }
-                        echo esc_html(implode(", ", $enabled));
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th><?php esc_html_e("Maximum Monthly Revenue", "zero-ad-network"); ?></th>
-                    <td>
-                        <strong>
-                            <?php
-                            $revenue = 0;
-                            foreach ($this->options["features"] as $feature) {
-                                if ($feature === Constants::FEATURE["CLEAN_WEB"]) {
-                                    $revenue += 6;
-                                }
-                                if ($feature === Constants::FEATURE["ONE_PASS"]) {
-                                    $revenue += 12;
-                                }
-                            }
-                            printf(
-                                /* translators: %s: Revenue amount per subscriber */
-                                esc_html__("$%s per subscriber (based on engagement)", "zero-ad-network"),
-                                esc_html(number_format($revenue, 0))
-                            );
-                            ?>
-                        </strong>
+                        <?php esc_html_e(
+                            "Ad-free, tracker-free, no cookie dialogs, no marketing popups, paywalls unlocked (Freedom plan)",
+                            "zero-ad-network"
+                        ); ?>
                     </td>
                 </tr>
             </tbody>

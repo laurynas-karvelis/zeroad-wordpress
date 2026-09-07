@@ -8,7 +8,7 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-use ZeroAd\Token\Site;
+use ZeroAd\Token\Publisher;
 
 class Config
 {
@@ -17,7 +17,7 @@ class Config
     private $settings;
     private $admin_pages;
     private $renderer;
-    private $site = null;
+    private $publisher = null;
 
     private function __construct(
         ?Settings $settings = null,
@@ -56,8 +56,8 @@ class Config
         // AJAX handler with rate limiting.
         add_action("wp_ajax_zeroad_dismiss_welcome", [$this, "ajaxDismissWelcome"]);
 
-        // Initialize Site instance.
-        add_action("init", [$this, "initializeSite"], 1);
+        // Initialize the Publisher instance.
+        add_action("init", [$this, "initializePublisher"], 1);
 
         // Hook to update options after save.
         add_action("update_option_" . Settings::OPTION_KEY, [$this, "onOptionsUpdate"], 10, 2);
@@ -66,47 +66,75 @@ class Config
         $this->renderer->run();
     }
 
-    public function initializeSite(): void
+    public function initializePublisher(): void
     {
         try {
             // Refresh options in case they were updated.
             $this->options = get_option(Settings::OPTION_KEY, $this->options);
             $this->updateComponents();
 
-            // Only create Site instance if plugin is fully configured.
-            if (
-                !empty($this->options["enabled"]) &&
-                !empty($this->options["client_id"]) &&
-                !empty($this->options["features"]) &&
-                count($this->options["features"]) > 0
-            ) {
-                if ($this->site === null) {
-                    $cache_config = null;
-                    if (!empty($this->options["cache_enabled"])) {
-                        $cache_config = [
-                            "ttl" => intval($this->options["cache_ttl"] ?? ZEROAD_DEFAULT_CACHE_TTL),
-                            "prefix" => $this->options["cache_prefix"] ?? "zeroad:"
-                        ];
-                    }
-
-                    $this->site = new Site([
-                        "clientId" => $this->options["client_id"],
-                        "features" => $this->options["features"],
-                        "cacheConfig" => $cache_config
+            // Only create a Publisher once the plugin is enabled and has a Publisher ID.
+            if (!empty($this->options["enabled"]) && !empty($this->options["publisher_id"])) {
+                if ($this->publisher === null) {
+                    $this->publisher = Publisher::create([
+                        "publisherId" => $this->options["publisher_id"],
+                        "hostnames" => $this->resolveHostnames(),
+                        "cache" => $this->resolveCacheOptions(),
                     ]);
                 }
 
-                $this->renderer->setSite($this->site);
+                $this->renderer->setPublisher($this->publisher);
             } else {
-                $this->renderer->setSite(null);
+                $this->renderer->setPublisher(null);
             }
         } catch (\InvalidArgumentException $e) {
-            $this->renderer->setSite(null);
+            $this->renderer->setPublisher(null);
             $this->showConfigError($e->getMessage());
         } catch (\RuntimeException $e) {
-            $this->renderer->setSite(null);
+            $this->renderer->setPublisher(null);
             $this->showConfigError($e->getMessage());
         }
+    }
+
+    /**
+     * The site's canonical host, which the SDK also expands to cover the `www` sibling. A visitor's token
+     * is bound to whichever host they typed and is verified against the exact request host, so this only
+     * needs to name the host(s) this WordPress install actually answers on.
+     *
+     * @return string[]
+     */
+    private function resolveHostnames(): array
+    {
+        $hosts = [];
+
+        foreach ([home_url(), site_url()] as $url) {
+            $host = wp_parse_url($url, PHP_URL_HOST);
+            if (is_string($host) && $host !== "") {
+                $hosts[$host] = true;
+            }
+        }
+
+        return array_keys($hosts);
+    }
+
+    /**
+     * Maps the plugin's cache settings onto the token SDK's cache options. The UI speaks seconds; the SDK
+     * speaks milliseconds. Enabling caching asks for the APCu store so a verdict is shared across the
+     * PHP-FPM pool, falling back to a per-process memory cache when APCu is absent.
+     *
+     * @return bool|array<string,mixed>
+     */
+    private function resolveCacheOptions()
+    {
+        if (empty($this->options["cache_enabled"])) {
+            return ["store" => "memory"];
+        }
+
+        return [
+            "store" => "auto",
+            "ttl" => intval($this->options["cache_ttl"] ?? ZEROAD_DEFAULT_CACHE_TTL) * 1000,
+            "prefix" => $this->options["cache_prefix"] ?? "zeroad:",
+        ];
     }
 
     private function showConfigError(string $message): void
@@ -127,14 +155,14 @@ class Config
 
     public function onOptionsUpdate($old_value, $new_value): void
     {
-        // Clear Site instance when options change.
-        $this->site = null;
+        // Rebuild the Publisher when options change.
+        $this->publisher = null;
         $this->options = $new_value;
         $this->updateComponents();
 
         // Reinitialize if init already happened.
         if (did_action("init")) {
-            $this->initializeSite();
+            $this->initializePublisher();
         }
     }
 
@@ -194,7 +222,7 @@ class Config
         $dismissed = get_user_meta(get_current_user_id(), "zeroad_welcome_dismissed", true);
 
         // Only show if plugin is not configured yet and not dismissed.
-        if (empty($this->options["client_id"]) && !$dismissed) {
+        if (empty($this->options["publisher_id"]) && !$dismissed) {
             $nonce = wp_create_nonce("zeroad_dismiss_welcome"); ?>
             <div class="notice notice-info is-dismissible zeroad-welcome-notice" data-dismiss-nonce="<?php echo esc_attr(
                 $nonce
@@ -212,7 +240,7 @@ class Config
                             wp_kses(
                                 /* translators: %s: URL to Zero Ad Network registration page */
                                 __(
-                                    'Register your site at <a href="%s" target="_blank" rel="noopener noreferrer">zeroad.network</a> to get your Client ID',
+                                    'Register your site at <a href="%s" target="_blank" rel="noopener noreferrer">zeroad.network</a> to get your Publisher ID',
                                     "zero-ad-network"
                                 ),
                                 ["a" => ["href" => [], "target" => [], "rel" => []]]
@@ -224,18 +252,18 @@ class Config
                         <?php printf(
                             wp_kses(
                                 /* translators: %s: URL to plugin settings page */
-                                __('Enter your Client ID in the <a href="%s">plugin settings</a>', "zero-ad-network"),
+                                __('Enter your Publisher ID in the <a href="%s">plugin settings</a>', "zero-ad-network"),
                                 ["a" => ["href" => []]]
                             ),
                             esc_url(admin_url("admin.php?page=zeroad-config"))
                         ); ?>
                     </li>
                     <li><?php esc_html_e(
-                        "Select which features to enable (Clean Web, One Pass, or both)",
+                        "Enable the plugin and save",
                         "zero-ad-network"
                     ); ?></li>
                     <li><?php esc_html_e(
-                        "Save settings and subscribers will enjoy an improved experience on your site while you earn revenue!",
+                        "Subscribers will enjoy an ad-free, clean experience on your site while you earn revenue!",
                         "zero-ad-network"
                     ); ?></li>
                 </ol>
@@ -279,7 +307,7 @@ class Config
         }
 
         $show_welcome =
-            empty($this->options["client_id"]) &&
+            empty($this->options["publisher_id"]) &&
             !get_user_meta(get_current_user_id(), "zeroad_welcome_dismissed", true);
 
         if (!$is_our_page && !$show_welcome) {

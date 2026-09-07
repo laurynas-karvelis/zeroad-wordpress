@@ -8,7 +8,7 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-use ZeroAd\Token\Site;
+use ZeroAd\Token\Publisher;
 use ZeroAd\WP\Actions\Advertisements;
 use ZeroAd\WP\Actions\ContentPaywalls;
 use ZeroAd\WP\Actions\CookieConsent;
@@ -18,26 +18,47 @@ use ZeroAd\WP\Actions\SubscriptionAccess;
 class Renderer
 {
     private $options;
-    private $site;
-    private $tokenContext;
+
+    /** @var Publisher|null */
+    private $publisher;
+
+    /** @var bool Whether this visitor holds a live Zero Ad Network (Freedom) subscription. */
+    private $isSubscriber = false;
+
+    /** @var array<string,bool> The action flags for this request, all on for a subscriber, empty otherwise. */
+    private $tokenContext = [];
+
     private $bufferStarted = false;
     private $bufferLevel = 0;
     private $enabledFeatureClasses = [];
 
-    public static function getFeatureActionClasses()
+    /**
+     * The single Freedom plan entitles a subscriber to the whole clean experience at once, so every
+     * action runs for a subscriber. This is the internal context the {@see Actions\Action} classes read.
+     */
+    public const SUBSCRIBER_CONTEXT = [
+        "HIDE_ADVERTISEMENTS" => true,
+        "HIDE_COOKIE_CONSENT_SCREEN" => true,
+        "HIDE_MARKETING_DIALOGS" => true,
+        "DISABLE_NON_FUNCTIONAL_TRACKING" => true,
+        "DISABLE_CONTENT_PAYWALL" => true,
+        "ENABLE_SUBSCRIPTION_ACCESS" => true,
+    ];
+
+    public static function getFeatureActionClasses(): array
     {
         return [
             Advertisements::class,
             CookieConsent::class,
             MarketingDialogs::class,
             ContentPaywalls::class,
-            SubscriptionAccess::class
+            SubscriptionAccess::class,
         ];
     }
 
-    public function setSite(?Site $site): void
+    public function setPublisher(?Publisher $publisher): void
     {
-        $this->site = $site;
+        $this->publisher = $publisher;
     }
 
     public function setOptions(array $options): void
@@ -47,71 +68,85 @@ class Renderer
 
     public function run(): void
     {
-        // Output the server header/meta tag
+        // Announce participation to the extension.
         add_action("send_headers", [$this, "maybeSendHeader"], 20);
         add_action("wp_head", [$this, "maybeInjectMetaTag"], 1);
 
-        // Parse incoming client token
-        add_action("init", [$this, "parseClientToken"], 2);
+        // Verify the incoming subscriber token.
+        add_action("init", [$this, "verifyToken"], 2);
 
-        // Register plugin-specific overrides
-        add_action("init", [$this, "registerPluginOverrides"], 3);
+        // Advertise the cache variant so page-cache plugins and CDNs keep subscriber and regular
+        // versions apart. Runs for every visitor, subscriber or not.
+        add_action("init", [$this, "registerCacheVariant"], 3);
 
-        // Toggle features based on token
+        // Register plugin-specific overrides for subscribers.
+        add_action("init", [$this, "registerPluginOverrides"], 4);
+
+        // Toggle actions based on the verdict.
         add_action("template_redirect", [$this, "maybeToggleFeatures"], 2);
 
-        // Start output buffering for HTML post-processing
+        // Start output buffering for HTML post-processing.
         add_action("template_redirect", [$this, "maybeStartOutputBuffer"], 5);
     }
 
     public function maybeSendHeader(): void
     {
-        if (!isset($this->site) || is_admin() || ($this->options["output_method"] ?? "header") !== "header") {
+        if ($this->publisher === null || is_admin() || ($this->options["output_method"] ?? "header") !== "header") {
             return;
         }
 
-        // Check if headers already sent
         if (headers_sent()) {
             return;
         }
 
-        header("{$this->site->SERVER_HEADER_NAME}: {$this->site->SERVER_HEADER_VALUE}", true);
+        header("{$this->publisher->headerName}: {$this->publisher->headerValue}", true);
     }
 
     public function maybeInjectMetaTag(): void
     {
-        if (!isset($this->site) || is_admin() || ($this->options["output_method"] ?? "header") !== "meta") {
+        if ($this->publisher === null || is_admin() || ($this->options["output_method"] ?? "header") !== "meta") {
             return;
         }
 
-        $name = esc_attr($this->site->SERVER_HEADER_NAME);
-        $value = esc_attr($this->site->SERVER_HEADER_VALUE);
+        $name = esc_attr($this->publisher->headerName);
+        $value = esc_attr($this->publisher->headerValue);
 
         // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $name and $value are escaped above
-        echo sprintf('<meta name="%s" content="%s" data-zeroad="server-identifier" />' . "\n", $name, $value);
+        echo sprintf('<meta name="%s" content="%s" data-zeroad="publisher-identifier" />' . "\n", $name, $value);
     }
 
-    public function parseClientToken(): void
+    public function verifyToken(): void
     {
-        if (!isset($this->site) || is_admin()) {
+        if ($this->publisher === null || is_admin()) {
             return;
         }
 
         try {
-            // Get the client header value
-            $headerName = $this->site->CLIENT_HEADER_NAME;
-            $headerValue = $this->getServerHeader($headerName);
+            $token = $this->getServerValue($this->publisher->tokenHeaderServerKey);
+            $hostname = $this->getServerValue("HTTP_HOST");
 
-            if ($headerValue === null) {
-                return;
-            }
+            $result = $this->publisher->verify($token, $hostname);
 
-            // Parse and verify the signed token
-            $this->tokenContext = $this->site->parseClientToken($headerValue);
+            $this->isSubscriber = $result->subscriber;
+            $this->tokenContext = $result->subscriber ? self::SUBSCRIBER_CONTEXT : [];
         } catch (\Throwable $e) {
-            // Set empty context so we know parsing was attempted
+            // A verification failure is a non-subscriber, never a fatal page error.
+            $this->isSubscriber = false;
             $this->tokenContext = [];
         }
+
+        // Actions that hook WordPress filters (e.g. password-protection bypass) read the verdict from a
+        // global, since they run inside callbacks that receive no context of their own.
+        $GLOBALS["zeroad_token_context"] = $this->tokenContext;
+    }
+
+    public function registerCacheVariant(): void
+    {
+        if ($this->publisher === null || is_admin()) {
+            return;
+        }
+
+        CacheInterceptor::registerPluginOverrides($this->isSubscriber);
     }
 
     public function registerPluginOverrides(): void
@@ -122,14 +157,9 @@ class Renderer
 
         foreach (self::getFeatureActionClasses() as $Class) {
             if ($Class::enabled($this->tokenContext)) {
-                if (method_exists($Class, "registerPluginOverrides")) {
-                    $Class::registerPluginOverrides($this->tokenContext);
-                }
+                $Class::registerPluginOverrides($this->tokenContext);
             }
         }
-
-        // Register cache interceptor
-        CacheInterceptor::registerPluginOverrides($this->tokenContext);
     }
 
     public function maybeToggleFeatures(): void
@@ -140,7 +170,7 @@ class Renderer
 
         $this->enabledFeatureClasses = [];
 
-        foreach (self::get_feature_action_classes() as $Class) {
+        foreach (self::getFeatureActionClasses() as $Class) {
             if ($Class::enabled($this->tokenContext)) {
                 $this->enabledFeatureClasses[] = $Class;
                 $Class::run();
@@ -150,27 +180,24 @@ class Renderer
 
     public function maybeStartOutputBuffer(): void
     {
-        // Only buffer if token parsing happened
-        if (!isset($this->tokenContext) || is_admin()) {
+        if (empty($this->tokenContext) || is_admin()) {
             return;
         }
 
-        // Skip buffering for AJAX and JSON requests
+        // Skip buffering for AJAX and JSON requests.
         if (wp_doing_ajax() || $this->isJsonRequest()) {
             return;
         }
 
-        // Avoid double-buffering
         if ($this->bufferStarted) {
             return;
         }
 
-        // Remember the buffer level before we start
         $this->bufferLevel = ob_get_level();
         $this->bufferStarted = true;
 
         ob_start([$this, "outputBufferCallback"]);
-        add_action("shutdown", [$this, "endBuffer"], 999); // Run late to ensure content is flushed
+        add_action("shutdown", [$this, "endBuffer"], 999);
     }
 
     public function endBuffer(): void
@@ -181,68 +208,50 @@ class Renderer
 
         $this->bufferStarted = false;
 
-        // Flush all buffers we started
         while (ob_get_level() > $this->bufferLevel) {
             ob_end_flush();
         }
     }
 
-    /**
-     * Output buffer callback - modify HTML before sending to client
-     */
+    /** Output buffer callback - modify HTML before it is sent to the visitor. */
     public function outputBufferCallback(string $html): string
     {
         if (empty($this->tokenContext)) {
             return $html;
         }
 
-        $startTime = microtime(true);
-        $originalLength = strlen($html);
-
-        // Use cached enabled features
-        $enabledClasses = $this->enabledFeatureClasses;
-
-        foreach ($enabledClasses as $Class) {
+        foreach ($this->enabledFeatureClasses as $Class) {
             try {
                 $html = $Class::outputBufferCallback($html);
             } catch (\Throwable $e) {
-                // Ignore
+                // A single misbehaving replacement must not take the page down.
             }
         }
-
-        $processTime = round((microtime(true) - $startTime) * 1000, 2);
-        $newLength = strlen($html);
-        $reduction = $originalLength - $newLength;
 
         return $html;
     }
 
-    private function getServerHeader(string $name): ?string
+    private function getServerValue(string $key): ?string
     {
-        $serverKey = "HTTP_" . str_replace("-", "_", strtoupper($name));
-
-        if (!isset($_SERVER[$serverKey]) || !is_string($_SERVER[$serverKey])) {
+        if (!isset($_SERVER[$key]) || !is_string($_SERVER[$key])) {
             return null;
         }
 
-        return sanitize_text_field(wp_unslash($_SERVER[$serverKey]));
+        return sanitize_text_field(wp_unslash($_SERVER[$key]));
     }
 
     private function isJsonRequest(): bool
     {
-        // Check if REST API request
         if (defined("REST_REQUEST") && REST_REQUEST) {
             return true;
         }
 
-        // Check Accept header
-        $accept = $this->getServerHeader("Accept") ?? "";
+        $accept = $this->getServerValue("HTTP_ACCEPT") ?? "";
         if (stripos($accept, "application/json") !== false) {
             return true;
         }
 
-        // Check Content-Type header
-        $contentType = $this->getServerHeader("Content-Type") ?? "";
+        $contentType = $this->getServerValue("HTTP_CONTENT_TYPE") ?? "";
         if (stripos($contentType, "application/json") !== false) {
             return true;
         }

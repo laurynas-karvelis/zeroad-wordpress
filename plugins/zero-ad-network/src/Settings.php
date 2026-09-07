@@ -8,13 +8,14 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-use ZeroAd\Token\Constants;
-
 class Settings
 {
     const OPTION_KEY = "zeroad_token_options";
-    const MAX_CLIENT_ID_LENGTH = 20;
-    const MIN_CLIENT_ID_LENGTH = 20;
+
+    /** A Publisher ID is the `zapub_` prefix followed by exactly 24 alphanumerics. */
+    const PUBLISHER_ID_PATTERN = '/^zapub_[A-Za-z0-9]{24}$/';
+    const PUBLISHER_ID_LENGTH = 30;
+
     private $options;
 
     public function __construct(array $options)
@@ -37,8 +38,7 @@ class Settings
     {
         return [
             "enabled" => false,
-            "client_id" => "",
-            "features" => [],
+            "publisher_id" => "",
             "output_method" => "header",
             "cache_enabled" => true,
             "cache_ttl" => ZEROAD_DEFAULT_CACHE_TTL,
@@ -67,9 +67,8 @@ class Settings
     {
         $fields = [
             "enabled" => ["renderEnabled", __("Enable Plugin", "zero-ad-network")],
-            "client_id" => ["renderClientId", __("Client ID", "zero-ad-network")],
-            "features" => ["renderFeatures", __("Enabled Features", "zero-ad-network")],
-            "output_method" => ["renderOutputMethod", __("Welcome Header Method", "zero-ad-network")]
+            "publisher_id" => ["renderPublisherId", __("Publisher ID", "zero-ad-network")],
+            "output_method" => ["renderOutputMethod", __("Publisher Header Method", "zero-ad-network")]
         ];
 
         foreach ($fields as $field => $entry) {
@@ -108,7 +107,7 @@ class Settings
     {
         echo '<p class="description">';
         esc_html_e(
-            "Configure your Zero Ad Network partnership settings. Subscribers with valid tokens will experience your site according to the features you enable.",
+            "Configure your Zero Ad Network partnership settings. Subscribers with a valid token get the full ad-free, tracker-free, paywall-free experience on your site automatically.",
             "zero-ad-network"
         );
         echo "</p>";
@@ -175,7 +174,7 @@ class Settings
         </label>
         <p class="description">
             <?php esc_html_e(
-                "When enabled, the plugin will verify subscriber tokens and apply the configured features for Zero Ad Network subscribers.",
+                "When enabled, the plugin verifies each visitor's subscriber token and applies the ad-free, clean experience for Zero Ad Network subscribers.",
                 "zero-ad-network"
             ); ?>
         </p>
@@ -183,96 +182,31 @@ class Settings
     }
 
     /**
-     * Render client_id field.
+     * Render publisher_id field.
      */
-    public function renderClientId(): void
+    public function renderPublisherId(): void
     {
-        $value = $this->options["client_id"] ?? ""; ?>
+        $value = $this->options["publisher_id"] ?? ""; ?>
         <input type="text"
-               name="<?php echo esc_attr(self::OPTION_KEY); ?>[client_id]"
+               name="<?php echo esc_attr(self::OPTION_KEY); ?>[publisher_id]"
                value="<?php echo esc_attr($value); ?>"
                class="regular-text code"
-               maxlength="<?php echo esc_attr((string) self::MAX_CLIENT_ID_LENGTH); ?>"
-               placeholder="<?php esc_attr_e("abc123DEF456_ghi789-jkl", "zero-ad-network"); ?>">
+               maxlength="<?php echo esc_attr((string) self::PUBLISHER_ID_LENGTH); ?>"
+               placeholder="<?php esc_attr_e("zapub_XXXXXXXXXXXXXXXXXXXXXXXX", "zero-ad-network"); ?>">
         <p class="description">
             <?php printf(
                 wp_kses(
                     /* translators: %s: URL to Zero Ad Network dashboard */
                     __(
-                        'Your unique Client ID from the <a href="%s" target="_blank" rel="noopener noreferrer">Zero Ad Network dashboard</a>. This is used to identify your site and verify subscriber tokens.',
+                        'Your unique Publisher ID from the <a href="%s" target="_blank" rel="noopener noreferrer">Zero Ad Network dashboard</a>. It starts with <code>zapub_</code> and identifies your site so visits are credited to you.',
                         "zero-ad-network"
                     ),
-                    ["a" => ["href" => [], "target" => [], "rel" => []]]
+                    ["a" => ["href" => [], "target" => [], "rel" => []], "code" => []]
                 ),
                 esc_url("https://zeroad.network/dashboard")
             ); ?>
         </p>
         <?php
-    }
-
-    /**
-     * Render features field.
-     */
-    public function renderFeatures(): void
-    {
-        $selected_features = $this->options["features"] ?? [];
-        $features = Constants::FEATURE;
-
-        $feature_descriptions = [
-            Constants::FEATURE["CLEAN_WEB"] => [
-                "name" => __("Clean Web", "zero-ad-network"),
-                "description" => __(
-                    'Hide advertisements, cookie consent screens, marketing dialogs, and disable non-functional tracking for Clean Web subscribers ($6/month plan).',
-                    "zero-ad-network"
-                ),
-                "revenue" => 6
-            ],
-            Constants::FEATURE["ONE_PASS"] => [
-                "name" => __("One Pass", "zero-ad-network"),
-                "description" => __(
-                    'Grant access to premium/member-only content for One Pass subscribers ($12/month plan) without requiring separate subscriptions.',
-                    "zero-ad-network"
-                ),
-                "revenue" => 12
-            ]
-        ];
-
-        foreach ($features as $key => $value) {
-
-            if (!isset($feature_descriptions[$value])) {
-                continue;
-            }
-
-            $info = $feature_descriptions[$value];
-            $checked = in_array($value, $selected_features, true);
-            ?>
-            <div class="zeroad-feature-box <?php echo $checked ? "selected" : ""; ?>">
-                <label class="zeroad-feature-label">
-                    <input type="checkbox"
-                           name="<?php echo esc_attr(self::OPTION_KEY); ?>[features][]"
-                           value="<?php echo esc_attr((string) $value); ?>"
-                           <?php checked($checked, true); ?>
-                           data-revenue="<?php echo esc_attr((string) $info["revenue"]); ?>">
-                    <span class="zeroad-feature-name"><?php echo esc_html($info["name"]); ?></span>
-                </label>
-                <p class="zeroad-feature-description"><?php echo esc_html($info["description"]); ?></p>
-                <p class="zeroad-feature-revenue">
-                    <?php printf(
-                        /* translators: %d: Monthly revenue amount in dollars */
-                        esc_html__('Earn up to $%d per subscriber per month (based on engagement)', "zero-ad-network"),
-                        esc_html((string) $info["revenue"])
-                    ); ?>
-                </p>
-            </div>
-            <?php
-        }
-
-        echo '<p class="description" style="margin-top: 15px;">';
-        esc_html_e(
-            'Select at least one feature. The Freedom plan ($18/month) includes both Clean Web and One Pass, providing the maximum revenue opportunity.',
-            "zero-ad-network"
-        );
-        echo "</p>";
     }
 
     /**
@@ -291,7 +225,7 @@ class Settings
         </select>
         <p class="description">
             <?php esc_html_e(
-                'How to send the "X-Better-Web-Welcome" identifier to the subscriber\'s browser extension. HTTP header is recommended for better performance with page caching.',
+                'How to send the "Better-Web-Publisher" identifier to the subscriber\'s browser extension. HTTP header is recommended for better performance with page caching.',
                 "zero-ad-network"
             ); ?>
         </p>
@@ -419,12 +353,20 @@ class Settings
         // Enabled.
         $output["enabled"] = !empty($input["enabled"]) ? 1 : 0;
 
-        // Client ID validation.
-        $client_id = isset($input["client_id"]) ? trim(sanitize_text_field($input["client_id"])) : "";
-        if (!empty($client_id)) {
-            $client_id = $this->validateClientId($client_id, $errors);
+        // Publisher ID validation.
+        $publisher_id = isset($input["publisher_id"]) ? trim(sanitize_text_field($input["publisher_id"])) : "";
+        if (!empty($publisher_id)) {
+            $publisher_id = $this->validatePublisherId($publisher_id, $errors);
         }
-        $output["client_id"] = $client_id;
+        $output["publisher_id"] = $publisher_id;
+
+        // Require a Publisher ID once the plugin is switched on.
+        if (empty($output["publisher_id"]) && !empty($output["enabled"])) {
+            $errors[] = __(
+                "Enter your Publisher ID from the Zero Ad Network dashboard before enabling the plugin.",
+                "zero-ad-network"
+            );
+        }
 
         // Output method.
         $output["output_method"] = $this->validateOutputMethod($input["output_method"] ?? "header");
@@ -434,9 +376,6 @@ class Settings
         $output["cache_ttl"] = $this->validateCacheTtl($input["cache_ttl"] ?? ZEROAD_DEFAULT_CACHE_TTL);
         $output["cache_prefix"] = $this->validateCachePrefix($input["cache_prefix"] ?? "zeroad:");
 
-        // Features validation.
-        $output["features"] = $this->validateFeatures($input["features"] ?? [], (bool) $output["enabled"], $errors);
-
         // Display errors.
         foreach ($errors as $error) {
             add_settings_error(self::OPTION_KEY, "validation_error_" . md5($error), $error, "error");
@@ -445,40 +384,20 @@ class Settings
         return $output;
     }
 
-    private function validateClientId(string $client_id, array &$errors): string
+    private function validatePublisherId(string $publisher_id, array &$errors): string
     {
-        // Check length.
-        if (strlen($client_id) < self::MIN_CLIENT_ID_LENGTH) {
-            $errors[] = sprintf(
-                /* translators: %d: minimum length */
-                __(
-                    "Client ID is too short (minimum %d characters). Please verify you copied it correctly from the Zero Ad Network dashboard.",
-                    "zero-ad-network"
-                ),
-                self::MIN_CLIENT_ID_LENGTH
-            );
-            return "";
-        }
-
-        if (strlen($client_id) > self::MAX_CLIENT_ID_LENGTH) {
-            $errors[] = sprintf(
-                /* translators: %d: maximum length */
-                __("Client ID is too long (maximum %d characters).", "zero-ad-network"),
-                self::MAX_CLIENT_ID_LENGTH
-            );
-            return "";
-        }
-
-        // Check characters.
-        if (!preg_match('/^[A-Za-z0-9_-]+$/', $client_id)) {
+        // A Publisher ID is `zapub_` followed by exactly 24 alphanumerics - the exact shape the token
+        // SDK's Publisher::create() accepts, checked here so a typo is a friendly settings error rather
+        // than a caught exception and a silently inactive plugin.
+        if (!preg_match(self::PUBLISHER_ID_PATTERN, $publisher_id)) {
             $errors[] = __(
-                "Client ID contains invalid characters. It should only contain letters, numbers, hyphens (-), and underscores (_).",
+                'Publisher ID must be "zapub_" followed by 24 letters or numbers. Copy it exactly from the Zero Ad Network dashboard.',
                 "zero-ad-network"
             );
             return "";
         }
 
-        return $client_id;
+        return $publisher_id;
     }
 
     private function validateOutputMethod(string $method): string
@@ -518,32 +437,5 @@ class Settings
         }
 
         return $prefix;
-    }
-
-    private function validateFeatures($features, bool $enabled, array &$errors): array
-    {
-        if (!is_array($features)) {
-            return [];
-        }
-
-        $valid_features = [];
-        $allowed_features = array_values(Constants::FEATURE);
-
-        foreach ($features as $feature) {
-            $feature = (int) $feature;
-            if (in_array($feature, $allowed_features, true)) {
-                $valid_features[] = $feature;
-            }
-        }
-
-        // Check if at least one feature is selected when enabled.
-        if (empty($valid_features) && $enabled) {
-            $errors[] = __(
-                "You must select at least one feature (Clean Web or One Pass) when the plugin is enabled.",
-                "zero-ad-network"
-            );
-        }
-
-        return array_unique($valid_features);
     }
 }

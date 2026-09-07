@@ -10,33 +10,20 @@ if (!defined("ABSPATH")) {
 class CacheInterceptor
 {
     /**
-     * Build the normalized variant string used as cache key suffix
+     * The cache variant for this visitor. With a single Freedom plan a page has exactly two shapes -
+     * the clean subscriber version and the standard one - so the variant is just which of the two.
      *
-     * Example output: "clean_web1-one_pass0"
-     *
-     * @param array $tokenContext Parsed token context with feature flags
+     * @param bool $isSubscriber Whether this visitor holds a live subscription
      * @return string Cache variant identifier
      */
-    private static function buildVariantString(array $tokenContext): string
+    private static function buildVariantString(bool $isSubscriber): string
     {
-        $flags = [
-            "HIDE_ADVERTISEMENTS" => "clean_web",
-            "ENABLE_SUBSCRIPTION_ACCESS" => "one_pass"
-        ];
-
-        $parts = [];
-
-        foreach ($flags as $flag => $short) {
-            $value = !empty($tokenContext[$flag]) ? "1" : "0";
-            $parts[] = $short . $value;
-        }
-
-        return implode("-", $parts);
+        return $isSubscriber ? "subscriber1" : "subscriber0";
     }
 
-    public static function registerPluginOverrides(array $tokenContext): void
+    public static function registerPluginOverrides(bool $isSubscriber): void
     {
-        $variant = self::buildVariantString($tokenContext);
+        $variant = self::buildVariantString($isSubscriber);
 
         // Always emit variant header for edge/CDN caching
         add_action(

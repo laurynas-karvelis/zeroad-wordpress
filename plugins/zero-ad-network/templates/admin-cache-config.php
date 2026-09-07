@@ -11,16 +11,15 @@ if (!defined("ABSPATH")) {
         <h3 class="zeroad-mt-0"><?php esc_html_e("Why Cache Configuration Matters", "zero-ad-network"); ?></h3>
         <p>
             <?php esc_html_e(
-                "Zero Ad Network subscribers see different versions of your pages based on their subscription plan. Proper cache configuration ensures:",
+                "Zero Ad Network subscribers see a different version of your pages than regular visitors. Proper cache configuration ensures:",
                 "zero-ad-network"
             ); ?>
         </p>
         <ul class="zeroad-ul">
             <li><?php esc_html_e(
-                "Clean Web subscribers don't see ads, cookie banners, or marketing popups",
+                "Subscribers don't see ads, cookie banners, marketing popups, or paywalls",
                 "zero-ad-network"
             ); ?></li>
-            <li><?php esc_html_e("One Pass subscribers can access paywalled content", "zero-ad-network"); ?></li>
             <li><?php esc_html_e("Regular visitors see the standard version of your site", "zero-ad-network"); ?></li>
             <li><?php esc_html_e("Your server doesn't regenerate pages unnecessarily", "zero-ad-network"); ?></li>
         </ul>
@@ -49,39 +48,17 @@ if (!defined("ABSPATH")) {
                 <tbody>
                     <tr>
                         <td><strong><?php esc_html_e("Regular Visitor", "zero-ad-network"); ?></strong></td>
-                        <td><code>clean_web0-one_pass0</code></td>
+                        <td><code>subscriber0</code></td>
                         <td><?php esc_html_e(
                             "Ads, cookie banners, paywalls (standard experience)",
                             "zero-ad-network"
                         ); ?></td>
                     </tr>
                     <tr>
-                        <td><strong><?php esc_html_e(
-                            "Clean Web Subscriber ($6/mo)",
-                            "zero-ad-network"
-                        ); ?></strong></td>
-                        <td><code>clean_web1-one_pass0</code></td>
+                        <td><strong><?php esc_html_e("Freedom Subscriber", "zero-ad-network"); ?></strong></td>
+                        <td><code>subscriber1</code></td>
                         <td><?php esc_html_e(
-                            "No ads, no cookie banners, but paywalls still active",
-                            "zero-ad-network"
-                        ); ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong><?php esc_html_e(
-                            "One Pass Subscriber ($12/mo)",
-                            "zero-ad-network"
-                        ); ?></strong></td>
-                        <td><code>clean_web0-one_pass1</code></td>
-                        <td><?php esc_html_e(
-                            "Paywalls removed, subscription content unlocked, but ads shown",
-                            "zero-ad-network"
-                        ); ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong><?php esc_html_e("Freedom Subscriber ($18/mo)", "zero-ad-network"); ?></strong></td>
-                        <td><code>clean_web1-one_pass1</code></td>
-                        <td><?php esc_html_e(
-                            "No ads, no paywalls, full access (best experience)",
+                            "No ads, no cookie banners, no popups, paywalls unlocked (best experience)",
                             "zero-ad-network"
                         ); ?></td>
                     </tr>
@@ -189,7 +166,7 @@ proxy_cache_path /var/cache/nginx keys_zone=pagecache:50m;
 # Extract variant from header
 map $http_x_zeroad_variant $zeroad_variant {
     default $http_x_zeroad_variant;
-    "" "clean_web0-one_pass0";  # Default for non-subscribers
+    "" "subscriber0";  # Default for non-subscribers
 }
 
 server {
@@ -244,7 +221,7 @@ sub vcl_recv {
     if (req.http.X-ZeroAd-Variant) {
         set req.http.X-ZeroAd-Variant = req.http.X-ZeroAd-Variant;
     } else {
-        set req.http.X-ZeroAd-Variant = "clean_web0-one_pass0";
+        set req.http.X-ZeroAd-Variant = "subscriber0";
     }
 }
 
@@ -282,7 +259,7 @@ sub vcl_backend_response {
 })
 
 async function handleRequest(request) {
-  const variant = request.headers.get('X-ZeroAd-Variant') || 'clean_web0-one_pass0';
+  const variant = request.headers.get('X-ZeroAd-Variant') || 'subscriber0';
   
   // Create cache key with variant
   const cacheKey = new Request(request.url + '?variant=' + variant, request);
@@ -307,7 +284,7 @@ async function handleRequest(request) {
   // Get variant from header
   const variant = request.headers['x-zeroad-variant']
     ? request.headers['x-zeroad-variant'][0].value
-    : 'clean_web0-one_pass0';
+    : 'subscriber0';
   
   // Add to cache key via query string
   request.querystring = request.querystring 
@@ -335,7 +312,7 @@ async function handleRequest(request) {
             ); ?></li>
             <li><?php esc_html_e("Check that ads and cookie banners appear normally", "zero-ad-network"); ?></li>
             <li><?php esc_html_e(
-                "Install Zero Ad browser extension and subscribe to Clean Web",
+                "Install the Zero Ad browser extension and subscribe to the Freedom plan",
                 "zero-ad-network"
             ); ?></li>
             <li><?php esc_html_e("Visit your site again - ads and banners should be gone", "zero-ad-network"); ?></li>

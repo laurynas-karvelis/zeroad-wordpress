@@ -110,7 +110,7 @@ if (!defined("ABSPATH")) {
                     <strong><?php esc_html_e("User Subscribes", "zero-ad-network"); ?></strong><br>
                     <span class="description">
                         <?php esc_html_e(
-                            "User chooses a plan: Clean Web ($6/mo), One Pass ($12/mo), or Freedom ($18/mo)",
+                            "User subscribes to the Freedom plan for an ad-free, clean web across every partner site",
                             "zero-ad-network"
                         ); ?>
                     </span>
@@ -140,7 +140,7 @@ if (!defined("ABSPATH")) {
                     <strong><?php esc_html_e("User Visits Your Site", "zero-ad-network"); ?></strong><br>
                     <span class="description">
                         <?php esc_html_e(
-                            "Browser extension sends token via X-Better-Web-Hello request header",
+                            "Browser extension sends the token via the Better-Web-Token request header",
                             "zero-ad-network"
                         ); ?>
                     </span>
@@ -157,10 +157,10 @@ if (!defined("ABSPATH")) {
                 </li>
                 
                 <li>
-                    <strong><?php esc_html_e("Features Enabled", "zero-ad-network"); ?></strong><br>
+                    <strong><?php esc_html_e("Clean Experience Applied", "zero-ad-network"); ?></strong><br>
                     <span class="description">
                         <?php esc_html_e(
-                            "Based on their plan, subscriber sees your site without ads/paywalls",
+                            "The subscriber sees your site with no ads, trackers, cookie dialogs, popups, or paywalls",
                             "zero-ad-network"
                         ); ?>
                     </span>
@@ -203,29 +203,21 @@ if (!defined("ABSPATH")) {
                 <thead>
                     <tr>
                         <th><?php esc_html_e("Plan", "zero-ad-network"); ?></th>
-                        <th><?php esc_html_e("User Pays", "zero-ad-network"); ?></th>
                         <th><?php esc_html_e("You Earn (Per Subscriber)", "zero-ad-network"); ?></th>
                         <th><?php esc_html_e("What You Provide", "zero-ad-network"); ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong><?php esc_html_e("Clean Web", "zero-ad-network"); ?></strong></td>
-                        <td>$6/month</td>
-                        <td style="color: #28a745; font-weight: 600;">$6/month*</td>
-                        <td><?php esc_html_e("No ads, no cookie banners, no popups", "zero-ad-network"); ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong><?php esc_html_e("One Pass", "zero-ad-network"); ?></strong></td>
-                        <td>$12/month</td>
-                        <td style="color: #28a745; font-weight: 600;">$12/month*</td>
-                        <td><?php esc_html_e("Free access to paywalled content", "zero-ad-network"); ?></td>
-                    </tr>
-                    <tr>
                         <td><strong><?php esc_html_e("Freedom", "zero-ad-network"); ?></strong></td>
-                        <td>$18/month</td>
-                        <td style="color: #28a745; font-weight: 600;">$18/month*</td>
-                        <td><?php esc_html_e("Everything: ad-free + paywall access", "zero-ad-network"); ?></td>
+                        <td style="color: #28a745; font-weight: 600;"><?php esc_html_e(
+                            "Share of the subscriber's fee*",
+                            "zero-ad-network"
+                        ); ?></td>
+                        <td><?php esc_html_e(
+                            "Ad-free, tracker-free, no cookie dialogs or popups, and free access to paywalled content",
+                            "zero-ad-network"
+                        ); ?></td>
                     </tr>
                 </tbody>
             </table>
@@ -242,9 +234,8 @@ if (!defined("ABSPATH")) {
             <h4 style="margin-top: 0;"><?php esc_html_e("📊 Real Example", "zero-ad-network"); ?></h4>
             <p style="line-height: 1.8;">
                 <strong><?php esc_html_e("Scenario:", "zero-ad-network"); ?></strong><br>
-                <?php esc_html_e("You have both Clean Web and One Pass features enabled.", "zero-ad-network"); ?><br>
                 <?php esc_html_e(
-                    "1,000 Freedom plan subscribers visit partner sites this month.",
+                    "1,000 Freedom subscribers visit partner sites this month.",
                     "zero-ad-network"
                 ); ?><br>
                 <?php esc_html_e("They spend a combined 10,000 hours on all partner sites.", "zero-ad-network"); ?><br>
@@ -252,13 +243,10 @@ if (!defined("ABSPATH")) {
             </p>
             <p style="line-height: 1.8;">
                 <strong><?php esc_html_e("Your Revenue:", "zero-ad-network"); ?></strong><br>
-                <?php esc_html_e("Clean Web pool: 1,000 subscribers × $6 = $6,000", "zero-ad-network"); ?><br>
-                <?php esc_html_e("Your share (10%): $600", "zero-ad-network"); ?><br><br>
-                <?php esc_html_e("One Pass pool: 1,000 subscribers × $12 = $12,000", "zero-ad-network"); ?><br>
-                <?php esc_html_e("Your share (10%): $1,200", "zero-ad-network"); ?><br><br>
-                <span style="font-size: 20px; color: #28a745; font-weight: bold;">
-                    <?php esc_html_e("Total Monthly Revenue: $1,800", "zero-ad-network"); ?>
-                </span>
+                <?php esc_html_e(
+                    "You receive 10% of the subscriber-revenue pool for that month - your share of the total time subscribers spent across every partner site.",
+                    "zero-ad-network"
+                ); ?>
             </p>
         </div>
     </div>
@@ -292,7 +280,7 @@ if (!defined("ABSPATH")) {
             <ul class="zeroad-ul" style="line-height: 1.8;">
                 <li><?php esc_html_e("Token version number", "zero-ad-network"); ?></li>
                 <li><?php esc_html_e("Subscription expiration date", "zero-ad-network"); ?></li>
-                <li><?php esc_html_e("Enabled features (Clean Web, One Pass, or both)", "zero-ad-network"); ?></li>
+                <li><?php esc_html_e("Subscription plan (Freedom)", "zero-ad-network"); ?></li>
                 <li><?php esc_html_e("Random seed value (for token uniqueness)", "zero-ad-network"); ?></li>
             </ul>
             <p style="line-height: 1.8; color: #666;">
@@ -326,11 +314,11 @@ if (!defined("ABSPATH")) {
                 <div style="font-size: 48px; margin-bottom: 10px;">2️⃣</div>
                 <h3><?php esc_html_e("Configure", "zero-ad-network"); ?></h3>
                 <p><?php esc_html_e(
-                    "Enter your Client ID and select which features to enable",
+                    "Enter your Publisher ID and enable the plugin",
                     "zero-ad-network"
                 ); ?></p>
                 <a href="<?php echo esc_url(
-                    admin_url("admin.php?page=zeroad-token")
+                    admin_url("admin.php?page=zeroad-config")
                 ); ?>" class="button button-primary">
                     <?php esc_html_e("Go to Settings", "zero-ad-network"); ?>
                 </a>

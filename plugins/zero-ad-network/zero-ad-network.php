@@ -3,7 +3,7 @@
  * Plugin Name:       Zero Ad Network
  * Plugin URI:        https://zeroad.network
  * Description:       Get paid by providing ad-free, clean web experience to Zero Ad Network users.
- * Version:           0.14.0
+ * Version:           0.15.0
  * Requires at least: 4.9
  * Requires PHP:      7.2
  * Author:            Explosive Brains Ltd.
@@ -16,7 +16,7 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-define("ZEROAD_VERSION", "0.14.0");
+define("ZEROAD_VERSION", "0.15.0");
 define("ZEROAD_PLUGIN_FILE", __FILE__);
 define("ZEROAD_PLUGIN_DIR", plugin_dir_path(__FILE__));
 define("ZEROAD_PLUGIN_URL", plugin_dir_url(__FILE__));
@@ -84,8 +84,7 @@ register_activation_hook(__FILE__, function () {
 
     $default_options = [
         "enabled" => false,
-        "client_id" => "",
-        "features" => [],
+        "publisher_id" => "",
         "output_method" => "header",
         "cache_enabled" => true,
         "cache_ttl" => ZEROAD_DEFAULT_CACHE_TTL,

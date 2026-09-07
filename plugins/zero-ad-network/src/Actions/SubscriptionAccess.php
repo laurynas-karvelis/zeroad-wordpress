@@ -11,11 +11,11 @@ if (!defined("ABSPATH")) {
 use ZeroAd\WP\Actions\Action;
 
 /**
- * SubscriptionAccess - ONE_PASS Feature Implementation
+ * SubscriptionAccess - paywall and membership access for Freedom subscribers
  *
- * This class handles the ONE_PASS feature ($12/month subscription tier) which allows
- * Zero Ad Network subscribers to access paywalled content and basic subscription features
- * on partner sites WITHOUT needing to create an account or purchase a separate subscription.
+ * A Freedom subscriber is entitled to any content the site keeps behind a paywall or membership
+ * plugin, so this class lets them read protected posts and member-only content WITHOUT needing to
+ * create an account or purchase a separate subscription on the site.
  *
  * CRITICAL SECURITY NOTE:
  * This class MUST NOT grant WordPress admin or editor capabilities. It should ONLY:
@@ -66,7 +66,7 @@ class SubscriptionAccess extends Action
     /**
      * Bypass WordPress password protection for Zero Ad subscribers
      *
-     * This allows ONE_PASS subscribers to read password-protected posts
+     * This lets Freedom subscribers read password-protected posts
      * without entering the password. Does NOT grant any editing capabilities.
      *
      * @param bool $required Whether password is required
@@ -78,7 +78,7 @@ class SubscriptionAccess extends Action
         // Get token context
         $tokenContext = $GLOBALS["zeroad_token_context"] ?? null;
 
-        // Only bypass if valid ONE_PASS token
+        // Only bypass for a verified Freedom subscriber
         if (empty($tokenContext) || empty($tokenContext["ENABLE_SUBSCRIPTION_ACCESS"])) {
             return $required; // Not a subscriber, keep password protection
         }
@@ -97,7 +97,7 @@ class SubscriptionAccess extends Action
         // Get token context
         $tokenContext = $GLOBALS["zeroad_token_context"] ?? null;
 
-        // Only process if valid ONE_PASS token
+        // Only process for a verified Freedom subscriber
         if (empty($tokenContext) || empty($tokenContext["ENABLE_SUBSCRIPTION_ACCESS"])) {
             return $html;
         }
@@ -119,7 +119,7 @@ class SubscriptionAccess extends Action
      * Register plugin-specific overrides for major membership/paywall plugins
      *
      * This method hooks into specific membership plugins to grant content access
-     * to Zero Ad Network ONE_PASS subscribers.
+     * to Zero Ad Network Freedom subscribers.
      *
      * IMPORTANT: These hooks ONLY grant READ access to content, never admin capabilities.
      *
@@ -127,7 +127,7 @@ class SubscriptionAccess extends Action
      */
     public static function registerPluginOverrides(array $ctx): void
     {
-        // Only register if ONE_PASS is enabled
+        // Only register when the subscriber is entitled to subscription access
         if (empty($ctx["ENABLE_SUBSCRIPTION_ACCESS"])) {
             return;
         }
@@ -163,7 +163,7 @@ class SubscriptionAccess extends Action
             add_filter(
                 "mepr-last-chance-to-block-content",
                 function ($shouldBlock) {
-                    return false; // Don't block content for ONE_PASS subscribers
+                    return false; // Don't block content for Freedom subscribers
                 },
                 999,
                 1
