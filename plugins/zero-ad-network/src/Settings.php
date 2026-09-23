@@ -107,7 +107,7 @@ class Settings
     {
         echo '<p class="description">';
         esc_html_e(
-            "Configure your Zero Ad Network partnership settings. Subscribers with a valid token get the full ad-free, tracker-free, paywall-free experience on your site automatically.",
+            "Configure your Zero Ad Network partnership settings. Subscribers get a clean browsing experience. If you sell access, select included posts and pages in their Freedom access box and verify your membership integration.",
             "zero-ad-network"
         );
         echo "</p>";

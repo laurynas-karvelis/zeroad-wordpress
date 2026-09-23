@@ -160,7 +160,7 @@ if (!defined("ABSPATH")) {
                     <strong><?php esc_html_e("Clean Experience Applied", "zero-ad-network"); ?></strong><br>
                     <span class="description">
                         <?php esc_html_e(
-                            "The subscriber sees your site with no ads, trackers, cookie dialogs, popups, or paywalls",
+                            "The subscriber sees no ads or interruptions and can read the paid content you include with Freedom",
                             "zero-ad-network"
                         ); ?>
                     </span>
@@ -215,7 +215,7 @@ if (!defined("ABSPATH")) {
                             "zero-ad-network"
                         ); ?></td>
                         <td><?php esc_html_e(
-                            "Ad-free, tracker-free, no cookie dialogs or popups, and free access to paywalled content",
+                            "No ads, non-essential trackers, cookie dialogs or marketing popups, plus access to your base subscription or custom included content",
                             "zero-ad-network"
                         ); ?></td>
                     </tr>

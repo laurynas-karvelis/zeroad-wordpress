@@ -127,7 +127,7 @@ class AdminPages
                     <th><?php esc_html_e("Subscriber Experience", "zero-ad-network"); ?></th>
                     <td>
                         <?php esc_html_e(
-                            "Ad-free, tracker-free, no cookie dialogs, no marketing popups, paywalls unlocked (Freedom plan)",
+                            "Freedom: no ads, non-essential trackers, cookie dialogs, or marketing popups; access to publisher-selected content",
                             "zero-ad-network"
                         ); ?>
                     </td>
