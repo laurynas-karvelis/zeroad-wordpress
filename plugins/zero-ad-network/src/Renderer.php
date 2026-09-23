@@ -10,7 +10,6 @@ if (!defined("ABSPATH")) {
 
 use ZeroAd\Token\Publisher;
 use ZeroAd\WP\Actions\Advertisements;
-use ZeroAd\WP\Actions\ContentPaywalls;
 use ZeroAd\WP\Actions\CookieConsent;
 use ZeroAd\WP\Actions\MarketingDialogs;
 use ZeroAd\WP\Actions\SubscriptionAccess;
@@ -41,7 +40,6 @@ class Renderer
         "HIDE_COOKIE_CONSENT_SCREEN" => true,
         "HIDE_MARKETING_DIALOGS" => true,
         "DISABLE_NON_FUNCTIONAL_TRACKING" => true,
-        "DISABLE_CONTENT_PAYWALL" => true,
         "ENABLE_SUBSCRIPTION_ACCESS" => true,
     ];
 
@@ -51,7 +49,6 @@ class Renderer
             Advertisements::class,
             CookieConsent::class,
             MarketingDialogs::class,
-            ContentPaywalls::class,
             SubscriptionAccess::class,
         ];
     }
@@ -135,7 +132,7 @@ class Renderer
             $this->tokenContext = [];
         }
 
-        // Actions that hook WordPress filters (e.g. password-protection bypass) read the verdict from a
+        // Actions that hook WordPress content-access filters read the verdict from a
         // global, since they run inside callbacks that receive no context of their own.
         $GLOBALS["zeroad_token_context"] = $this->tokenContext;
     }

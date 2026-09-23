@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use ZeroAd\WP\Actions\Advertisements;
-use ZeroAd\WP\Actions\ContentPaywalls;
 use ZeroAd\WP\Actions\CookieConsent;
 use ZeroAd\WP\Actions\MarketingDialogs;
 use ZeroAd\WP\Actions\SubscriptionAccess;
@@ -108,9 +107,8 @@ class ActionsTest extends TestCase
     {
         $html = '<div class="paywall-overlay"><div class="premium-content">locked article body</div></div>';
 
-        // Access is granted at the source (membership filters); the overlay markup is left for CSS, so
-        // the article text must survive rather than being cut by a broken regex.
-        foreach ([ContentPaywalls::class, SubscriptionAccess::class] as $Class) {
+        // Access is granted only through scoped membership filters; markup stays intact.
+        foreach ([SubscriptionAccess::class] as $Class) {
             $out = $Class::outputBufferCallback($html);
             $this->assertStringContainsString("locked article body", $out, "$Class must not eat article content");
         }

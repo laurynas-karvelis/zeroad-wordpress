@@ -61,6 +61,16 @@ namespace {
         $GLOBALS["__settings_errors"] = [];
         $_SERVER = array_diff_key($_SERVER, array_flip(["HTTP_BETTER_WEB_TOKEN", "HTTP_HOST", "HTTP_ACCEPT", "HTTP_CONTENT_TYPE"]));
         unset($GLOBALS["zeroad_token_context"]);
+        $GLOBALS["__posts"] = [];
+        $GLOBALS["__post_meta"] = [];
+        $GLOBALS["__can_edit_post"] = true;
+        $GLOBALS["__valid_nonce"] = true;
+        $GLOBALS["__is_revision"] = false;
+        $GLOBALS["__is_autosave"] = false;
+        $GLOBALS["__is_admin"] = false;
+        $GLOBALS["__is_ajax"] = false;
+        $GLOBALS["__is_json"] = false;
+        $_POST = [];
         $_COOKIE = [];
     }
     zeroad_test_reset();
@@ -75,6 +85,54 @@ namespace {
         $GLOBALS["__wp_hooks"][$hook][] = $cb;
         return true;
     }
+    function apply_filters($hook, $value, ...$args)
+    {
+        foreach ($GLOBALS["__wp_hooks"][$hook] ?? [] as $callback) {
+            $value = $callback($value, ...$args);
+        }
+        return $value;
+    }
+    function get_post($postId)
+    {
+        return $GLOBALS["__posts"][$postId] ?? null;
+    }
+    function get_post_type($postId)
+    {
+        return get_post($postId)->post_type ?? false;
+    }
+    function get_post_meta($postId, $key, $single = false)
+    {
+        return $GLOBALS["__post_meta"][$postId][$key] ?? "";
+    }
+    function update_post_meta($postId, $key, $value)
+    {
+        $GLOBALS["__post_meta"][$postId][$key] = $value;
+    }
+    function delete_post_meta($postId, $key)
+    {
+        unset($GLOBALS["__post_meta"][$postId][$key]);
+    }
+    function wp_verify_nonce($nonce, $action)
+    {
+        return $GLOBALS["__valid_nonce"];
+    }
+    function current_user_can($capability, ...$args)
+    {
+        return $GLOBALS["__can_edit_post"];
+    }
+    function wp_is_post_revision($postId)
+    {
+        return $GLOBALS["__is_revision"];
+    }
+    function wp_is_post_autosave($postId)
+    {
+        return $GLOBALS["__is_autosave"];
+    }
+    function wp_is_json_request()
+    {
+        return $GLOBALS["__is_json"];
+    }
+
     function remove_filter($hook, $cb, $priority = 10)
     {
         return true;

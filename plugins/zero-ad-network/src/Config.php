@@ -47,6 +47,8 @@ class Config
 
     public function run(): void
     {
+        IncludedContent::register();
+
         // Admin hooks.
         add_action("admin_menu", [$this, "addAdminPages"]);
         add_action("admin_init", [$this->settings, "register"]);
