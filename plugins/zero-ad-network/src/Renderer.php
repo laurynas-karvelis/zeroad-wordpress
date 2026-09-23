@@ -65,16 +65,14 @@ class Renderer
 
     public function run(): void
     {
+        CacheInterceptor::preventPageCaching();
+
         // Announce participation to the extension.
         add_action("send_headers", [$this, "maybeSendHeader"], 20);
         add_action("wp_head", [$this, "maybeInjectMetaTag"], 1);
 
         // Verify the incoming subscriber token.
         add_action("init", [$this, "verifyToken"], 2);
-
-        // Advertise the cache variant so page-cache plugins and CDNs keep subscriber and regular
-        // versions apart. Runs for every visitor, subscriber or not.
-        add_action("init", [$this, "registerCacheVariant"], 3);
 
         // Register plugin-specific overrides for subscribers.
         add_action("init", [$this, "registerPluginOverrides"], 4);
@@ -135,15 +133,6 @@ class Renderer
         // Actions that hook WordPress content-access filters read the verdict from a
         // global, since they run inside callbacks that receive no context of their own.
         $GLOBALS["zeroad_token_context"] = $this->tokenContext;
-    }
-
-    public function registerCacheVariant(): void
-    {
-        if ($this->publisher === null || !$this->isPageRequest()) {
-            return;
-        }
-
-        CacheInterceptor::registerPluginOverrides($this->isSubscriber);
     }
 
     public function registerPluginOverrides(): void

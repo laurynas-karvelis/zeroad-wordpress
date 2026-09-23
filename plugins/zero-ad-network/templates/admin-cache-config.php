@@ -3,337 +3,66 @@
 if (!defined("ABSPATH")) {
     exit();
 } ?>
-
 <div class="wrap zeroad-cache-config">
-    <h1><?php esc_html_e("Cache Configuration for Zero Ad Network", "zero-ad-network"); ?></h1>
-
-    <div class="zeroad-info-box">
-        <h3 class="zeroad-mt-0"><?php esc_html_e("Why Cache Configuration Matters", "zero-ad-network"); ?></h3>
-        <p>
-            <?php esc_html_e(
-                "Zero Ad Network subscribers see a different version of your pages than regular visitors. Proper cache configuration ensures:",
-                "zero-ad-network"
-            ); ?>
-        </p>
-        <ul class="zeroad-ul">
-            <li><?php esc_html_e(
-                "Subscribers don't see ads, cookie banners, marketing popups, or paywalls",
-                "zero-ad-network"
-            ); ?></li>
-            <li><?php esc_html_e("Regular visitors see the standard version of your site", "zero-ad-network"); ?></li>
-            <li><?php esc_html_e("Your server doesn't regenerate pages unnecessarily", "zero-ad-network"); ?></li>
-        </ul>
+    <h1><?php esc_html_e("Cache Configuration for Freedom", "zero-ad-network"); ?></h1>
+    <div class="zeroad-warning-box">
+        <h2><?php esc_html_e("Token requests must reach WordPress", "zero-ad-network"); ?></h2>
+        <p><?php esc_html_e("At every page cache, bypass both cache reads and writes when Better-Web-Token is present, and forward that header unchanged to WordPress. This includes invalid tokens. Only verified tokens unlock Freedom; a cookie or variant header never proves access.", "zero-ad-network"); ?></p>
+        <p><?php esc_html_e("The plugin marks token responses private and no-store and signals compatible WordPress caches not to store them. It cannot stop a cache hit served before WordPress loads. If your host cannot bypass token requests, disable its full-page cache on participating pages. Static assets and object caching can remain enabled.", "zero-ad-network"); ?></p>
     </div>
 
-    <div class="zeroad-cache-explanation">
-        <h2><?php esc_html_e("How It Works", "zero-ad-network"); ?></h2>
-        
-        <p class="description">
-            <?php esc_html_e(
-                "On every response the plugin sets a zeroad_variant cookie and a matching X-ZeroAd-Variant / Vary header. Both carry the same value, identifying which version of the page should be cached. WordPress page-cache plugins vary on the cookie; CDNs and reverse proxies vary on the header.",
-                "zero-ad-network"
-            ); ?>
-        </p>
+    <h2><?php esc_html_e("WordPress page caches", "zero-ad-network"); ?></h2>
+    <p><?php esc_html_e("For a PHP-based page cache, replace the existing WP_CACHE definition in wp-config.php with the following, before WordPress loads. Do not add a second definition. This skips advanced-cache.php for token requests; it does not bypass web-server rewrites or a CDN.", "zero-ad-network"); ?></p>
+<pre><code>$freedomTokenRequest = array_key_exists('HTTP_BETTER_WEB_TOKEN', $_SERVER);
+define('WP_CACHE', !$freedomTokenRequest);
+if ($freedomTokenRequest &amp;&amp; !defined('DONOTCACHEPAGE')) {
+    define('DONOTCACHEPAGE', true);
+}</code></pre>
+    <table class="widefat">
+        <thead><tr><th><?php esc_html_e("Cache", "zero-ad-network"); ?></th><th><?php esc_html_e("Required setup", "zero-ad-network"); ?></th></tr></thead>
+        <tbody>
+            <tr><td>WP Super Cache</td><td><?php esc_html_e("Use PHP/Simple delivery with the early bypass above. Expert/rewrite delivery also needs a server-level exclusion before serving cached files.", "zero-ad-network"); ?></td></tr>
+            <tr><td>WP Rocket / W3 Total Cache / WP Fastest Cache</td><td><?php esc_html_e("Use the early PHP bypass wherever advanced-cache.php is used. Any direct cached-file delivery must also exclude token requests at the server. Plugin activation alone does not configure that exclusion.", "zero-ad-network"); ?></td></tr>
+            <tr><td>LiteSpeed Cache</td><td><?php esc_html_e("Configure a server-level token-header exclusion before cache lookup. The plugin also sends LiteSpeed no-cache signals for responses that reach WordPress.", "zero-ad-network"); ?></td></tr>
+            <tr><td>Apache / CloudFront / managed hosting</td><td><?php esc_html_e("Ask the host to bypass cache lookup and storage on token requests and preserve the header. If the cache cannot do this, disable HTML caching for participating pages. Do not select a cached subscriber page using a client-supplied cookie or header.", "zero-ad-network"); ?></td></tr>
+        </tbody>
+    </table>
 
-        <div class="zeroad-info-box">
-            <h4 class="zeroad-mt-0"><?php esc_html_e("Cache Variant Examples:", "zero-ad-network"); ?></h4>
-            <table class="widefat zeroad-variant-table">
-                <thead>
-                    <tr>
-                        <th><?php esc_html_e("Visitor Type", "zero-ad-network"); ?></th>
-                        <th><?php esc_html_e("X-ZeroAd-Variant Header", "zero-ad-network"); ?></th>
-                        <th><?php esc_html_e("What They See", "zero-ad-network"); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong><?php esc_html_e("Regular Visitor", "zero-ad-network"); ?></strong></td>
-                        <td><code>subscriber0</code></td>
-                        <td><?php esc_html_e(
-                            "Ads, cookie banners, paywalls (standard experience)",
-                            "zero-ad-network"
-                        ); ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong><?php esc_html_e("Freedom Subscriber", "zero-ad-network"); ?></strong></td>
-                        <td><code>subscriber1</code></td>
-                        <td><?php esc_html_e(
-                            "No ads, no cookie banners, no popups, paywalls unlocked (best experience)",
-                            "zero-ad-network"
-                        ); ?></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <p class="description zeroad-mt-2">
-            <strong><?php esc_html_e("Important:", "zero-ad-network"); ?></strong>
-            <?php esc_html_e(
-                "Your caching system (plugin, CDN, or server) must key its cache on the zeroad_variant cookie or the X-ZeroAd-Variant header. Without that, all visitors may be served the same cached version.",
-                "zero-ad-network"
-            ); ?>
-        </p>
-
-        <div class="zeroad-warning-box zeroad-mt-2">
-            <strong><?php esc_html_e("A note on full-page caching:", "zero-ad-network"); ?></strong>
-            <?php esc_html_e(
-                "Full-page cache plugins serve a cache hit before WordPress loads, so on a hit this plugin never runs to verify the token. The split then relies entirely on the zeroad_variant cookie your cache is configured to vary on. A brand-new subscriber may be served the standard cached page on their very first visit, until the cookie is set on a request that reaches PHP; from then on they get the subscriber version.",
-                "zero-ad-network"
-            ); ?>
-        </div>
-    </div>
-
-    <hr class="zeroad-mt-3 zeroad-mb-3">
-
-    <h2><?php esc_html_e("Configuration Examples", "zero-ad-network"); ?></h2>
-    
-    <p class="description zeroad-mb-2">
-        <?php esc_html_e(
-            "Choose the configuration that matches your setup. If you're not sure which caching system you use, check your plugins or contact your hosting provider.",
-            "zero-ad-network"
-        ); ?>
-    </p>
-
-    <!-- WordPress Cache Plugins -->
-    <div class="za-accordion">
-        
-        <!-- WP Super Cache -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("WP Super Cache", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <p><?php esc_html_e(
-                    "Our plugin folds the variant into WP Super Cache's cache key via its wp_cache_get_cookies_values filter, so subscriber and regular pages are cached separately.",
-                    "zero-ad-network"
-                ); ?></p>
-                <p class="description">
-                    <?php esc_html_e(
-                        "For this to also apply on cache hits (which WP Super Cache serves before WordPress loads), add zeroad_variant to Settings → WP Super Cache → Advanced → \"Cache cookies\" so its early cache layer keys on the same cookie.",
-                        "zero-ad-network"
-                    ); ?>
-                </p>
-            </div>
-        </div>
-
-        <!-- WP Rocket -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("WP Rocket", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <p><?php esc_html_e("WP Rocket is configured automatically.", "zero-ad-network"); ?></p>
-                <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
-                <p class="description">
-                    <?php esc_html_e(
-                        "Our plugin registers zeroad_variant on WP Rocket's dynamic (mandatory) cookies list, and sets that cookie, so WP Rocket caches a separate copy per variant.",
-                        "zero-ad-network"
-                    ); ?>
-                </p>
-            </div>
-        </div>
-
-        <!-- W3 Total Cache -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("W3 Total Cache", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <p><?php esc_html_e(
-                    "W3 Total Cache is automatically configured by our plugin.",
-                    "zero-ad-network"
-                ); ?></p>
-                <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
-                <p class="description">
-                    <?php esc_html_e(
-                        "Our plugin modifies the cache key using W3TC's filters to include the variant.",
-                        "zero-ad-network"
-                    ); ?>
-                </p>
-            </div>
-        </div>
-
-        <!-- LiteSpeed Cache -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("LiteSpeed Cache", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <p><?php esc_html_e(
-                    "LiteSpeed Cache is automatically configured by our plugin.",
-                    "zero-ad-network"
-                ); ?></p>
-                <p><strong><?php esc_html_e("✅ No manual configuration needed!", "zero-ad-network"); ?></strong></p>
-            </div>
-        </div>
-
-        <!-- Nginx -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("Nginx (Server-Level Caching)", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <p><?php esc_html_e(
-                    "If your hosting uses Nginx with fastcgi_cache or proxy_cache, add this configuration:",
-                    "zero-ad-network"
-                ); ?></p>
-<pre><code class="language-nginx"># Nginx proxy_cache example
-proxy_cache_path /var/cache/nginx keys_zone=pagecache:50m;
-
-# Extract variant from header
-map $http_x_zeroad_variant $zeroad_variant {
-    default $http_x_zeroad_variant;
-    "" "subscriber0";  # Default for non-subscribers
+    <h2>Nginx</h2>
+    <p><?php esc_html_e("Add this map in the http context. Add the matching directives to your existing proxy or FastCGI location, preserving all other cache exclusions. A value of 0 is still treated as a supplied, invalid token.", "zero-ad-network"); ?></p>
+<pre><code>map $http_better_web_token $freedom_skip_cache {
+    ""      0;
+    default 1;
 }
 
-server {
-    location / {
-        # Pass variant to backend
-        proxy_set_header X-ZeroAd-Variant $zeroad_variant;
+# In an existing proxy_cache location:
+proxy_cache_bypass $freedom_skip_cache;
+proxy_no_cache $freedom_skip_cache;
+proxy_set_header Better-Web-Token $http_better_web_token;
 
-        # Cache configuration
-        proxy_cache pagecache;
-        
-        # IMPORTANT: Include variant in cache key
-        proxy_cache_key "$scheme$host$request_uri::$zeroad_variant";
-        
-        proxy_pass http://backend;
-    }
+# Or in an existing fastcgi_cache location:
+fastcgi_cache_bypass $freedom_skip_cache;
+fastcgi_no_cache $freedom_skip_cache;
+fastcgi_param HTTP_BETTER_WEB_TOKEN $http_better_web_token;</code></pre>
+    <p><?php esc_html_e("Nginx treats an empty header like an absent header here. Neither grants access. Non-empty tokens always bypass. Do not override the origin's private/no-store response headers.", "zero-ad-network"); ?></p>
+
+    <h2>Varnish</h2>
+    <p><?php esc_html_e("Place this before any cache lookup or early return in vcl_recv. Preserve the header on the backend request.", "zero-ad-network"); ?></p>
+<pre><code>if (req.http.Better-Web-Token) {
+    return (pass);
 }</code></pre>
-            </div>
-        </div>
 
-        <!-- Apache -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("Apache (mod_cache)", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <p><?php esc_html_e("Add this to your Apache configuration or .htaccess:", "zero-ad-network"); ?></p>
-<pre><code class="language-apacheconf"># Apache mod_cache configuration
-CacheQuickHandler off
-CacheEnable disk /
+    <h2>Cloudflare</h2>
+    <p><?php esc_html_e("Create a Cache Rule matching the expression below and set Cache eligibility to Bypass cache. Ensure later rules, Workers, and origin overrides do not re-enable caching or remove the token header.", "zero-ad-network"); ?></p>
+<pre><code>http.request.headers.truncated or has_key(http.request.headers, "better-web-token")</code></pre>
 
-# Vary cache by X-ZeroAd-Variant header
-CacheVaryByHeader X-ZeroAd-Variant
-
-# Ensure header is preserved
-Header always merge X-ZeroAd-Variant %{X-ZeroAd-Variant}e
-
-# If using as reverse proxy:
-ProxyPass / http://backend/
-ProxyPassReverse / http://backend/
-RequestHeader set X-ZeroAd-Variant %{X-ZeroAd-Variant}e</code></pre>
-            </div>
-        </div>
-
-        <!-- Varnish -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("Varnish Cache", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <p><?php esc_html_e("Add this to your Varnish VCL configuration:", "zero-ad-network"); ?></p>
-<pre><code class="language-vcl"># Varnish VCL (4.x / 7.x)
-vcl 4.0;
-
-sub vcl_recv {
-    # Extract variant header
-    if (req.http.X-ZeroAd-Variant) {
-        set req.http.X-ZeroAd-Variant = req.http.X-ZeroAd-Variant;
-    } else {
-        set req.http.X-ZeroAd-Variant = "subscriber0";
-    }
-}
-
-sub vcl_hash {
-    # Include variant in cache hash
-    hash_data(req.http.X-ZeroAd-Variant);
-}
-
-sub vcl_backend_response {
-    # Set Vary header
-    set beresp.http.Vary = "X-ZeroAd-Variant";
-}</code></pre>
-            </div>
-        </div>
-
-        <!-- Cloudflare -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("Cloudflare CDN", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <h4><?php esc_html_e("Configuration Steps:", "zero-ad-network"); ?></h4>
-                <ol>
-                    <li><?php esc_html_e("Log in to your Cloudflare dashboard", "zero-ad-network"); ?></li>
-                    <li><?php esc_html_e("Go to Caching → Cache Rules", "zero-ad-network"); ?></li>
-                    <li><?php esc_html_e("Create a new Cache Rule", "zero-ad-network"); ?></li>
-                    <li><?php esc_html_e(
-                        "Under 'Custom Cache Key', select 'Query String' → 'Include header'",
-                        "zero-ad-network"
-                    ); ?></li>
-                    <li><?php esc_html_e("Add header: X-ZeroAd-Variant", "zero-ad-network"); ?></li>
-                </ol>
-                
-                <p><strong><?php esc_html_e("Or use Cloudflare Workers:", "zero-ad-network"); ?></strong></p>
-<pre><code class="language-javascript">addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
-
-async function handleRequest(request) {
-  const variant = request.headers.get('X-ZeroAd-Variant') || 'subscriber0';
-  
-  // Create cache key with variant
-  const cacheKey = new Request(request.url + '?variant=' + variant, request);
-  
-  return fetch(request, {
-    cf: {
-      cacheKey: cacheKey
-    }
-  });
-}</code></pre>
-            </div>
-        </div>
-
-        <!-- AWS CloudFront -->
-        <div class="za-item">
-            <div class="za-header"><?php esc_html_e("AWS CloudFront (Lambda@Edge)", "zero-ad-network"); ?></div>
-            <div class="za-body">
-                <p><?php esc_html_e("Create a Lambda@Edge function for viewer requests:", "zero-ad-network"); ?></p>
-<pre><code class="language-javascript">exports.handler = async (event) => {
-  const request = event.Records[0].cf.request;
-  
-  // Get variant from header
-  const variant = request.headers['x-zeroad-variant']
-    ? request.headers['x-zeroad-variant'][0].value
-    : 'subscriber0';
-  
-  // Add to cache key via query string
-  request.querystring = request.querystring 
-    ? request.querystring + '&variant=' + variant
-    : 'variant=' + variant;
-  
-  return request;
-};</code></pre>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="zeroad-warning-box zeroad-mt-3">
-        <h3 class="zeroad-mt-0"><?php esc_html_e("⚠️ Testing Your Cache Configuration", "zero-ad-network"); ?></h3>
-        <p><?php esc_html_e(
-            "After configuring your cache, test it to ensure it's working correctly:",
-            "zero-ad-network"
-        ); ?></p>
-        <ol>
-            <li><?php esc_html_e("Clear all caches (plugin cache, server cache, CDN cache)", "zero-ad-network"); ?></li>
-            <li><?php esc_html_e(
-                "Visit your site as a regular user (no Zero Ad subscription)",
-                "zero-ad-network"
-            ); ?></li>
-            <li><?php esc_html_e("Check that ads and cookie banners appear normally", "zero-ad-network"); ?></li>
-            <li><?php esc_html_e(
-                "Install the Zero Ad browser extension and subscribe to the Freedom plan",
-                "zero-ad-network"
-            ); ?></li>
-            <li><?php esc_html_e("Visit your site again - ads and banners should be gone", "zero-ad-network"); ?></li>
-            <li><?php esc_html_e(
-                "Check browser dev tools → Network tab → Response Headers for X-ZeroAd-Variant",
-                "zero-ad-network"
-            ); ?></li>
-        </ol>
-        <p>
-            <strong><?php esc_html_e("Need help?", "zero-ad-network"); ?></strong>
-            <a href="https://docs.zeroad.network" target="_blank"><?php esc_html_e(
-                "Visit our documentation →",
-                "zero-ad-network"
-            ); ?></a>
-        </p>
-    </div>
+    <h2><?php esc_html_e("Verify your installation", "zero-ad-network"); ?></h2>
+    <ol>
+        <li><?php esc_html_e("Clear page caches after configuration or included-content changes. Warm a public page without a token, then visit the same URL with a valid hostname-bound token and no cookies. It must reach WordPress and unlock only included content.", "zero-ad-network"); ?></li>
+        <li><?php esc_html_e("Repeat the valid request: it must still bypass the page cache, with Cache-Control: private, no-store. Return without the token: the ordinary protected page must remain intact.", "zero-ad-network"); ?></li>
+        <li><?php esc_html_e("Try missing, invalid, expired, and wrong-host tokens, including forged zeroad_variant=subscriber1 cookies and X-ZeroAd-Variant headers. They must never unlock content. Ordinary WordPress membership permissions still apply.", "zero-ad-network"); ?></li>
+        <li><?php esc_html_e("Check each cache layer's logs or status headers. A MISS alone is not proof of bypass: the response might still be stored. Test again after warming the cache.", "zero-ad-network"); ?></li>
+    </ol>
+    <p><?php esc_html_e("Verification-result caching (APCu) is separate from HTML caching. Expired tokens are rejected subject to the SDK's 60-second clock tolerance. Cancellation or account closure cannot revoke an already-signed offline token before its expiry. The plugin does not create subscriber cache cookies or shared subscriber pages.", "zero-ad-network"); ?></p>
+    <p><a href="https://zeroad.network/docs/site-integration/remove-ads/wordpress"><?php esc_html_e("WordPress integration guide", "zero-ad-network"); ?></a></p>
 </div>

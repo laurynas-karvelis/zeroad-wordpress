@@ -36,7 +36,7 @@ class RendererTest extends TestCase
         ]);
     }
 
-    private function verify(?string $token, string $host = self::HOSTNAME): void
+    private function verify(?string $token, string $host = self::HOSTNAME): Renderer
     {
         if ($token !== null) {
             $_SERVER["HTTP_BETTER_WEB_TOKEN"] = $token;
@@ -47,6 +47,7 @@ class RendererTest extends TestCase
         $renderer->setOptions(["output_method" => "header"]);
         $renderer->setPublisher($this->publisher());
         $renderer->verifyToken();
+        return $renderer;
     }
 
     private function context()
@@ -58,6 +59,35 @@ class RendererTest extends TestCase
     {
         $this->verify($this->authority->mintToken(self::HOSTNAME));
         $this->assertSame(Renderer::SUBSCRIBER_CONTEXT, $this->context());
+    }
+
+    public function testFirstSubscriberVisitNeedsNoVariantCookieAndCannotBeCached(): void
+    {
+        $renderer = $this->verify($this->authority->mintToken(self::HOSTNAME));
+        $renderer->run();
+        foreach ($GLOBALS["__wp_hooks"]["send_headers"] as $callback) {
+            $callback();
+        }
+        $this->assertSame(Renderer::SUBSCRIBER_CONTEXT, $this->context());
+        $this->assertSame([], $GLOBALS["__set_cookies"]);
+        $this->assertContains("Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0", array_column($GLOBALS["__sent_headers"], "header"));
+    }
+
+    public function testAClientVariantClaimCannotUnlockContentWithoutAToken(): void
+    {
+        $_COOKIE["zeroad_variant"] = "subscriber1";
+        $_SERVER["HTTP_X_ZEROAD_VARIANT"] = "subscriber1";
+        $this->verify(null);
+        $this->assertSame([], $this->context());
+    }
+
+    public function testASubscriberVisitDoesNotCarryAccessIntoTheNextOrdinaryRequest(): void
+    {
+        $this->verify($this->authority->mintToken(self::HOSTNAME));
+        $this->assertSame(Renderer::SUBSCRIBER_CONTEXT, $this->context());
+        zeroad_test_reset();
+        $this->verify(null);
+        $this->assertSame([], $this->context());
     }
 
     public function testEveryActionRecognisesTheSubscriberContext(): void

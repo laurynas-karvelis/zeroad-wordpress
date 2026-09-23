@@ -93,6 +93,8 @@ You can visit our homepage at https://zeroad.network. Read more about the progra
 
 == Changelog ==
 Unreleased:
+- Token-bearing requests require page-cache bypass and receive private/no-store responses.
+- Removed subscriber variant cookies, headers, and cache-key overrides. Configure every upstream cache before enabling subscriber access.
 - Publishers explicitly select included posts and pages using the Freedom access box.
 - Paid Memberships Pro and WP-Members access applies only to selected published content.
 - Removed blanket paywall/commerce overrides and password bypasses. Other membership plugins need custom adapters.
