@@ -93,20 +93,3 @@ Signing up is easy:
 = Where can I get more information about the program? =
 
 You can visit our homepage at https://zeroad.network. Read more about the program itself at https://zeroad.network/docs.
-
-== Changelog ==
-Unreleased:
-- Token-bearing requests require page-cache bypass and receive private/no-store responses.
-- Removed subscriber variant cookies, headers, and cache-key overrides. Configure every upstream cache before enabling subscriber access.
-- Publishers explicitly select included posts and pages using the Freedom access box.
-- Paid Memberships Pro and WP-Members access applies only to selected published content.
-- Removed blanket paywall/commerce overrides and password bypasses. Other membership plugins need custom adapters.
-- Clear all page caches and verify included and excluded content when upgrading.
-
-0.15.0:
-- Rebuilt on the reworked Zero Ad Network token SDK: single Freedom plan, hostname-bound tokens, and the new `Better-Web-Publisher` / `Better-Web-Token` headers.
-- Verified verdicts are now cached across requests via APCu (shared across the PHP-FPM pool), with automatic fallback to per-request verification.
-- Configuration simplified to a single Publisher ID; the per-feature selection is gone as every subscriber now gets the full clean experience.
-
-0.14.0:
-- Initial public release
