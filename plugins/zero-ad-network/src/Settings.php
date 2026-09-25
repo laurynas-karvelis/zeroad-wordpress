@@ -355,9 +355,11 @@ class Settings
 
         // Publisher ID validation.
         $publisher_id = isset($input["publisher_id"]) ? trim(sanitize_text_field($input["publisher_id"])) : "";
+
         if (!empty($publisher_id)) {
             $publisher_id = $this->validatePublisherId($publisher_id, $errors);
         }
+
         $output["publisher_id"] = $publisher_id;
 
         // Require a Publisher ID once the plugin is switched on.
@@ -394,6 +396,7 @@ class Settings
                 'Publisher ID must be "zapub_" followed by 24 letters or numbers. Copy it exactly from the Zero Ad Network dashboard.',
                 "zero-ad-network"
             );
+
             return "";
         }
 
@@ -403,12 +406,14 @@ class Settings
     private function validateOutputMethod(string $method): string
     {
         $valid_methods = ["header", "meta"];
+
         return in_array($method, $valid_methods, true) ? $method : "header";
     }
 
     private function validateCacheTtl($ttl): int
     {
         $ttl = intval($ttl);
+
         return max(1, min(60, $ttl));
     }
 
@@ -428,6 +433,7 @@ class Settings
                 __("Cache prefix contains invalid characters. Using default.", "zero-ad-network"),
                 "warning"
             );
+
             return "zeroad:";
         }
 

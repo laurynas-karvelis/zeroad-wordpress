@@ -44,15 +44,18 @@ class SubscriptionAccess extends Action
     public static function blockContent($blocked, $args = [])
     {
         $postId = $args["post_id"] ?? 0;
+
         return $postId && self::allowsPost(get_post($postId)) ? false : $blocked;
     }
 
     public static function allowsPost($post): bool
     {
         $context = $GLOBALS["zeroad_token_context"] ?? [];
+
         if (!self::enabled($context) || is_admin() || wp_doing_ajax()) {
             return false;
         }
+
         if ((defined("REST_REQUEST") && REST_REQUEST) || (function_exists("wp_is_json_request") && wp_is_json_request())) {
             return false;
         }

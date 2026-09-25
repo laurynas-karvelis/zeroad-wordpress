@@ -27,6 +27,7 @@ namespace ZeroAd\WP {
     function setcookie(string $name, string $value = "", $expires = 0, string $path = "", string $domain = "", bool $secure = false, bool $httponly = false): bool
     {
         $GLOBALS["__set_cookies"][] = compact("name", "value", "expires", "path", "domain", "secure", "httponly");
+
         return true;
     }
 }
@@ -36,18 +37,23 @@ namespace {
     if (!defined("ABSPATH")) {
         define("ABSPATH", sys_get_temp_dir() . "/");
     }
+
     if (!defined("ZEROAD_DEFAULT_CACHE_TTL")) {
         define("ZEROAD_DEFAULT_CACHE_TTL", 10);
     }
+
     if (!defined("ZEROAD_PLUGIN_URL")) {
         define("ZEROAD_PLUGIN_URL", "https://example.com/wp-content/plugins/zero-ad-network/");
     }
+
     if (!defined("ZEROAD_VERSION")) {
         define("ZEROAD_VERSION", "test");
     }
+
     if (!defined("COOKIEPATH")) {
         define("COOKIEPATH", "/");
     }
+
     if (!defined("COOKIE_DOMAIN")) {
         define("COOKIE_DOMAIN", "");
     }
@@ -73,16 +79,19 @@ namespace {
         $_POST = [];
         $_COOKIE = [];
     }
+
     zeroad_test_reset();
 
     function add_action($hook, $cb, $priority = 10, $args = 1)
     {
         $GLOBALS["__wp_hooks"][$hook][] = $cb;
+
         return true;
     }
     function add_filter($hook, $cb, $priority = 10, $args = 1)
     {
         $GLOBALS["__wp_hooks"][$hook][] = $cb;
+
         return true;
     }
     function apply_filters($hook, $value, ...$args)
@@ -90,6 +99,7 @@ namespace {
         foreach ($GLOBALS["__wp_hooks"][$hook] ?? [] as $callback) {
             $value = $callback($value, ...$args);
         }
+
         return $value;
     }
     function get_post($postId)
@@ -223,9 +233,11 @@ namespace {
             "ZeroAd\\Token\\Tests\\Fixtures\\" => $fixtures,
             "ZeroAd\\Token\\" => $sdkSrc,
         ];
+
         foreach ($maps as $prefix => $base) {
             if (strncmp($class, $prefix, strlen($prefix)) === 0) {
                 $file = $base . str_replace("\\", "/", substr($class, strlen($prefix))) . ".php";
+
                 if (is_file($file)) {
                     require $file;
                     return;

@@ -27,6 +27,7 @@ class SettingsTest extends TestCase
     public function testAcceptsAWellFormedPublisherId(): void
     {
         $out = $this->validate(["enabled" => "1", "publisher_id" => self::VALID_ID]);
+
         $this->assertSame(self::VALID_ID, $out["publisher_id"]);
         $this->assertSame(1, $out["enabled"]);
         $this->assertEmpty($GLOBALS["__settings_errors"]);
@@ -35,6 +36,7 @@ class SettingsTest extends TestCase
     public function testTrimsSurroundingWhitespaceFromThePublisherId(): void
     {
         $out = $this->validate(["publisher_id" => "  " . self::VALID_ID . "  "]);
+
         $this->assertSame(self::VALID_ID, $out["publisher_id"]);
     }
 
@@ -44,6 +46,7 @@ class SettingsTest extends TestCase
     public function testRejectsAMalformedPublisherId(string $id): void
     {
         $out = $this->validate(["publisher_id" => $id]);
+
         $this->assertSame("", $out["publisher_id"]);
         $this->assertNotEmpty($this->errorMessages());
     }
@@ -62,6 +65,7 @@ class SettingsTest extends TestCase
     public function testFlagsEnablingWithoutAPublisherId(): void
     {
         $out = $this->validate(["enabled" => "1", "publisher_id" => ""]);
+
         $this->assertSame("", $out["publisher_id"]);
         $this->assertSame(1, $out["enabled"]);
         $this->assertNotEmpty($this->errorMessages());
@@ -70,6 +74,7 @@ class SettingsTest extends TestCase
     public function testAnEmptyPublisherIdIsFineWhileDisabled(): void
     {
         $out = $this->validate(["enabled" => "", "publisher_id" => ""]);
+
         $this->assertSame(0, $out["enabled"]);
         $this->assertEmpty($GLOBALS["__settings_errors"]);
     }
@@ -80,6 +85,7 @@ class SettingsTest extends TestCase
     public function testClampsCacheTtlIntoRange($input, int $expected): void
     {
         $out = $this->validate(["cache_ttl" => $input]);
+
         $this->assertSame($expected, $out["cache_ttl"]);
     }
 
@@ -104,6 +110,7 @@ class SettingsTest extends TestCase
     public function testRejectsAnInvalidCachePrefix(): void
     {
         $out = $this->validate(["cache_prefix" => "bad prefix!"]);
+
         $this->assertSame("zeroad:", $out["cache_prefix"]);
     }
 
@@ -116,6 +123,7 @@ class SettingsTest extends TestCase
     public function testDefaultsDoNotCarryTheRemovedFeaturesKey(): void
     {
         $defaults = Settings::getDefaults();
+
         $this->assertArrayHasKey("publisher_id", $defaults);
         $this->assertArrayNotHasKey("features", $defaults);
         $this->assertArrayNotHasKey("client_id", $defaults);

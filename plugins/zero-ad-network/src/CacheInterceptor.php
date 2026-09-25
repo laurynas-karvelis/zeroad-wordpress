@@ -26,13 +26,17 @@ class CacheInterceptor
             if ($hasToken) {
                 do_action("litespeed_control_set_nocache", "Freedom token verification");
             }
+
             if (headers_sent()) {
                 return;
             }
+
             header("Vary: " . Constants::TOKEN_HEADER, false);
+
             if (!$hasToken) {
                 return;
             }
+
             header("Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0", true);
             header("CDN-Cache-Control: no-store", true);
             header("X-LiteSpeed-Cache-Control: no-cache", true);

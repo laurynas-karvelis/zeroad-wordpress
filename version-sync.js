@@ -6,9 +6,11 @@ const replace = (content, pattern, replacement) => content.replace(pattern, repl
 
 const syncFile = async (path, ...replacements) => {
   let content = await Bun.file(path).text()
+
   for (const [pattern, replacement] of replacements) {
     content = replace(content, pattern, replacement)
   }
+
   await Bun.write(path, content)
 }
 

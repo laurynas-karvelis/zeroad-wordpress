@@ -22,6 +22,7 @@
         if (isOpen) {
           setTimeout(() => {
             const r = item.getBoundingClientRect()
+
             if (r.top < 0 || r.bottom > window.innerHeight) {
               item.scrollIntoView({ behavior: "smooth", block: "nearest" })
             }
@@ -41,6 +42,7 @@
 
   function initWelcomeNotice() {
     const notice = document.querySelector(".zeroad-welcome-notice")
+
     if (!notice || typeof zeroadAdmin === "undefined") return
 
     const nonce = notice.dataset.dismissNonce
@@ -62,7 +64,9 @@
   function initFeatureSelection() {
     document.querySelectorAll(".zeroad-feature-box").forEach((box) => {
       const cb = box.querySelector('input[type="checkbox"]')
+
       if (!cb) return
+
       box.classList.toggle("selected", cb.checked)
       cb.addEventListener("change", () => box.classList.toggle("selected", cb.checked))
     })
@@ -71,7 +75,9 @@
   document.querySelectorAll('a[href^="#"]').forEach((a) => {
     a.addEventListener("click", function (e) {
       const target = document.querySelector(this.getAttribute("href"))
+
       if (!target) return
+
       e.preventDefault()
       target.scrollIntoView({ behavior: "smooth", block: "start" })
       history.pushState?.(null, "", this.getAttribute("href"))
@@ -81,7 +87,9 @@
   document.querySelectorAll("form").forEach((form) => {
     form.addEventListener("submit", function () {
       const btn = this.querySelector('input[type="submit"], button[type="submit"]')
+
       if (!btn || btn.classList.contains("disabled")) return
+
       btn.classList.add("disabled")
       setTimeout(() => btn.classList.remove("disabled"), 5000)
     })

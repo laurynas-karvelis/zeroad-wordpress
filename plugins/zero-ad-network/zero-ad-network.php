@@ -37,6 +37,7 @@ function zeroad_autoloader($class)
 
     foreach ($namespaces as $prefix => $base_dir) {
         $len = strlen($prefix);
+
         if (strncmp($prefix, $class, $len) !== 0) {
             continue;
         }
@@ -46,6 +47,7 @@ function zeroad_autoloader($class)
 
         if (file_exists($file)) {
             require_once $file;
+
             return true;
         }
     }

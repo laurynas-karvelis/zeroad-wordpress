@@ -188,6 +188,7 @@ abstract class Action
                     // Case 4: Static method string "ClassName::method"
                     elseif (is_string($func) && strpos($func, "::") !== false) {
                         $parts = explode("::", $func, 2);
+
                         if (count($parts) === 2) {
                             [$class, $method] = $parts;
 

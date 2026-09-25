@@ -32,6 +32,7 @@ class ConfigTest extends TestCase
         $prop = new ReflectionProperty(Config::class, "options");
         self::unlock($prop);
         $prop->setValue($config, $options);
+
         return $config;
     }
 
@@ -39,12 +40,14 @@ class ConfigTest extends TestCase
     {
         $ref = new ReflectionMethod(Config::class, $method);
         self::unlock($ref);
+
         return $ref->invoke($config);
     }
 
     public function testCacheDisabledYieldsNoCache(): void
     {
         $config = $this->withOptions(["cache_enabled" => 0]);
+
         $this->assertFalse($this->call($config, "resolveCacheOptions"));
     }
 
@@ -62,6 +65,7 @@ class ConfigTest extends TestCase
     {
         $config = $this->withOptions(["cache_enabled" => 1]);
         $options = $this->call($config, "resolveCacheOptions");
+
         $this->assertSame(ZEROAD_DEFAULT_CACHE_TTL * 1000, $options["ttl"]);
     }
 
@@ -71,6 +75,7 @@ class ConfigTest extends TestCase
         $GLOBALS["__site_url"] = "https://example.com";
 
         $hosts = $this->call($this->withOptions([]), "resolveHostnames");
+
         $this->assertSame(["example.com"], $hosts);
     }
 
@@ -80,6 +85,7 @@ class ConfigTest extends TestCase
         $GLOBALS["__site_url"] = "https://wp.example.com";
 
         $hosts = $this->call($this->withOptions([]), "resolveHostnames");
+
         $this->assertSame(["example.com", "wp.example.com"], $hosts);
     }
 }

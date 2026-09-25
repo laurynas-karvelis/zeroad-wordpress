@@ -238,11 +238,13 @@ class Renderer
         }
 
         $accept = $this->getServerValue("HTTP_ACCEPT") ?? "";
+
         if (stripos($accept, "application/json") !== false) {
             return true;
         }
 
         $contentType = $this->getServerValue("HTTP_CONTENT_TYPE") ?? "";
+
         if (stripos($contentType, "application/json") !== false) {
             return true;
         }

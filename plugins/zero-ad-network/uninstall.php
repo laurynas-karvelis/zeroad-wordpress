@@ -9,6 +9,7 @@ function zeroad_uninstall_cleanup()
     delete_option("zeroad_token_options");
 
     $users = get_users(["fields" => "ID"]);
+
     foreach ($users as $user_id) {
         delete_user_meta($user_id, "zeroad_welcome_dismissed");
     }

@@ -41,12 +41,14 @@ class RendererTest extends TestCase
         if ($token !== null) {
             $_SERVER["HTTP_BETTER_WEB_TOKEN"] = $token;
         }
+
         $_SERVER["HTTP_HOST"] = $host;
 
         $renderer = new Renderer();
         $renderer->setOptions(["output_method" => "header"]);
         $renderer->setPublisher($this->publisher());
         $renderer->verifyToken();
+
         return $renderer;
     }
 
@@ -58,6 +60,7 @@ class RendererTest extends TestCase
     public function testAValidTokenYieldsTheFullSubscriberContext(): void
     {
         $this->verify($this->authority->mintToken(self::HOSTNAME));
+
         $this->assertSame(Renderer::SUBSCRIBER_CONTEXT, $this->context());
     }
 
@@ -65,9 +68,11 @@ class RendererTest extends TestCase
     {
         $renderer = $this->verify($this->authority->mintToken(self::HOSTNAME));
         $renderer->run();
+
         foreach ($GLOBALS["__wp_hooks"]["send_headers"] as $callback) {
             $callback();
         }
+
         $this->assertSame(Renderer::SUBSCRIBER_CONTEXT, $this->context());
         $this->assertSame([], $GLOBALS["__set_cookies"]);
         $this->assertContains("Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0", array_column($GLOBALS["__sent_headers"], "header"));
@@ -78,21 +83,25 @@ class RendererTest extends TestCase
         $_COOKIE["zeroad_variant"] = "subscriber1";
         $_SERVER["HTTP_X_ZEROAD_VARIANT"] = "subscriber1";
         $this->verify(null);
+
         $this->assertSame([], $this->context());
     }
 
     public function testASubscriberVisitDoesNotCarryAccessIntoTheNextOrdinaryRequest(): void
     {
         $this->verify($this->authority->mintToken(self::HOSTNAME));
+
         $this->assertSame(Renderer::SUBSCRIBER_CONTEXT, $this->context());
         zeroad_test_reset();
         $this->verify(null);
+
         $this->assertSame([], $this->context());
     }
 
     public function testEveryActionRecognisesTheSubscriberContext(): void
     {
         $this->verify($this->authority->mintToken(self::HOSTNAME));
+
         foreach (Renderer::getFeatureActionClasses() as $Class) {
             $this->assertTrue($Class::enabled($this->context()), "$Class should be enabled for a subscriber");
         }
@@ -101,6 +110,7 @@ class RendererTest extends TestCase
     public function testNoTokenMeansAnEmptyContext(): void
     {
         $this->verify(null);
+
         $this->assertSame([], $this->context());
     }
 
@@ -108,6 +118,7 @@ class RendererTest extends TestCase
     {
         // Bound to another site, then presented here - the hostname signature won't match.
         $this->verify($this->authority->mintToken("harvested-elsewhere.example"));
+
         $this->assertSame([], $this->context());
     }
 
@@ -115,6 +126,7 @@ class RendererTest extends TestCase
     {
         // Well past the SDK's default 60s clock-skew tolerance.
         $this->verify($this->authority->mintToken(self::HOSTNAME, ["expiresAt" => time() - 3600]));
+
         $this->assertSame([], $this->context());
     }
 
@@ -123,12 +135,14 @@ class RendererTest extends TestCase
         // Minted by a different authority than the publisher trusts.
         $forged = Authority::create()->mintToken(self::HOSTNAME);
         $this->verify($forged);
+
         $this->assertSame([], $this->context());
     }
 
     public function testGarbageInTheHeaderIsRejectedNotFatal(): void
     {
         $this->verify(str_repeat("x", 5000));
+
         $this->assertSame([], $this->context());
     }
 

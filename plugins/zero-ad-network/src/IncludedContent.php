@@ -48,12 +48,15 @@ class IncludedContent
     public static function save(int $postId): void
     {
         $nonce = $_POST["zeroad_freedom_nonce"] ?? null;
+
         if (!is_string($nonce) || !wp_verify_nonce($nonce, "zeroad_freedom_access_" . $postId)) {
             return;
         }
+
         if (wp_is_post_revision($postId) || wp_is_post_autosave($postId) || !current_user_can("edit_post", $postId)) {
             return;
         }
+
         if (!in_array(get_post_type($postId), ["post", "page"], true)) {
             return;
         }
@@ -70,11 +73,13 @@ class IncludedContent
         if (!$post || $post->post_status !== "publish" || $post->post_password !== "") {
             return false;
         }
+
         if (!in_array($post->post_type, ["post", "page"], true)) {
             return false;
         }
 
         $included = get_post_meta($post->ID, self::META_KEY, true) === "1";
+
         return (bool) apply_filters("zeroad_freedom_includes_post", $included, $post);
     }
 }

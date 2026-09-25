@@ -37,6 +37,7 @@ class Config
         if (self::$instance === null) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
 
@@ -111,6 +112,7 @@ class Config
 
         foreach ([home_url(), site_url()] as $url) {
             $host = wp_parse_url($url, PHP_URL_HOST);
+
             if (is_string($host) && $host !== "") {
                 $hosts[$host] = true;
             }

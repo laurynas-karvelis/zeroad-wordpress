@@ -46,8 +46,10 @@ class ActionsTest extends TestCase
         // If a pattern fails to compile, preg_last_error() is non-zero after runReplacements. Prove every
         // action's patterns compile by running them and checking the error state.
         $html = "<html><head></head><body><p>content</p></body></html>";
+
         foreach ($this->actionClasses() as $Class) {
             $Class::outputBufferCallback($html);
+
             $this->assertSame(PREG_NO_ERROR, preg_last_error(), "$Class has a non-compiling pattern");
         }
     }
@@ -100,6 +102,7 @@ class ActionsTest extends TestCase
     public function testDoesNotStripInnocentMetaTags(): void
     {
         $html = '<meta name="application-name" content="MyApp"><meta name="description" content="A site">';
+
         $this->assertSame($html, Advertisements::outputBufferCallback($html));
     }
 
@@ -110,6 +113,7 @@ class ActionsTest extends TestCase
         // Access is granted only through scoped membership filters; markup stays intact.
         foreach ([SubscriptionAccess::class] as $Class) {
             $out = $Class::outputBufferCallback($html);
+
             $this->assertStringContainsString("locked article body", $out, "$Class must not eat article content");
         }
     }

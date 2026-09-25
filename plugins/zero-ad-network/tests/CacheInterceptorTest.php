@@ -19,9 +19,11 @@ class CacheInterceptorTest extends TestCase
     private function sendHeaders(): array
     {
         CacheInterceptor::preventPageCaching();
+
         foreach ($GLOBALS["__wp_hooks"]["send_headers"] ?? [] as $callback) {
             $callback();
         }
+
         return array_column($GLOBALS["__sent_headers"], "header");
     }
 
@@ -36,6 +38,7 @@ class CacheInterceptorTest extends TestCase
     {
         $_COOKIE["zeroad_variant"] = "subscriber1";
         $_SERVER["HTTP_X_ZEROAD_VARIANT"] = "subscriber1";
+
         $this->assertSame(["Vary: Better-Web-Token"], $this->sendHeaders());
         $this->assertFalse(defined("DONOTCACHEPAGE"));
         $this->assertSame([], $GLOBALS["__set_cookies"]);
@@ -45,11 +48,13 @@ class CacheInterceptorTest extends TestCase
     {
         $_SERVER["HTTP_BETTER_WEB_TOKEN"] = "invalid-token";
         $headers = $this->sendHeaders();
+
         $this->assertTrue(DONOTCACHEPAGE);
         $this->assertContains("Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0", $headers);
         $this->assertContains("CDN-Cache-Control: no-store", $headers);
         $this->assertContains("X-LiteSpeed-Cache-Control: no-cache", $headers);
         $this->assertSame([], $GLOBALS["__set_cookies"]);
+
         foreach ($headers as $header) {
             $this->assertStringNotContainsString("Variant", $header);
         }
@@ -58,6 +63,7 @@ class CacheInterceptorTest extends TestCase
     public function testEmptyTokensStillDisablePageCaching(): void
     {
         $_SERVER["HTTP_BETTER_WEB_TOKEN"] = "";
+
         $this->assertNotEmpty($this->sendHeaders());
         $this->assertTrue(DONOTCACHEPAGE);
     }
