@@ -137,7 +137,7 @@ class AdminPages
 
         <p class="description" style="margin-top: 15px; max-width: 800px;">
             <?php esc_html_e(
-                "Revenue is distributed monthly based on the time subscribers spend on your site compared to all partner sites. The more engaging your content, the more you earn!",
+                "Earnings are calculated monthly from each subscriber’s measured time and allocation preferences. Transfers require the minimum balance and eligible Stripe setup; bank withdrawals are separate.",
                 "zero-ad-network"
             ); ?>
         </p>

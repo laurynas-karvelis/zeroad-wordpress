@@ -269,7 +269,7 @@ class Config
                     ); ?></li>
                 </ol>
                 <p>
-                    <a href="https://docs.zeroad.network" target="_blank" rel="noopener noreferrer" class="button button-primary">
+                    <a href="https://zeroad.network/docs" target="_blank" rel="noopener noreferrer" class="button button-primary">
                         <?php esc_html_e("View Documentation", "zero-ad-network"); ?>
                     </a>
                     <a href="<?php echo esc_url(admin_url("admin.php?page=zeroad-config")); ?>" class="button">

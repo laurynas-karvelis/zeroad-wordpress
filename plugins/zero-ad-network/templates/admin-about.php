@@ -91,7 +91,7 @@ if (!defined("ABSPATH")) {
                 </h3>
                 <ul class="zeroad-ul" style="line-height: 1.8; color: #155724;">
                     <li><?php esc_html_e("New revenue stream from subscribers", "zero-ad-network"); ?></li>
-                    <li><?php esc_html_e("Paid based on content quality & engagement", "zero-ad-network"); ?></li>
+                    <li><?php esc_html_e("Earnings based on funded subscriber attention", "zero-ad-network"); ?></li>
                     <li><?php esc_html_e("No need for intrusive monetization", "zero-ad-network"); ?></li>
                     <li><?php esc_html_e("Focus on creating great content", "zero-ad-network"); ?></li>
                     <li><?php esc_html_e("Simple integration with existing site", "zero-ad-network"); ?></li>
@@ -170,7 +170,7 @@ if (!defined("ABSPATH")) {
                     <strong><?php esc_html_e("Engagement Tracked", "zero-ad-network"); ?></strong><br>
                     <span class="description">
                         <?php esc_html_e(
-                            "Extension anonymously tracks how long subscriber spends on your site",
+                            "The extension reports visits and focused-tab time linked to the subscriber’s Zero Ad Network account",
                             "zero-ad-network"
                         ); ?>
                     </span>
@@ -180,7 +180,7 @@ if (!defined("ABSPATH")) {
                     <strong><?php esc_html_e("You Get Paid!", "zero-ad-network"); ?></strong><br>
                     <span class="description">
                         <?php esc_html_e(
-                            "Monthly revenue distributed based on engagement time compared to all partner sites",
+                            "Each subscriber’s funded amount is allocated by measured time and their preferences; eligible balances transfer to Stripe",
                             "zero-ad-network"
                         ); ?>
                     </span>
@@ -224,27 +224,27 @@ if (!defined("ABSPATH")) {
 
             <p style="font-size: 13px; color: #666; margin-top: 15px;">
                 <strong>*</strong> <?php esc_html_e(
-                    "Revenue is distributed based on engagement time. If a subscriber spends 100% of their browsing time on partner sites at your site, you receive the full amount. If they spend 50% of their time on your site, you receive 50% of the amount.",
+                    "Allocation starts with each subscriber’s share of measured time, then applies creator preferences and publisher exclusions. Publishers keep 70% after processing fees and excluding tax. Unallocated funds enter a shared pool for eligible publishers.",
                     "zero-ad-network"
                 ); ?>
             </p>
         </div>
 
         <div style="background: #e7f3ff; border-left: 4px solid #0073aa; padding: 25px; margin: 20px 0;">
-            <h4 style="margin-top: 0;"><?php esc_html_e("📊 Real Example", "zero-ad-network"); ?></h4>
+            <h4 style="margin-top: 0;"><?php esc_html_e("📊 Example Allocation", "zero-ad-network"); ?></h4>
             <p style="line-height: 1.8;">
                 <strong><?php esc_html_e("Scenario:", "zero-ad-network"); ?></strong><br>
                 <?php esc_html_e(
-                    "1,000 Freedom subscribers visit partner sites this month.",
+                    "One subscriber contributes $10 for the month after processing fees and excluding tax.",
                     "zero-ad-network"
                 ); ?><br>
-                <?php esc_html_e("They spend a combined 10,000 hours on all partner sites.", "zero-ad-network"); ?><br>
-                <?php esc_html_e("They spend 1,000 hours (10%) on YOUR site.", "zero-ad-network"); ?>
+                <?php esc_html_e("They spend equal time on two participating websites.", "zero-ad-network"); ?><br>
+                <?php esc_html_e("Neither website is excluded from their allocations.", "zero-ad-network"); ?>
             </p>
             <p style="line-height: 1.8;">
                 <strong><?php esc_html_e("Your Revenue:", "zero-ad-network"); ?></strong><br>
                 <?php esc_html_e(
-                    "You receive 10% of the subscriber-revenue pool for that month - your share of the total time subscribers spent across every partner site.",
+                    "Each website receives $3.50 after the 30% platform fee. Monthly transfers require a $30 accumulated balance and eligible Stripe setup; bank withdrawals are separate.",
                     "zero-ad-network"
                 ); ?>
             </p>
@@ -269,8 +269,8 @@ if (!defined("ABSPATH")) {
                     "Your plugin verifies authenticity using Zero Ad's public key",
                     "zero-ad-network"
                 ); ?></li>
-                <li><?php esc_html_e("Only valid, paying subscribers get the benefits", "zero-ad-network"); ?></li>
-                <li><?php esc_html_e("Tokens automatically expire when subscription ends", "zero-ad-network"); ?></li>
+                <li><?php esc_html_e("Verified membership or hostname-restricted test access enables benefits", "zero-ad-network"); ?></li>
+                <li><?php esc_html_e("Tokens have their own expiry; cancellation cannot immediately revoke an issued token", "zero-ad-network"); ?></li>
             </ul>
 
             <h3><?php esc_html_e("No Personal Data in Tokens", "zero-ad-network"); ?></h3>
@@ -279,14 +279,14 @@ if (!defined("ABSPATH")) {
             </p>
             <ul class="zeroad-ul" style="line-height: 1.8;">
                 <li><?php esc_html_e("Token version number", "zero-ad-network"); ?></li>
-                <li><?php esc_html_e("Subscription expiration date", "zero-ad-network"); ?></li>
+                <li><?php esc_html_e("Token expiration date", "zero-ad-network"); ?></li>
                 <li><?php esc_html_e("Subscription plan (Freedom)", "zero-ad-network"); ?></li>
-                <li><?php esc_html_e("Random seed value (for token uniqueness)", "zero-ad-network"); ?></li>
+                <li><?php esc_html_e("Ephemeral public key, nonce, and two Ed25519 signatures", "zero-ad-network"); ?></li>
             </ul>
             <p style="line-height: 1.8; color: #666;">
                 <strong><?php esc_html_e("Important:", "zero-ad-network"); ?></strong>
                 <?php esc_html_e(
-                    "No email addresses, names, IP addresses, or any personally identifiable information is included. Subscribers remain anonymous to your site.",
+                    "Tokens contain no account ID, email, name, or IP address. Token reuse can link requests on the same hostname during validity. Your server still receives ordinary request data; platform attention reports remain account-linked.",
                     "zero-ad-network"
                 ); ?>
             </p>
@@ -302,7 +302,7 @@ if (!defined("ABSPATH")) {
                 <div style="font-size: 48px; margin-bottom: 10px;">1️⃣</div>
                 <h3><?php esc_html_e("Register", "zero-ad-network"); ?></h3>
                 <p><?php esc_html_e(
-                    "Create an account at zeroad.network and register your WordPress site",
+                    "Create an account and copy your Publisher ID from the dashboard. No paid subscription is needed to publish.",
                     "zero-ad-network"
                 ); ?></p>
                 <a href="https://zeroad.network/login" target="_blank" class="button button-primary">
@@ -346,15 +346,15 @@ if (!defined("ABSPATH")) {
             <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
                 <h3><?php esc_html_e("Documentation", "zero-ad-network"); ?></h3>
                 <ul class="zeroad-ul" style="line-height: 2;">
-                    <li><a href="https://docs.zeroad.network" target="_blank"><?php esc_html_e(
+                    <li><a href="https://zeroad.network/docs" target="_blank"><?php esc_html_e(
                         "Developer Portal",
                         "zero-ad-network"
                     ); ?></a></li>
-                    <li><a href="https://docs.zeroad.network/site-integration" target="_blank"><?php esc_html_e(
+                    <li><a href="https://zeroad.network/docs/site-integration" target="_blank"><?php esc_html_e(
                         "Integration Guide",
                         "zero-ad-network"
                     ); ?></a></li>
-                    <li><a href="https://docs.zeroad.network/blog" target="_blank"><?php esc_html_e(
+                    <li><a href="https://zeroad.network/blog" target="_blank"><?php esc_html_e(
                         "Blog & Updates",
                         "zero-ad-network"
                     ); ?></a></li>

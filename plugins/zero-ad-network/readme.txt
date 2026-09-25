@@ -12,13 +12,13 @@ Get paid by providing an ad-free, clean web experience to Zero Ad Network subscr
 
 == Description ==
 
-Zero Ad Network is a publisher monetization plugin for WordPress. It works alongside the Zero Ad Network browser extension — when a subscriber visits your site, the plugin verifies their token and automatically gives them the clean experience their subscription pays for.
+Zero Ad Network is a publisher monetization plugin for WordPress. It works alongside the Zero Ad Network browser extension — when a subscriber visits your site, the plugin verifies their token and applies supported integrations to provide the subscriber experience.
 
 **This is the site owner side of the platform.** Your visitors install the browser extension and subscribe. You install this plugin, enter your Publisher ID, and start earning.
 
 = What Your Site Gets =
 
-Zero Ad Network subscribers are on a single plan, **Freedom**. When one visits your site, the plugin automatically:
+Zero Ad Network subscribers are on a single plan, **Freedom**. For verified subscribers, the plugin works with supported plugins to:
 
 - Suppresses advertisements
 - Removes cookie consent banners
@@ -30,17 +30,19 @@ All subscribers receive the clean browsing benefits. If you sell access, include
 
 = How You Get Paid =
 
-At the end of each month, Zero Ad Network distributes subscriber revenue across all partner sites based on how much time subscribers actually spent on each site. No impressions, no clicks — just time spent on your content.
+Earnings are calculated monthly for each subscriber using measured time and allocation preferences. Publishers share 70% of received revenue after processing fees and excluding tax; the platform retains 30%. Unallocated money enters a shared pool for eligible publishers.
 
-The more engaging your site, the more you earn.
+Transfers to Stripe Express require a $30 accumulated balance and completed, eligible payout setup. Smaller balances carry forward. A transfer credits your Stripe account; bank withdrawals are separate. See [how earnings work](https://zeroad.network/docs/monetization).
 
 = How It Works Technically =
 
-The subscriber's browser extension sends a signed `Better-Web-Token` request header with a cryptographic token on every page load. The plugin verifies the token using an ED25519 public key — no outbound API calls, no round trips. The token is bound to your hostname, so a token harvested on another site cannot be replayed against yours. Verification happens entirely on your server in about 0.09ms (two Ed25519 checks via the Sodium extension); with APCu enabled a returning subscriber's token is reused from shared memory in a few microseconds.
+After recognizing your website, the subscriber’s browser extension sends `Better-Web-Token` on eligible HTTPS page and media requests. The first visit may need a reload after discovery. The plugin verifies the token using an ED25519 public key — no outbound API calls, no round trips. The token is bound to your hostname, so a token harvested on another site cannot be replayed against yours. Verification uses two Ed25519 checks through the Sodium extension. APCu can reuse verification verdicts across requests.
 
 The plugin outputs a `Better-Web-Publisher` identifier (via HTTP response header or HTML meta tag) so the extension knows your site is a partner and can credit visits to you.
 
 Verified verdicts can be cached across requests with the [APCu extension](https://www.php.net/manual/en/book.apcu.php), shared across the whole PHP-FPM pool. When APCu is not present the plugin falls back to per-request verification automatically.
+
+Configure every CDN, proxy, and page cache to bypass reads and writes for requests carrying `Better-Web-Token`, and forward the header to WordPress. The plugin cannot verify a request served by an upstream cache. Test ordinary and subscriber responses with warm caches; verification-result caching is separate from page caching.
 
 = Supported Plugin Compatibility =
 
@@ -52,7 +54,7 @@ Benefits only apply to verified Zero Ad Network subscribers. All other visitors 
 
 = Get Started =
 
-1. [Sign up at zeroad.network](https://zeroad.network) to register your site and get your Publisher ID
+1. [Sign up at zeroad.network](https://zeroad.network) and copy your account’s Publisher ID from the dashboard
 2. Install and activate this plugin
 3. Enter your Publisher ID and enable the plugin
 4. Select included paid posts and pages in their Freedom access box, verify access, and clear page caches
@@ -61,7 +63,7 @@ Benefits only apply to verified Zero Ad Network subscribers. All other visitors 
 == Installation ==
 1. Upload the plugin files to the `/wp-content/plugins/zero-ad-network` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. [Sign up at zeroad.network](https://zeroad.network) to register your site and get your Publisher ID
+3. [Sign up at zeroad.network](https://zeroad.network) and copy your account’s Publisher ID from the dashboard
 4. Enter your Publisher ID and enable the plugin on the plugin's settings page
 5. If you sell access, select included posts and pages, verify access, and clear page caches
 6. Start earning from subscribers who visit your site
@@ -83,13 +85,14 @@ When a verified Zero Ad Network subscriber loads one of your pages, the plugin a
 
 Signing up is easy:
 1. Sign up with Zero Ad Network at https://zeroad.network/login.
-2. Register your site to receive your unique Publisher ID at https://zeroad.network/publisher/sites/add.
-3. Copy your site's `Publisher ID` into the plugin's settings page and enable the plugin.
-4. By the end of each month, if our subscribers visit your site, you get paid a share of their subscription fees.
+2. Copy your account’s Publisher ID from the dashboard; you do not need a paid subscription.
+3. Enter the ID in the plugin settings, enable the plugin, configure included content and page-cache bypass, and verify the experience.
+4. Add and verify the website from your dashboard, or let accepted subscriber activity discover it after upload and processing.
+5. Use Test in your browser to check access without paying. Test activity earns nothing. Earnings and transfers follow the rules above.
 
 = Where can I get more information about the program? =
 
-You can visit our homepage at https://zeroad.network. Read more about the program itself at https://docs.zeroad.network.
+You can visit our homepage at https://zeroad.network. Read more about the program itself at https://zeroad.network/docs.
 
 == Changelog ==
 Unreleased:
