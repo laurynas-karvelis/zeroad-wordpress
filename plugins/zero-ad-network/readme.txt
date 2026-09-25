@@ -46,7 +46,20 @@ Configure every CDN, proxy, and page cache to bypass reads and writes for reques
 
 = Supported Plugin Compatibility =
 
-The plugin integrates with advertising and interruption plugins, plus content-specific hooks for Paid Memberships Pro and WP-Members. Other paywalls require a custom adapter. See the [integration guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress).
+The plugin targets advertising, cookie banner, and popup integrations through plugin hooks, script removal, and CSS. These rules do not certify every third-party plugin version. Check your installed versions and theme with a subscriber visit; custom markup and plugin updates can need additional integration.
+
+Examples include:
+
+- Advertising: Ads For WP, Ad Inserter, Advanced Ads, WP Quads, AdRotate, and Google Site Kit's AdSense filters.
+- Cookie banners: Cookiebot, Real Cookie Banner, Complianz, CookieYes, Cookie Notice, and GDPR by Trew Knowledge.
+- Marketing popups: Popup Maker, Popup Maker WP, OptinMonster, MailOptin Lite, Hustle, and Thrive Leads. Popup Maker WP is targeted through `SGPM` callbacks; Thrive Leads uses a conditional display-filter override.
+- Included content: Paid Memberships Pro and WP-Members, through content-specific hooks for explicitly selected posts and pages. Other paywalls and custom functionality require a custom adapter. The plugin does not create site subscriptions, grant purchases, or bypass post passwords.
+
+Raptive/AdThrive is not confirmed support. Its existing rule checks the `cmb2` text domain, which belongs to a separate custom-fields toolkit and does not reliably identify an active Raptive integration.
+
+Convert Pro has a suppression rule and a conditional popup override. Convert Pro and Convert Plus are separate products; the shared override does not establish full support for both.
+
+See the [complete supported plugins reference](https://zeroad.network/docs/site-integration/remove-ads/wordpress#supported-plugins-reference) for the targeted integrations and their detection conditions. Its identifiers are text domains, callbacks, or filters, not necessarily WordPress.org download slugs.
 
 = No Conflict With Your Existing Setup =
 
