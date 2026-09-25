@@ -14,7 +14,9 @@ if (!defined("ABSPATH")) {
     <h2><?php esc_html_e("WordPress page caches", "zero-ad-network"); ?></h2>
     <p><?php esc_html_e("For a PHP-based page cache, replace the existing WP_CACHE definition in wp-config.php with the following, before WordPress loads. Do not add a second definition. This skips advanced-cache.php for token requests; it does not bypass web-server rewrites or a CDN.", "zero-ad-network"); ?></p>
 <pre><code>$freedomTokenRequest = array_key_exists('HTTP_BETTER_WEB_TOKEN', $_SERVER);
+
 define('WP_CACHE', !$freedomTokenRequest);
+
 if ($freedomTokenRequest &amp;&amp; !defined('DONOTCACHEPAGE')) {
     define('DONOTCACHEPAGE', true);
 }</code></pre>
