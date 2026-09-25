@@ -84,17 +84,8 @@ register_activation_hook(__FILE__, function () {
         );
     }
 
-    $default_options = [
-        "enabled" => false,
-        "publisher_id" => "",
-        "output_method" => "header",
-        "cache_enabled" => true,
-        "cache_ttl" => ZEROAD_DEFAULT_CACHE_TTL,
-        "cache_prefix" => "zeroad:"
-    ];
-
     if (!get_option(\ZeroAd\WP\Settings::OPTION_KEY)) {
-        add_option(\ZeroAd\WP\Settings::OPTION_KEY, $default_options, "", "no");
+        add_option(\ZeroAd\WP\Settings::OPTION_KEY, \ZeroAd\WP\Settings::getDefaults(), "", "no");
     }
 
     wp_cache_flush();

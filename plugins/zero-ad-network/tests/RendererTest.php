@@ -57,6 +57,21 @@ class RendererTest extends TestCase
         return $GLOBALS["zeroad_token_context"] ?? null;
     }
 
+    public function testJsonContentTypeDoesNotRegisterPageOverrides(): void
+    {
+        $renderer = $this->verify($this->authority->mintToken(self::HOSTNAME));
+        $_SERVER["CONTENT_TYPE"] = "application/json; charset=utf-8";
+
+        $renderer->registerPluginOverrides();
+
+        $this->assertSame([], $GLOBALS["__wp_hooks"]);
+
+        unset($_SERVER["CONTENT_TYPE"]);
+        $renderer->registerPluginOverrides();
+
+        $this->assertArrayHasKey("pmpro_has_membership_access_filter", $GLOBALS["__wp_hooks"]);
+    }
+
     public function testAValidTokenYieldsTheFullSubscriberContext(): void
     {
         $this->verify($this->authority->mintToken(self::HOSTNAME));

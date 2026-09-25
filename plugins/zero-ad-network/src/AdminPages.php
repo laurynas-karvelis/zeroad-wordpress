@@ -114,7 +114,7 @@ class AdminPages
                             /* translators: 1: Cache TTL in seconds, 2: Cache key prefix */
                             printf(
                                 esc_html__("Enabled (TTL: %1\$ds, Prefix: %2\$s)", "zero-ad-network"),
-                                esc_html((string) ($this->options["cache_ttl"] ?? 5)),
+                                esc_html((string) ($this->options["cache_ttl"] ?? ZEROAD_DEFAULT_CACHE_TTL)),
                                 esc_html($this->options["cache_prefix"] ?? "zeroad:")
                             ); ?>
                         <?php else: ?>

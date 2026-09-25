@@ -21,9 +21,6 @@ class Renderer
     /** @var Publisher|null */
     private $publisher;
 
-    /** @var bool Whether this visitor holds a live Zero Ad Network (Freedom) subscription. */
-    private $isSubscriber = false;
-
     /** @var array<string,bool> The action flags for this request, all on for a subscriber, empty otherwise. */
     private $tokenContext = [];
 
@@ -122,11 +119,9 @@ class Renderer
 
             $result = $this->publisher->verify($token, $hostname);
 
-            $this->isSubscriber = $result->subscriber;
             $this->tokenContext = $result->subscriber ? self::SUBSCRIBER_CONTEXT : [];
         } catch (\Throwable $e) {
             // A verification failure is a non-subscriber, never a fatal page error.
-            $this->isSubscriber = false;
             $this->tokenContext = [];
         }
 
@@ -243,7 +238,7 @@ class Renderer
             return true;
         }
 
-        $contentType = $this->getServerValue("HTTP_CONTENT_TYPE") ?? "";
+        $contentType = $this->getServerValue("CONTENT_TYPE") ?? $this->getServerValue("HTTP_CONTENT_TYPE") ?? "";
 
         if (stripos($contentType, "application/json") !== false) {
             return true;

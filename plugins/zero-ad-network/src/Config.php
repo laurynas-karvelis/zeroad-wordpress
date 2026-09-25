@@ -90,10 +90,7 @@ class Config
             } else {
                 $this->renderer->setPublisher(null);
             }
-        } catch (\InvalidArgumentException $e) {
-            $this->renderer->setPublisher(null);
-            $this->showConfigError($e->getMessage());
-        } catch (\RuntimeException $e) {
+        } catch (\InvalidArgumentException | \RuntimeException $e) {
             $this->renderer->setPublisher(null);
             $this->showConfigError($e->getMessage());
         }

@@ -22,6 +22,36 @@ class ActionsTest extends TestCase
         zeroad_test_reset();
     }
 
+    public function testRemovesMatchingCallbacksAcrossAllWordPressCallbackForms(): void
+    {
+        $instance = new \stdClass();
+        $matching = ["ad_render", "ad_Class::render", "Other::ad_render", ["ad_Class", "render"], [$instance, "ad_render"]];
+        $untouched = ["ordinary", "Other::render", "AD_render", function () {}];
+        $callbacks = [];
+
+        foreach (array_merge($matching, $untouched) as $callback) {
+            $callbacks[] = ["function" => $callback];
+        }
+
+        $previous = $GLOBALS["wp_filter"] ?? null;
+        $GLOBALS["wp_filter"] = ["the_content" => (object) ["callbacks" => [25 => $callbacks]]];
+        $method = new \ReflectionMethod(\ZeroAd\WP\Actions\Action::class, "removeCallbacksByPrefix");
+
+        if (PHP_VERSION_ID < 80100) {
+            $method->setAccessible(true);
+        }
+
+        try {
+            $method->invoke(null, "ad_");
+        } finally {
+            $GLOBALS["wp_filter"] = $previous;
+        }
+
+        $this->assertSame(array_map(function ($callback) {
+            return ["the_content", $callback, 25];
+        }, $matching), $GLOBALS["__removed_filters"]);
+    }
+
     private function actionClasses(): array
     {
         return Renderer::getFeatureActionClasses();

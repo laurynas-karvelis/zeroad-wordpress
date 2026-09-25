@@ -65,7 +65,8 @@ namespace {
         $GLOBALS["__set_cookies"] = [];
         $GLOBALS["__wp_hooks"] = [];
         $GLOBALS["__settings_errors"] = [];
-        $_SERVER = array_diff_key($_SERVER, array_flip(["HTTP_BETTER_WEB_TOKEN", "HTTP_HOST", "HTTP_ACCEPT", "HTTP_CONTENT_TYPE", "HTTP_X_ZEROAD_VARIANT"]));
+        $GLOBALS["__removed_filters"] = [];
+        $_SERVER = array_diff_key($_SERVER, array_flip(["HTTP_BETTER_WEB_TOKEN", "HTTP_HOST", "HTTP_ACCEPT", "HTTP_CONTENT_TYPE", "CONTENT_TYPE", "HTTP_X_ZEROAD_VARIANT"]));
         unset($GLOBALS["zeroad_token_context"]);
         $GLOBALS["__posts"] = [];
         $GLOBALS["__post_meta"] = [];
@@ -145,6 +146,8 @@ namespace {
 
     function remove_filter($hook, $cb, $priority = 10)
     {
+        $GLOBALS["__removed_filters"][] = [$hook, $cb, $priority];
+
         return true;
     }
     function remove_action($hook, $cb, $priority = 10)

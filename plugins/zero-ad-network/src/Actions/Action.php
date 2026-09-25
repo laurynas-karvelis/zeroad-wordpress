@@ -21,31 +21,6 @@ abstract class Action
         // Default: no overrides
     }
 
-    protected static function injectIntoHead(string $html, string $inject): string
-    {
-        if (stripos($html, "</head>") !== false) {
-            return preg_replace("#</head>#i", $inject . "</head>", $html, 1);
-        }
-
-        // Fallback: prepend to document
-        return $inject . $html;
-    }
-
-    protected static function addFilters(array $list): void
-    {
-        foreach ($list as $value) {
-            if (!is_array($value) || count($value) < 2) {
-                continue;
-            }
-
-            $name = $value[0];
-            $fn = $value[1];
-            $priority = $value[2] ?? 10;
-
-            add_filter($name, $fn, $priority);
-        }
-    }
-
     protected static function removeActions(array $list): void
     {
         foreach ($list as $value) {
@@ -146,56 +121,25 @@ abstract class Action
                     continue;
                 }
 
-                foreach ($callbacks as $id => $callback_data) {
+                foreach ($callbacks as $callback_data) {
                     if (!isset($callback_data["function"])) {
                         continue;
                     }
 
                     $func = $callback_data["function"];
-                    $shouldRemove = false;
+                    $names = [];
 
-                    // Prefixes name real PHP identifiers (class/function names), which are case-sensitive,
-                    // so matching is too: `strpos(...) === 0`. A case-insensitive match would let a short
-                    // prefix like `ai_` sweep up unrelated callbacks from other plugins.
-
-                    // Case 1: Simple named function string
                     if (is_string($func)) {
-                        if (strpos($func, $prefix) === 0) {
-                            $shouldRemove = true;
+                        $names = explode("::", $func, 2);
+                    } elseif (is_array($func) && count($func) === 2 && isset($func[0], $func[1])) {
+                        $names = [is_object($func[0]) ? get_class($func[0]) : $func[0], $func[1]];
+                    }
+
+                    // Keep matching case-sensitive so a prefix cannot sweep up unrelated callbacks.
+                    foreach ($names as $name) {
+                        if (is_string($name) && strpos($name, $prefix) === 0) {
                             remove_filter($hook_name, $func, $priority);
-                        }
-                    }
-                    // Case 2: Instance method array [object, method]
-                    elseif (is_array($func) && count($func) === 2 && is_object($func[0]) && isset($func[1])) {
-                        $class = get_class($func[0]);
-                        $method = $func[1];
-
-                        if (strpos($class, $prefix) === 0 || strpos($method, $prefix) === 0) {
-                            $shouldRemove = true;
-                            remove_filter($hook_name, [$func[0], $method], $priority);
-                        }
-                    }
-                    // Case 3: Static method array [ClassName, method]
-                    elseif (is_array($func) && count($func) === 2 && is_string($func[0]) && isset($func[1])) {
-                        $class = $func[0];
-                        $method = $func[1];
-
-                        if (strpos($class, $prefix) === 0 || strpos($method, $prefix) === 0) {
-                            $shouldRemove = true;
-                            remove_filter($hook_name, [$class, $method], $priority);
-                        }
-                    }
-                    // Case 4: Static method string "ClassName::method"
-                    elseif (is_string($func) && strpos($func, "::") !== false) {
-                        $parts = explode("::", $func, 2);
-
-                        if (count($parts) === 2) {
-                            [$class, $method] = $parts;
-
-                            if (strpos($class, $prefix) === 0 || strpos($method, $prefix) === 0) {
-                                $shouldRemove = true;
-                                remove_filter($hook_name, $func, $priority);
-                            }
+                            break;
                         }
                     }
                 }

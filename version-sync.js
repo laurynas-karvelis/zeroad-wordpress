@@ -2,13 +2,11 @@
 
 const { version } = await Bun.file("package.json").json()
 
-const replace = (content, pattern, replacement) => content.replace(pattern, replacement)
-
 const syncFile = async (path, ...replacements) => {
   let content = await Bun.file(path).text()
 
   for (const [pattern, replacement] of replacements) {
-    content = replace(content, pattern, replacement)
+    content = content.replace(pattern, replacement)
   }
 
   await Bun.write(path, content)
