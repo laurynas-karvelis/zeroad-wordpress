@@ -4,3 +4,5 @@
 **/vendor/
 node_modules/
 build/
+.phpunit.result.cache
+.phpunit.cache/
