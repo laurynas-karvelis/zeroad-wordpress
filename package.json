@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "zeroad-wordpress",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "composer:install": "cd plugins/zero-ad-network && composer install --no-autoloader --no-dev",
     "start": "wp-env start",
