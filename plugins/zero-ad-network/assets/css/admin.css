@@ -73,6 +73,7 @@
 
 .zeroad-steps {
   margin-bottom: 0;
+  margin-inline: 0;
   padding: 0;
   list-style: none;
   counter-reset: zeroad-step;
@@ -252,6 +253,9 @@
 
 .zeroad-disclosure .widefat {
   width: calc(100% - 40px);
+}
+
+.zeroad-disclosure > :last-child:not(summary) {
   margin-bottom: 20px;
 }
 
