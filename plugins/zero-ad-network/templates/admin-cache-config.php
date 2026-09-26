@@ -11,6 +11,7 @@ $zeroadActivePage = "zeroad-cache-config";
         <span class="zeroad-page-icon dashicons dashicons-performance" aria-hidden="true"></span>
         <div>
     <h1><?php esc_html_e("Page cache setup", "zero-ad-network"); ?></h1>
+    <p class="zeroad-intro"><?php esc_html_e("Configure your cache layers, then verify your setup.", "zero-ad-network"); ?></p>
         </div>
     </header>
     <?php include __DIR__ . "/admin-navigation.php"; ?>
@@ -21,7 +22,6 @@ $zeroadActivePage = "zeroad-cache-config";
         <p><?php esc_html_e("The plugin marks token responses private and no-store and signals compatible WordPress caches not to store them. It cannot stop a cache hit served before WordPress loads. If your host cannot bypass token requests, disable its full-page cache on participating pages. Static assets and object caching can remain enabled.", "zero-ad-network"); ?></p>
     </div>
 
-    <p class="zeroad-intro"><?php esc_html_e("Configure every cache layer serving your site. Open the instructions for your hosting stack, then run the checks below.", "zero-ad-network"); ?></p>
     <details class="zeroad-panel zeroad-disclosure" open><summary><?php esc_html_e("WordPress page caches", "zero-ad-network"); ?></summary>
     <p><?php esc_html_e("For a PHP-based page cache, replace the existing WP_CACHE definition in wp-config.php with the following, before WordPress loads. Do not add a second definition. This skips advanced-cache.php for token requests; it does not bypass web-server rewrites or a CDN.", "zero-ad-network"); ?></p>
 <pre><code>$freedomTokenRequest = array_key_exists('HTTP_BETTER_WEB_TOKEN', $_SERVER);
