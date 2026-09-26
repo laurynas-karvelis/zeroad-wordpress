@@ -120,3 +120,26 @@ Signing up is easy:
 = Where can I get more information about the program? =
 
 You can visit our homepage at https://zeroad.network. Read more about the program itself at https://zeroad.network/docs.
+
+== Changelog ==
+
+= 1.0.0 =
+
+First official stable release. Changes since 0.14.0:
+
+* Updated the WordPress integration to use the stable Zero Ad Network PHP token SDK 1.0.0, with local subscriber verification bound to the request hostname. Invalid, expired, forged, and wrong-host tokens do not unlock subscriber benefits.
+* Aligned subscriber benefits with the single Freedom plan and removed the previous per-feature settings. Verified subscribers receive the supported ad, cookie-banner, and marketing-popup suppression rules.
+* Added a Freedom access box to the post and page editor. Paid Memberships Pro and WP-Members now grant reading access only to explicitly included published content; private, draft, password-protected, and unselected content stays protected.
+* Removed broad paywall and membership overrides. The plugin no longer attempts to grant site memberships or purchases, or remove arbitrary paywall markup. Other paywalls require a custom integration.
+* Reworked page-cache handling: requests carrying Better-Web-Token send no-store headers and signal supported page caches to bypass caching, including for empty or invalid tokens. Removed the previous variant-cookie approach. Upstream caches still require explicit bypass configuration.
+* Connected verification caching to the SDK's automatic APCu support, with a fallback when APCu is unavailable, and corrected cache TTL unit conversion. Increased the default verification-cache TTL to one hour.
+* Fixed plugin callback removal, including static-method callbacks, and refined HTML filtering to preserve unrelated markup and nested content.
+* Limited subscriber page modifications to front-end page requests, excluding administration, AJAX, REST, and JSON requests, and fixed JSON content-type detection.
+* Redesigned the settings, cache configuration, and About pages with clearer setup status, navigation, and guidance. Updated documentation for supported integrations, publisher earnings, external services, and privacy.
+* Added automated regression coverage for token verification, content-access boundaries, cache behavior, settings validation, plugin actions, and administration pages.
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+
+First official stable release with the updated token SDK. Review your Publisher ID, select included posts and pages in the Freedom access box, configure all page caches to bypass requests carrying Better-Web-Token, and clear existing page caches. Broad paywall overrides have been removed.
