@@ -94,7 +94,9 @@ class SettingsTest extends TestCase
         return [
             "below minimum" => [0, 1],
             "negative" => [-5, 1],
-            "above maximum" => [999, 60],
+            "above maximum" => [86401, 86400],
+            "default duration" => [3600, 3600],
+            "maximum duration" => [86400, 86400],
             "within range" => [15, 15],
             "numeric string" => ["30", 30],
         ];

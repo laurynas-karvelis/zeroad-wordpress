@@ -246,19 +246,13 @@ class Settings
                name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_ttl]"
                value="<?php echo esc_attr((string) $value); ?>"
                min="1"
-               max="60"
+               max="86400"
                step="1"
                class="small-text">
         <span><?php esc_html_e("seconds", "zero-ad-network"); ?></span>
         <p class="description" id="zeroad-cache_ttl-help">
             <?php esc_html_e(
-                "How long to reuse verification results. Recommended: 5–10 seconds. Token expiry is checked regardless of this setting.",
-                "zero-ad-network"
-            ); ?>
-            <br>
-            <strong><?php esc_html_e("Note:", "zero-ad-network"); ?></strong>
-            <?php esc_html_e(
-                "Tokens are automatically removed from cache when they expire, regardless of TTL setting.",
+                "How long to reuse verification results. Default: 3600 seconds (1 hour). Maximum: 86400 seconds (24 hours). Cached access never extends beyond the token's expiry.",
                 "zero-ad-network"
             ); ?>
         </p>
@@ -374,7 +368,7 @@ class Settings
     {
         $ttl = intval($ttl);
 
-        return max(1, min(60, $ttl));
+        return max(1, min(86400, $ttl));
     }
 
     private function validateCachePrefix(string $prefix): string

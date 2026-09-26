@@ -39,7 +39,7 @@ namespace {
     }
 
     if (!defined("ZEROAD_DEFAULT_CACHE_TTL")) {
-        define("ZEROAD_DEFAULT_CACHE_TTL", 10);
+        define("ZEROAD_DEFAULT_CACHE_TTL", 3600);
     }
 
     if (!defined("ZEROAD_PLUGIN_URL")) {
