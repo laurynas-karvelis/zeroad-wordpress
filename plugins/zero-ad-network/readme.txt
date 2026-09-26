@@ -3,7 +3,7 @@ Contributors: zeroadnetwork
 Tags: monetization, revenue, access-control, ad-blocker, ad-free
 Requires PHP: 7.2
 Requires at least: 4.9
-Tested up to: 6.9
+Tested up to: 7.1
 Stable tag: 1.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
@@ -86,6 +86,16 @@ Benefits only apply to verified Zero Ad Network subscribers. All other visitors 
 6. Check your publisher dashboard for monthly earnings from funded subscriber attention and any shared-pool allocation
 
 == Frequently Asked Questions ==
+
+= External service and privacy =
+
+This plugin integrates with [Zero Ad Network](https://zeroad.network), which manages subscriber memberships, issues signed membership credentials, processes attention reports, and allocates publisher earnings. A publisher account is required to participate; site owners do not need a paid subscription. Visitors use their own subscription and browser extension.
+
+The plugin verifies tokens locally and makes no outbound API requests for verification or telemetry. When enabled, it publishes your Publisher ID in a response header or meta tag for the extension to discover. Subscriber tokens contain no account ID, name, or email, but repeated use can be correlated on the same hostname during validity.
+
+The subscriber's browser extension separately reports account-linked activity to Zero Ad Network, including Publisher ID, hostname, measured duration, views, and creator page URLs where applicable. This reporting is performed by the extension, not by this WordPress plugin. It is not anonymous. The plugin stores its settings, selected-content metadata, and welcome-notice dismissal in WordPress; optional APCu caching stores verification results on your server.
+
+Review the service's [Terms of Use](https://zeroad.network/terms) and [Privacy Policy](https://zeroad.network/privacy) before participating.
 
 = What is Zero Ad Network? =
 

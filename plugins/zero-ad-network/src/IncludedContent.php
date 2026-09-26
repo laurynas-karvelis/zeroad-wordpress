@@ -47,9 +47,11 @@ class IncludedContent
 
     public static function save(int $postId): void
     {
-        $nonce = $_POST["zeroad_freedom_nonce"] ?? null;
+        $nonce = isset($_POST["zeroad_freedom_nonce"]) && is_string($_POST["zeroad_freedom_nonce"])
+            ? sanitize_text_field(wp_unslash($_POST["zeroad_freedom_nonce"]))
+            : "";
 
-        if (!is_string($nonce) || !wp_verify_nonce($nonce, "zeroad_freedom_access_" . $postId)) {
+        if ($nonce === "" || !wp_verify_nonce($nonce, "zeroad_freedom_access_" . $postId)) {
             return;
         }
 
@@ -61,7 +63,11 @@ class IncludedContent
             return;
         }
 
-        if (($_POST["zeroad_freedom_included"] ?? null) === "1") {
+        $included = isset($_POST["zeroad_freedom_included"]) && is_string($_POST["zeroad_freedom_included"])
+            ? sanitize_text_field(wp_unslash($_POST["zeroad_freedom_included"]))
+            : "";
+
+        if ($included === "1") {
             update_post_meta($postId, self::META_KEY, "1");
         } else {
             delete_post_meta($postId, self::META_KEY);

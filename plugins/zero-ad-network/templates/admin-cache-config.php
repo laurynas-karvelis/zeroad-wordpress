@@ -4,10 +4,15 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-$activePage = "zeroad-cache-config";
+$zeroadActivePage = "zeroad-cache-config";
 ?>
 <div class="wrap zeroad-admin">
+    <header class="zeroad-page-header">
+        <span class="zeroad-page-icon dashicons dashicons-performance" aria-hidden="true"></span>
+        <div>
     <h1><?php esc_html_e("Page cache setup", "zero-ad-network"); ?></h1>
+        </div>
+    </header>
     <?php include __DIR__ . "/admin-navigation.php"; ?>
     <div class="zeroad-content">
     <div class="notice notice-warning inline">

@@ -19,11 +19,13 @@ class CacheInterceptor
 
         // Early cache hits must be bypassed by the host before WordPress loads this plugin.
         if ($hasToken && !defined("DONOTCACHEPAGE")) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Standard third-party cache bypass constant.
             define("DONOTCACHEPAGE", true);
         }
 
         add_action("send_headers", function () use ($hasToken) {
             if ($hasToken) {
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- LiteSpeed's public cache-control hook.
                 do_action("litespeed_control_set_nocache", "Freedom token verification");
             }
 

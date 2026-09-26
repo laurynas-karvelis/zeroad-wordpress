@@ -52,6 +52,23 @@ class SubscriptionAccessTest extends TestCase
         $this->assertFalse(IncludedContent::contains(get_post(10)));
     }
 
+    public function testMalformedFormValuesCannotGrantIncludedAccess(): void
+    {
+        foreach ([null, "", ["valid"]] as $nonce) {
+            $_POST = ["zeroad_freedom_nonce" => $nonce, "zeroad_freedom_included" => "1"];
+
+            IncludedContent::save(10);
+
+            $this->assertFalse(IncludedContent::contains(get_post(10)));
+        }
+
+        $_POST = ["zeroad_freedom_nonce" => "valid", "zeroad_freedom_included" => ["1"]];
+
+        IncludedContent::save(10);
+
+        $this->assertFalse(IncludedContent::contains(get_post(10)));
+    }
+
     public function testAccessNeedsBothMembershipAndSelectedContent(): void
     {
         $this->selectPost();

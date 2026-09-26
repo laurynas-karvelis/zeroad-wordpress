@@ -4,13 +4,18 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-$activePage = "zeroad-about";
+$zeroadActivePage = "zeroad-about";
 ?>
 <div class="wrap zeroad-admin">
+    <header class="zeroad-page-header">
+        <span class="zeroad-page-icon dashicons dashicons-info" aria-hidden="true"></span>
+        <div>
     <h1><?php esc_html_e("About Zero Ad Network", "zero-ad-network"); ?></h1>
     <p class="zeroad-intro"><?php esc_html_e("A subscriber-funded alternative to advertising, based on attention to participating content.", "zero-ad-network"); ?></p>
+        </div>
+    </header>
     <?php include __DIR__ . "/admin-navigation.php"; ?>
-    <div class="zeroad-content">
+    <div class="zeroad-content zeroad-about-grid">
         <section class="zeroad-panel">
             <h2><?php esc_html_e("What your subscribers receive", "zero-ad-network"); ?></h2>
             <p><?php esc_html_e("For verified Freedom subscribers, the plugin applies supported integrations to remove ads, non-essential trackers, cookie dialogs, and marketing popups. Other visitors keep their normal experience.", "zero-ad-network"); ?></p>
@@ -21,7 +26,7 @@ $activePage = "zeroad-about";
             <h2><?php esc_html_e("Where funding comes from", "zero-ad-network"); ?></h2>
             <p><?php esc_html_e("Funding comes from subscription payments actually received, after payment-processing fees and excluding tax. Each payment is spread across the calendar months its billing period covers. Discounts reduce the amount available to share.", "zero-ad-network"); ?></p>
         </section>
-        <section class="zeroad-panel">
+        <section class="zeroad-panel zeroad-panel-wide">
             <h2><?php esc_html_e("How Your Share Is Calculated", "zero-ad-network"); ?></h2>
             <p>
                 <?php esc_html_e(
@@ -51,7 +56,7 @@ $activePage = "zeroad-about";
             </p>
             <p><a href="https://zeroad.network/docs/monetization" target="_blank" rel="noopener noreferrer"><?php esc_html_e("Read how earnings and transfers work", "zero-ad-network"); ?></a></p>
         </section>
-        <section class="zeroad-panel">
+        <section class="zeroad-panel zeroad-panel-wide">
             <h2><?php esc_html_e("Verification and privacy", "zero-ad-network"); ?></h2>
             <p><?php esc_html_e("The extension discovers your Publisher ID and sends a signed, hostname-bound token on eligible requests. The plugin verifies it locally, without an API call. The first visit may need a reload after discovery.", "zero-ad-network"); ?></p>
             <p><?php esc_html_e("Tokens contain no account ID, name, or email. Reuse permits same-host correlation during validity. Issuance is authenticated, and the extension separately reports account-linked attention, including creator page URLs. This is not anonymous measurement.", "zero-ad-network"); ?></p>

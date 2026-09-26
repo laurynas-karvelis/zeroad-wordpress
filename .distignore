@@ -3,3 +3,5 @@ vendor/composer
 tests
 phpunit.xml
 composer.lock
+
+.phpunit.result.cache
