@@ -3,66 +3,124 @@ name: Build & publish
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: wordpress-publish
+  cancel-in-progress: false
+
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
   build:
+    needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: zeroad-wordpress
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - name: Checkout plugin
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: zeroad-wordpress
+
+      - name: Checkout PHP test tools and fixtures
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: laurynas-karvelis/zeroad-token-php
+          ref: eab87fb4c24122b280bb636f76ed154e9fcd0bee # 1.0.0
+          path: zeroad-token-php
 
       - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: latest
+          bun-version: "1.4.2"
 
-      - name: Install dependencies
-        run: |
-          bun install --frozen-lockfile
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: "8.4"
+          extensions: sodium, apcu
+          ini-values: apc.enable_cli=1
+          coverage: none
+          tools: composer:v2
 
-      - name: Install Composer dependencies
-        run: |
-          bun composer:install
+      - name: Validate release dependencies
+        working-directory: zeroad-wordpress/plugins/zero-ad-network
+        run: composer validate --no-check-publish
 
+      - name: Install production dependencies
+        working-directory: zeroad-wordpress/plugins/zero-ad-network
+        run: composer install --no-dev --no-autoloader --prefer-dist --no-interaction --no-progress
+
+      - name: Install test tools
+        working-directory: zeroad-token-php
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Test plugin with the SDK that will ship
+        working-directory: zeroad-wordpress/plugins/zero-ad-network
+        run: ../../../zeroad-token-php/vendor/bin/phpunit -c phpunit.xml
+
+      # Building only needs Bun and rsync; @wordpress/env is a local development tool.
       - name: Create a build
         run: |
-          bun version:sync && bun run build
+          bun --no-env-file run version:sync
+          bun --no-env-file run build
+          test -f build/zero-ad-network/vendor/zeroad.network/token/src/Publisher.php
+          test ! -d build/zero-ad-network/tests
+          test ! -d build/zero-ad-network/vendor/phpunit
+
+      - name: Work out plugin version
+        id: version
+        run: echo "version=$(jq -r '.version' package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact before deployment
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: zero-ad-network-${{ steps.version.outputs.version }}
+          path: zeroad-wordpress/build/
+          if-no-files-found: error
 
       - name: Install SVN
-        run: sudo apt-get install -y subversion
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y subversion
 
       - name: Deploy to WordPress.org SVN
         env:
           SVN_USERNAME: ${{ secrets.WPORG_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.WPORG_SVN_PASSWORD }}
         run: |
-          svn checkout https://plugins.svn.wordpress.org/zero-ad-network/ svn --depth immediates
-          svn update --set-depth infinity svn/trunk
-          svn update --set-depth infinity svn/assets
-
-          # sync plugin files into trunk
-          rsync -a --delete --exclude-from='.distignore' build/zero-ad-network/ svn/trunk/
-
-          # sync promo assets (banners, icons, screenshots)
-          rsync -a --delete PROMO_MATERIALS/ svn/assets/
-
-          # stage all changes
-          svn add --force svn/trunk/ svn/assets/
-          svn status svn | grep '^\!' | awk '{print $2}' | xargs -r svn delete
-
+          test -n "$SVN_USERNAME"
+          test -n "$SVN_PASSWORD"
           VERSION=$(jq -r '.version' package.json)
-          svn commit svn -m "Release $VERSION" --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --non-interactive
 
-          svn update --set-depth infinity svn/tags/$VERSION || true
-          svn copy svn/trunk svn/tags/$VERSION
-          svn commit svn/tags/$VERSION -m "Tag $VERSION" --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --non-interactive
+          svn checkout https://plugins.svn.wordpress.org/zero-ad-network/ svn --depth immediates --non-interactive
+          svn update --set-depth infinity svn/trunk svn/assets
+          svn update --set-depth immediates svn/tags
+          if svn info "svn/tags/$VERSION" > /dev/null 2>&1; then
+            echo "Release $VERSION already exists; bump the plugin version before publishing."
+            exit 1
+          fi
 
-      - name: Work out plugin version
-        id: version
-        run: echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+          rsync -a --delete --exclude='.svn/' --exclude-from='.distignore' build/zero-ad-network/ svn/trunk/
+          rsync -a --delete --exclude='.svn/' PROMO_MATERIALS/ svn/assets/
+          svn add --force svn/trunk/ svn/assets/
+          python3 - <<'PYTHON'
+          import subprocess
+          import xml.etree.ElementTree as ET
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: zero-ad-network-${{ steps.version.outputs.version }}
-          path: build/
+          status = subprocess.check_output(["svn", "status", "--xml", "svn"])
+
+          for entry in ET.fromstring(status).findall(".//entry"):
+              if entry.find("wc-status").attrib["item"] == "missing":
+                  subprocess.run(["svn", "delete", entry.attrib["path"]], check=True)
+          PYTHON
+
+          # Publish trunk, assets and the immutable version tag in one SVN transaction.
+          svn copy svn/trunk "svn/tags/$VERSION"
+          svn commit svn -m "Release $VERSION" --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --non-interactive --no-auth-cache
