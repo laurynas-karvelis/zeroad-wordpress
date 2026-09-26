@@ -3,7 +3,6 @@
 
   function init() {
     initWelcomeNotice()
-    initFeatureSelection()
   }
 
   function initWelcomeNotice() {
@@ -24,17 +23,6 @@
           method: "POST",
         })
       }
-    })
-  }
-
-  function initFeatureSelection() {
-    document.querySelectorAll(".zeroad-feature-box").forEach((box) => {
-      const cb = box.querySelector('input[type="checkbox"]')
-
-      if (!cb) return
-
-      box.classList.toggle("selected", cb.checked)
-      cb.addEventListener("change", () => box.classList.toggle("selected", cb.checked))
     })
   }
 })()

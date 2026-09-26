@@ -72,7 +72,7 @@ class Settings
         ];
 
         foreach ($fields as $field => $entry) {
-            add_settings_field($field, $entry[1], [$this, $entry[0]], self::OPTION_KEY, "zeroad_main");
+            add_settings_field($field, $entry[1], [$this, $entry[0]], self::OPTION_KEY, "zeroad_main", ["label_for" => "zeroad-" . $field]);
         }
     }
 
@@ -92,7 +92,7 @@ class Settings
         ];
 
         foreach ($fields as $field => $entry) {
-            add_settings_field($field, $entry[1], [$this, $entry[0]], self::OPTION_KEY, "zeroad_cache");
+            add_settings_field($field, $entry[1], [$this, $entry[0]], self::OPTION_KEY, "zeroad_cache", ["label_for" => "zeroad-" . $field]);
         }
     }
 
@@ -125,34 +125,13 @@ class Settings
         );
         echo "</p>";
 
-        // Show APCu status.
-        $apcu_available = extension_loaded("apcu") && apcu_enabled();
-        $notice_class = $apcu_available ? "notice-success" : "notice-warning";
-        $icon = $apcu_available ? "✅" : "⚠️";
-        $title = $apcu_available
-            ? __("APCu Extension Available", "zero-ad-network")
-            : __("APCu Extension Not Available", "zero-ad-network");
+        $apcuAvailable = \ZeroAd\Token\ApcuResultCache::isSupported();
 
-        printf(
-            '<div class="notice %s inline" style="margin: 15px 0;"><p><strong>%s %s</strong><br>',
-            esc_attr($notice_class),
-            esc_html($icon),
-            esc_html($title)
-        );
-
-        if ($apcu_available) {
-            esc_html_e(
-                "APCu is installed and ready. Enable caching below to share verified tokens across PHP workers, so a returning subscriber's token isn't re-verified on every request.",
-                "zero-ad-network"
-            );
-        } else {
-            esc_html_e(
-                "The APCu PHP extension is not installed or enabled, so verified tokens can't be shared across requests. Verification still runs per request (about 0.09ms) - installing APCu simply avoids repeating it.",
-                "zero-ad-network"
-            );
-        }
-
-        echo "</p></div>";
+        echo '<p class="description"><strong>';
+        echo esc_html($apcuAvailable
+            ? __("APCu is available on this server.", "zero-ad-network")
+            : __("APCu is unavailable. Verification still works; ask your host to enable it if needed.", "zero-ad-network"));
+        echo "</strong></p>";
     }
 
     // ========================================================================
@@ -167,12 +146,14 @@ class Settings
         $enabled = !empty($this->options["enabled"]); ?>
         <label>
             <input type="checkbox"
+                   id="zeroad-enabled"
+                   aria-describedby="zeroad-enabled-help"
                    name="<?php echo esc_attr(self::OPTION_KEY); ?>[enabled]"
                    value="1"
                    <?php checked($enabled, true); ?>>
             <?php esc_html_e("Activate Zero Ad Network integration on this site", "zero-ad-network"); ?>
         </label>
-        <p class="description">
+        <p class="description" id="zeroad-enabled-help">
             <?php esc_html_e(
                 "When enabled, the plugin verifies each visitor's subscriber token and applies the ad-free, clean experience for Zero Ad Network subscribers.",
                 "zero-ad-network"
@@ -188,17 +169,19 @@ class Settings
     {
         $value = $this->options["publisher_id"] ?? ""; ?>
         <input type="text"
+               id="zeroad-publisher_id"
+               aria-describedby="zeroad-publisher_id-help"
                name="<?php echo esc_attr(self::OPTION_KEY); ?>[publisher_id]"
                value="<?php echo esc_attr($value); ?>"
                class="regular-text code"
                maxlength="<?php echo esc_attr((string) self::PUBLISHER_ID_LENGTH); ?>"
                placeholder="<?php esc_attr_e("zapub_XXXXXXXXXXXXXXXXXXXXXXXX", "zero-ad-network"); ?>">
-        <p class="description">
+        <p class="description" id="zeroad-publisher_id-help">
             <?php printf(
                 wp_kses(
                     /* translators: %s: URL to Zero Ad Network dashboard */
                     __(
-                        'Your unique Publisher ID from the <a href="%s" target="_blank" rel="noopener noreferrer">Zero Ad Network dashboard</a>. It starts with <code>zapub_</code> and identifies your site so visits are credited to you.',
+                        'Your unique Publisher ID from the <a href="%s" target="_blank" rel="noopener noreferrer">Zero Ad Network dashboard</a>. It starts with <code>zapub_</code> and identifies your publisher account across your sites.',
                         "zero-ad-network"
                     ),
                     ["a" => ["href" => [], "target" => [], "rel" => []], "code" => []]
@@ -215,7 +198,9 @@ class Settings
     public function renderOutputMethod(): void
     {
         $value = $this->options["output_method"] ?? "header"; ?>
-        <select name="<?php echo esc_attr(self::OPTION_KEY); ?>[output_method]">
+        <select id="zeroad-output_method"
+               aria-describedby="zeroad-output_method-help"
+               name="<?php echo esc_attr(self::OPTION_KEY); ?>[output_method]">
             <option value="header" <?php selected($value, "header"); ?>>
                 <?php esc_html_e("HTTP Response Header", "zero-ad-network"); ?>
             </option>
@@ -223,7 +208,7 @@ class Settings
                 <?php esc_html_e("HTML Meta Tag", "zero-ad-network"); ?>
             </option>
         </select>
-        <p class="description">
+        <p class="description" id="zeroad-output_method-help">
             <?php esc_html_e(
                 'How to send the "Better-Web-Publisher" identifier to the subscriber\'s browser extension. HTTP header is recommended for better performance with page caching.',
                 "zero-ad-network"
@@ -237,45 +222,16 @@ class Settings
      */
     public function renderCacheEnabled(): void
     {
-        $enabled = !empty($this->options["cache_enabled"]);
-        $apcu_available = extension_loaded("apcu") && apcu_enabled();
-        ?>
-             <div class="zeroad-feature-box <?php echo $enabled ? "selected" : ""; ?>">
-                <label class="zeroad-feature-label">
-                    <input type="checkbox"
-                            name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_enabled]"
-                            value="1"
-                            <?php checked($enabled, true); ?>
-                            <?php disabled(!$apcu_available); ?>>
-                    <span class="zeroad-feature-name"><?php esc_html_e(
-                        "Enable APCu token caching",
-                        "zero-ad-network"
-                    ); ?></span>
-                </label>
-                <p class="zeroad-feature-description">
-                    <?php esc_html_e(
-                        "Caches verified tokens in APCu (shared memory) so a returning subscriber's token is reused across requests and PHP workers instead of being re-verified each time.",
-                        "zero-ad-network"
-                    ); ?>
-                    <br>
-                    <strong><?php esc_html_e("Performance Impact:", "zero-ad-network"); ?></strong>
-                    <?php esc_html_e(
-                        "A cold verification is about 0.09ms; an APCu cache hit is a shared-memory lookup, a few microseconds. Either way it is negligible - caching mainly avoids repeating the work under load.",
-                        "zero-ad-network"
-                    ); ?>
-                </p>
-        
-            <?php if (!$apcu_available): ?>
-                <p class="zeroad-feature-description" style="color: #d63638;">
-                    <strong><?php esc_html_e("⚠️ APCu not available.", "zero-ad-network"); ?></strong>
-                    <?php esc_html_e(
-                        "Install with: sudo apt-get install php-apcu or sudo pecl install apcu",
-                        "zero-ad-network"
-                    ); ?>
-                </p>
-            <?php endif; ?>
-            </div>
-    <?php
+        $enabled = !empty($this->options["cache_enabled"]); ?>
+        <label>
+            <input type="checkbox" id="zeroad-cache_enabled"
+                   aria-describedby="zeroad-cache_enabled-help"
+                   name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_enabled]"
+                   value="1" <?php checked($enabled, true); ?>>
+            <?php esc_html_e("Reuse verification results with APCu when available", "zero-ad-network"); ?>
+        </label>
+        <p class="description" id="zeroad-cache_enabled-help"><?php esc_html_e("This preference takes effect when your host enables APCu. Otherwise, token verification runs per request. It does not cache subscriber pages.", "zero-ad-network"); ?></p>
+        <?php
     }
 
     /**
@@ -285,6 +241,8 @@ class Settings
     {
         $value = intval($this->options["cache_ttl"] ?? ZEROAD_DEFAULT_CACHE_TTL); ?>
         <input type="number"
+               id="zeroad-cache_ttl"
+               aria-describedby="zeroad-cache_ttl-help"
                name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_ttl]"
                value="<?php echo esc_attr((string) $value); ?>"
                min="1"
@@ -292,9 +250,9 @@ class Settings
                step="1"
                class="small-text">
         <span><?php esc_html_e("seconds", "zero-ad-network"); ?></span>
-        <p class="description">
+        <p class="description" id="zeroad-cache_ttl-help">
             <?php esc_html_e(
-                "How long to cache validated tokens. Recommended: 5-10 seconds. Lower = more accurate token expiration checking. Higher = better performance.",
+                "How long to reuse verification results. Recommended: 5–10 seconds. Token expiry is checked regardless of this setting.",
                 "zero-ad-network"
             ); ?>
             <br>
@@ -314,12 +272,14 @@ class Settings
     {
         $value = $this->options["cache_prefix"] ?? "zeroad:"; ?>
         <input type="text"
+               id="zeroad-cache_prefix"
+               aria-describedby="zeroad-cache_prefix-help"
                name="<?php echo esc_attr(self::OPTION_KEY); ?>[cache_prefix]"
                value="<?php echo esc_attr($value); ?>"
                maxlength="50"
                class="regular-text code"
                placeholder="zeroad:">
-        <p class="description">
+        <p class="description" id="zeroad-cache_prefix-help">
             <?php esc_html_e(
                 "Prefix for cache keys to avoid conflicts with other plugins. Change only if you have multiple WordPress installations sharing APCu.",
                 "zero-ad-network"

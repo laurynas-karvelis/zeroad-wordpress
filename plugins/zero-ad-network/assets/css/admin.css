@@ -1,223 +1,178 @@
-/* Code blocks */
-.wrap pre {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 15px;
-  background: #2d2d2d;
-  overflow-x: auto;
-  margin: 15px 0;
-
-  code {
-    background: transparent !important;
-    color: #f8f8f2;
-    font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
-    font-size: 13px;
-    line-height: 1.6;
-
-    .comment {
-      color: #75715e;
-    }
-
-    .keyword {
-      color: #66d9ef;
-    }
-
-    .string {
-      color: #a6e22e;
-    }
-  }
+.zeroad-admin {
+  max-width: 1200px;
 }
 
-/* About page */
-.zeroad-about {
-  h2 {
-    font-size: 24px;
-    margin-top: 40px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #0073aa;
-    padding-bottom: 10px;
-  }
-
-  h3 {
-    font-size: 18px;
-    margin-top: 20px;
-  }
-
-  .description {
-    color: #666;
-    font-size: 14px;
-  }
-}
-
-.zeroad-hero {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #fff;
-  padding: 40px;
-  border-radius: 8px;
-  margin: 30px 0;
-
-  h2 {
-    color: #fff;
-    margin-top: 0;
-    font-size: 28px;
-    border-bottom: none;
-  }
-}
-
-/* Info boxes */
-.zeroad-info-box {
-  background: #e7f3ff;
-  border-left: 4px solid #0073aa;
-  padding: 10px 20px;
-  margin: 20px 0;
-  border-radius: 4px;
-}
-
-ul.zeroad-ul {
-  list-style: disc;
-  margin-left: 20px;
-}
-
-.zeroad-warning-box {
-  background: #fff3cd;
-  border-left: 4px solid #ffc107;
-  padding: 20px;
-  margin: 20px 0;
-  border-radius: 4px;
-}
-
-/* Feature boxes */
-.zeroad-feature-box {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 20px;
-  margin: 15px 0;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
-
-  &:hover {
-    border-color: #0073aa;
-    box-shadow: 0 2px 8px #0073aa1a;
-  }
-
-  &.selected {
-    border-color: #0073aa;
-    background: #e7f3ff;
-  }
-}
-
-.zeroad-feature-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin: 0 0 10px;
-  user-select: none;
-
-  input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    margin: 0 12px 0 0;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-}
-
-.zeroad-feature-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #23282d;
-}
-
-.zeroad-feature-description {
-  margin: 0 0 10px 32px;
-  color: #666;
+.zeroad-admin .zeroad-intro {
+  max-width: 760px;
+  margin: 12px 0 20px;
+  color: #50575e;
+  font-size: 14px;
   line-height: 1.6;
 }
 
-/* Comparison grid */
-.zeroad-comparison-grid {
+.zeroad-admin .zeroad-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.zeroad-admin .nav-tab {
+  float: none;
+  margin-left: 0;
+}
+
+.zeroad-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin: 20px 0;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
 }
 
-.zeroad-comparison-box {
-  padding: 25px;
-  border-radius: 8px;
-
-  h3 {
-    margin-top: 0;
-  }
-
-  &.negative {
-    border: 2px solid #dc3545;
-    background: #fff5f5;
-
-    h3 {
-      color: #dc3545;
-    }
-  }
-
-  &.positive {
-    border: 2px solid #28a745;
-    background: #f0f9f0;
-
-    h3 {
-      color: #28a745;
-    }
-  }
+.zeroad-main,
+.zeroad-sidebar {
+  min-width: 0;
 }
 
-/* Cache config */
-.zeroad-cache-explanation {
+.zeroad-content {
   max-width: 900px;
-  margin: 30px 0;
 }
 
-.zeroad-variant-table {
-  margin: 20px 0;
+.zeroad-panel {
+  box-sizing: border-box;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  border: 1px solid #c3c4c7;
   background: #fff;
-
-  th {
-    background: #f9f9f9;
-    font-weight: 600;
-    padding: 12px;
-  }
-
-  td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-  }
-
-  td code {
-    background: #f0f0f0;
-    padding: 3px 8px;
-    border-radius: 3px;
-    font-size: 13px;
-    color: #d63384;
-  }
 }
 
-/* Spacing utilities */
-.zeroad-mt-0 {
+.zeroad-panel > h2:first-child {
   margin-top: 0;
 }
 
-.zeroad-mt-2 {
-  margin-top: 8px;
+.zeroad-panel p,
+.zeroad-panel li {
+  line-height: 1.6;
 }
 
-.zeroad-mt-3 {
-  margin-top: 16px;
+.zeroad-panel > :last-child {
+  margin-bottom: 0;
 }
 
-.zeroad-mb-2 {
-  margin-bottom: 8px;
+.zeroad-status {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid #c3c4c7;
+  border-radius: 2px;
+  background: #f6f7f7;
 }
 
-.zeroad-mb-3 {
+.zeroad-steps {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+.zeroad-steps li + li {
+  margin-top: 20px;
+}
+
+.zeroad-steps p {
+  margin: 4px 0 0;
+  color: #50575e;
+}
+
+.zeroad-admin .notice p {
+  line-height: 1.6;
+}
+
+.zeroad-settings > h2:first-of-type {
+  margin-top: 0;
+}
+
+.zeroad-settings > h2:not(:first-of-type) {
+  padding-top: 24px;
+  border-top: 1px solid #dcdcde;
+  margin-top: 24px;
+}
+
+.zeroad-settings .form-table th {
+  width: 160px;
+}
+
+.zeroad-settings .regular-text {
+  width: 100%;
+  max-width: 360px;
+}
+
+.zeroad-settings .description {
+  max-width: 560px;
+}
+
+.zeroad-settings .submit {
+  padding-bottom: 0;
+}
+
+.zeroad-admin .notice.inline {
+  margin: 16px 0;
+}
+
+.zeroad-disclosure summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.zeroad-disclosure summary:focus-visible {
+  outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+  outline-offset: 4px;
+}
+
+.zeroad-disclosure[open] summary {
   margin-bottom: 16px;
+}
+
+.zeroad-admin pre {
+  padding: 16px;
+  overflow-x: auto;
+  border: 1px solid #dcdcde;
+  background: #f6f7f7;
+  color: #1d2327;
+  line-height: 1.6;
+  direction: ltr;
+  text-align: left;
+}
+
+.zeroad-admin pre code {
+  padding: 0;
+  background: transparent;
+  font-size: 13px;
+}
+
+.zeroad-admin .widefat td {
+  line-height: 1.6;
+}
+
+@media screen and (max-width: 1100px) {
+  .zeroad-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .zeroad-sidebar {
+    max-width: 760px;
+  }
+}
+
+@media screen and (max-width: 782px) {
+  .zeroad-panel {
+    padding: 16px;
+  }
+
+  .zeroad-admin .nav-tab {
+    padding: 8px 10px;
+  }
+
+  .zeroad-settings .form-table th {
+    width: auto;
+  }
 }

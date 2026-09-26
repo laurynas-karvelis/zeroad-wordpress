@@ -2,16 +2,22 @@
 
 if (!defined("ABSPATH")) {
     exit();
-} ?>
-<div class="wrap zeroad-cache-config">
-    <h1><?php esc_html_e("Cache Configuration for Freedom", "zero-ad-network"); ?></h1>
-    <div class="zeroad-warning-box">
+}
+
+$activePage = "zeroad-cache-config";
+?>
+<div class="wrap zeroad-admin">
+    <h1><?php esc_html_e("Page cache setup", "zero-ad-network"); ?></h1>
+    <?php include __DIR__ . "/admin-navigation.php"; ?>
+    <div class="zeroad-content">
+    <div class="notice notice-warning inline">
         <h2><?php esc_html_e("Token requests must reach WordPress", "zero-ad-network"); ?></h2>
         <p><?php esc_html_e("At every page cache, bypass both cache reads and writes when Better-Web-Token is present, and forward that header unchanged to WordPress. This includes invalid tokens. Only verified tokens unlock Freedom; a cookie or variant header never proves access.", "zero-ad-network"); ?></p>
         <p><?php esc_html_e("The plugin marks token responses private and no-store and signals compatible WordPress caches not to store them. It cannot stop a cache hit served before WordPress loads. If your host cannot bypass token requests, disable its full-page cache on participating pages. Static assets and object caching can remain enabled.", "zero-ad-network"); ?></p>
     </div>
 
-    <h2><?php esc_html_e("WordPress page caches", "zero-ad-network"); ?></h2>
+    <p class="zeroad-intro"><?php esc_html_e("Configure every cache layer serving your site. Open the instructions for your hosting stack, then run the checks below.", "zero-ad-network"); ?></p>
+    <details class="zeroad-panel zeroad-disclosure" open><summary><?php esc_html_e("WordPress page caches", "zero-ad-network"); ?></summary>
     <p><?php esc_html_e("For a PHP-based page cache, replace the existing WP_CACHE definition in wp-config.php with the following, before WordPress loads. Do not add a second definition. This skips advanced-cache.php for token requests; it does not bypass web-server rewrites or a CDN.", "zero-ad-network"); ?></p>
 <pre><code>$freedomTokenRequest = array_key_exists('HTTP_BETTER_WEB_TOKEN', $_SERVER);
 
@@ -20,8 +26,8 @@ define('WP_CACHE', !$freedomTokenRequest);
 if ($freedomTokenRequest &amp;&amp; !defined('DONOTCACHEPAGE')) {
     define('DONOTCACHEPAGE', true);
 }</code></pre>
-    <table class="widefat">
-        <thead><tr><th><?php esc_html_e("Cache", "zero-ad-network"); ?></th><th><?php esc_html_e("Required setup", "zero-ad-network"); ?></th></tr></thead>
+    <table class="widefat striped">
+        <thead><tr><th scope="col"><?php esc_html_e("Cache", "zero-ad-network"); ?></th><th scope="col"><?php esc_html_e("Required setup", "zero-ad-network"); ?></th></tr></thead>
         <tbody>
             <tr><td>WP Super Cache</td><td><?php esc_html_e("Use PHP/Simple delivery with the early bypass above. Expert/rewrite delivery also needs a server-level exclusion before serving cached files.", "zero-ad-network"); ?></td></tr>
             <tr><td>WP Rocket / W3 Total Cache / WP Fastest Cache</td><td><?php esc_html_e("Use the early PHP bypass wherever advanced-cache.php is used. Any direct cached-file delivery must also exclude token requests at the server. Plugin activation alone does not configure that exclusion.", "zero-ad-network"); ?></td></tr>
@@ -30,7 +36,8 @@ if ($freedomTokenRequest &amp;&amp; !defined('DONOTCACHEPAGE')) {
         </tbody>
     </table>
 
-    <h2>Nginx</h2>
+    </details>
+    <details class="zeroad-panel zeroad-disclosure"><summary>Nginx</summary>
     <p><?php esc_html_e("Add this map in the http context. Add the matching directives to your existing proxy or FastCGI location, preserving all other cache exclusions. A value of 0 is still treated as a supplied, invalid token.", "zero-ad-network"); ?></p>
 <pre><code>map $http_better_web_token $freedom_skip_cache {
     ""      0;
@@ -48,16 +55,20 @@ fastcgi_no_cache $freedom_skip_cache;
 fastcgi_param HTTP_BETTER_WEB_TOKEN $http_better_web_token;</code></pre>
     <p><?php esc_html_e("Nginx treats an empty header like an absent header here. Neither grants access. Non-empty tokens always bypass. Do not override the origin's private/no-store response headers.", "zero-ad-network"); ?></p>
 
-    <h2>Varnish</h2>
+    </details>
+    <details class="zeroad-panel zeroad-disclosure"><summary>Varnish</summary>
     <p><?php esc_html_e("Place this before any cache lookup or early return in vcl_recv. Preserve the header on the backend request.", "zero-ad-network"); ?></p>
 <pre><code>if (req.http.Better-Web-Token) {
     return (pass);
 }</code></pre>
 
-    <h2>Cloudflare</h2>
+    </details>
+    <details class="zeroad-panel zeroad-disclosure"><summary>Cloudflare</summary>
     <p><?php esc_html_e("Create a Cache Rule matching the expression below and set Cache eligibility to Bypass cache. Ensure later rules, Workers, and origin overrides do not re-enable caching or remove the token header.", "zero-ad-network"); ?></p>
 <pre><code>http.request.headers.truncated or has_key(http.request.headers, "better-web-token")</code></pre>
 
+    </details>
+    <section class="zeroad-panel">
     <h2><?php esc_html_e("Verify your installation", "zero-ad-network"); ?></h2>
     <ol>
         <li><?php esc_html_e("Clear page caches after configuration or included-content changes. Warm a public page without a token, then visit the same URL with a valid hostname-bound token and no cookies. It must reach WordPress and unlock only included content.", "zero-ad-network"); ?></li>
@@ -67,4 +78,6 @@ fastcgi_param HTTP_BETTER_WEB_TOKEN $http_better_web_token;</code></pre>
     </ol>
     <p><?php esc_html_e("Verification-result caching (APCu) is separate from HTML caching. Expired tokens are rejected subject to the SDK's 60-second clock tolerance. Cancellation or account closure cannot revoke an already-signed offline token before its expiry. The plugin does not create subscriber cache cookies or shared subscriber pages.", "zero-ad-network"); ?></p>
     <p><a href="https://zeroad.network/docs/site-integration/remove-ads/wordpress"><?php esc_html_e("WordPress integration guide", "zero-ad-network"); ?></a></p>
+    </section>
+    </div>
 </div>
