@@ -49,7 +49,7 @@ class AdminPages
                             "zero-ad-network"
                         ); ?></strong><br>
                         <?php esc_html_e(
-                            "Subscribers will now enjoy an enhanced experience on your site, and you'll earn revenue based on their engagement time.",
+                            "The plugin is enabled. Verify the subscriber experience and page-cache setup. Earnings depend on funded subscriber attention and allocation preferences; test access earns nothing.",
                             "zero-ad-network"
                         ); ?>
                     </p>

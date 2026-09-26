@@ -203,7 +203,7 @@ if (!defined("ABSPATH")) {
                 <thead>
                     <tr>
                         <th><?php esc_html_e("Plan", "zero-ad-network"); ?></th>
-                        <th><?php esc_html_e("You Earn (Per Subscriber)", "zero-ad-network"); ?></th>
+                        <th><?php esc_html_e("How Earnings Are Calculated", "zero-ad-network"); ?></th>
                         <th><?php esc_html_e("What You Provide", "zero-ad-network"); ?></th>
                     </tr>
                 </thead>
@@ -211,7 +211,7 @@ if (!defined("ABSPATH")) {
                     <tr>
                         <td><strong><?php esc_html_e("Freedom", "zero-ad-network"); ?></strong></td>
                         <td style="color: #28a745; font-weight: 600;"><?php esc_html_e(
-                            "Share of the subscriber's fee*",
+                            "Share of funded subscriber attention*",
                             "zero-ad-network"
                         ); ?></td>
                         <td><?php esc_html_e(
@@ -224,30 +224,41 @@ if (!defined("ABSPATH")) {
 
             <p style="font-size: 13px; color: #666; margin-top: 15px;">
                 <strong>*</strong> <?php esc_html_e(
-                    "Allocation starts with each subscriber’s share of measured time, then applies creator preferences and publisher exclusions. Publishers keep 70% after processing fees and excluding tax. Unallocated funds enter a shared pool for eligible publishers.",
+                    "Funding comes from subscription payments actually received, after payment-processing fees and excluding tax. Each payment is spread across the calendar months its billing period covers. Discounts reduce the amount available to share.",
                     "zero-ad-network"
                 ); ?>
             </p>
         </div>
 
         <div style="background: #e7f3ff; border-left: 4px solid #0073aa; padding: 25px; margin: 20px 0;">
-            <h4 style="margin-top: 0;"><?php esc_html_e("📊 Example Allocation", "zero-ad-network"); ?></h4>
+            <h4 style="margin-top: 0;"><?php esc_html_e("How Your Share Is Calculated", "zero-ad-network"); ?></h4>
             <p style="line-height: 1.8;">
-                <strong><?php esc_html_e("Scenario:", "zero-ad-network"); ?></strong><br>
                 <?php esc_html_e(
-                    "One subscriber contributes $10 for the month after processing fees and excluding tax.",
-                    "zero-ad-network"
-                ); ?><br>
-                <?php esc_html_e("They spend equal time on two participating websites.", "zero-ad-network"); ?><br>
-                <?php esc_html_e("Neither website is excluded from their allocations.", "zero-ad-network"); ?>
-            </p>
-            <p style="line-height: 1.8;">
-                <strong><?php esc_html_e("Your Revenue:", "zero-ad-network"); ?></strong><br>
-                <?php esc_html_e(
-                    "Each website receives $3.50 after the 30% platform fee. Monthly transfers require a $30 accumulated balance and eligible Stripe setup; bank withdrawals are separate.",
+                    "For each subscriber, monthly funding is divided by their measured time on participating websites and creator content during paid coverage. Their creator allocation setting and publisher exclusions adjust those shares. Money withheld from creators or excluded publishers is redistributed to the non-excluded website publishers they visited, in proportion to website time; if there are none, it enters the shared pool.",
                     "zero-ad-network"
                 ); ?>
             </p>
+            <p style="line-height: 1.8;">
+                <strong><?php esc_html_e("Your Earnings:", "zero-ad-network"); ?></strong><br>
+                <?php esc_html_e(
+                    "You keep 70% of your allocated share after the 30% platform fee. Earnings are combined across your sites and creator integrations in your publisher account. There is no fixed payment per visit, minute, or website. Test access earns nothing.",
+                    "zero-ad-network"
+                ); ?>
+            </p>
+            <p style="line-height: 1.8;">
+                <?php esc_html_e(
+                    "Funding left unallocated, including funding from subscribers with no qualifying activity, goes to the shared pool. It is divided equally per eligible publisher account with an observed or active integration, not per website. Pool earnings are not guaranteed. Exclusion from a subscriber’s direct allocations does not exclude an otherwise eligible publisher from the pool.",
+                    "zero-ad-network"
+                ); ?>
+            </p>
+            <p style="line-height: 1.8;">
+                <strong><?php esc_html_e("Transfers to Stripe:", "zero-ad-network"); ?></strong><br>
+                <?php esc_html_e(
+                    "Earnings accrue before payout setup. Once your publisher account has at least $30 in accumulated unpaid earnings, you can complete Stripe Express onboarding. Monthly processing transfers eligible balances to your connected Stripe account; smaller balances carry forward. Reaching $30 does not trigger an immediate payment. The platform fee is not deducted again at transfer. Bank withdrawals are separate, and Zero Ad Network does not initiate them.",
+                    "zero-ad-network"
+                ); ?>
+            </p>
+            <p><a href="https://zeroad.network/docs/monetization" target="_blank" rel="noopener noreferrer"><?php esc_html_e("Read how earnings and transfers work", "zero-ad-network"); ?></a></p>
         </div>
     </div>
 
@@ -328,7 +339,7 @@ if (!defined("ABSPATH")) {
                 <div style="font-size: 48px; margin-bottom: 10px;">3️⃣</div>
                 <h3><?php esc_html_e("Earn", "zero-ad-network"); ?></h3>
                 <p><?php esc_html_e(
-                    "Start earning revenue as subscribers enjoy your content!",
+                    "Check your publisher dashboard for monthly earnings from funded subscriber attention and any shared-pool allocation.",
                     "zero-ad-network"
                 ); ?></p>
                 <a href="https://zeroad.network/dashboard" target="_blank" class="button button-secondary">

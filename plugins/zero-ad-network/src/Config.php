@@ -231,7 +231,7 @@ class Config
                 <h3><?php esc_html_e("Welcome to Zero Ad Network!", "zero-ad-network"); ?></h3>
                 <p>
                     <?php esc_html_e(
-                        "Thank you for installing Zero Ad Network! To start earning revenue from subscriber engagement:",
+                        "Thank you for installing Zero Ad Network! Set up your site to participate:",
                         "zero-ad-network"
                     ); ?>
                 </p>
@@ -241,7 +241,7 @@ class Config
                             wp_kses(
                                 /* translators: %s: URL to Zero Ad Network registration page */
                                 __(
-                                    'Register your site at <a href="%s" target="_blank" rel="noopener noreferrer">zeroad.network</a> to get your Publisher ID',
+                                    'Create an account at <a href="%s" target="_blank" rel="noopener noreferrer">zeroad.network</a> and copy your Publisher ID from the dashboard',
                                     "zero-ad-network"
                                 ),
                                 ["a" => ["href" => [], "target" => [], "rel" => []]]
@@ -264,7 +264,7 @@ class Config
                         "zero-ad-network"
                     ); ?></li>
                     <li><?php esc_html_e(
-                        "Subscribers will enjoy an ad-free, clean experience on your site while you earn revenue!",
+                        "Verify the subscriber experience and page-cache setup. Earnings depend on funded subscriber attention and allocation preferences; test access earns nothing.",
                         "zero-ad-network"
                     ); ?></li>
                 </ol>

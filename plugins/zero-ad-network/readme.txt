@@ -14,7 +14,7 @@ Get paid by providing an ad-free, clean web experience to Zero Ad Network subscr
 
 Zero Ad Network is a publisher monetization plugin for WordPress. It works alongside the Zero Ad Network browser extension — when a subscriber visits your site, the plugin verifies their token and applies supported integrations to provide the subscriber experience.
 
-**This is the site owner side of the platform.** Your visitors install the browser extension and subscribe. You install this plugin, enter your Publisher ID, and start earning.
+**This is the site owner side of the platform.** Your visitors install the browser extension and subscribe. You install this plugin, enter your Publisher ID, and configure the subscriber experience. Earnings depend on funded subscriber attention and allocation preferences.
 
 = What Your Site Gets =
 
@@ -30,9 +30,13 @@ All subscribers receive the clean browsing benefits. If you sell access, include
 
 = How You Get Paid =
 
-Earnings are calculated monthly for each subscriber using measured time and allocation preferences. Publishers share 70% of received revenue after processing fees and excluding tax; the platform retains 30%. Unallocated money enters a shared pool for eligible publishers.
+Funding comes from subscription payments actually received, after payment-processing fees and excluding tax. Discounts reduce this amount. Each payment is spread across the calendar months its billing period covers.
 
-Transfers to Stripe Express require a $30 accumulated balance and completed, eligible payout setup. Smaller balances carry forward. A transfer credits your Stripe account; bank withdrawals are separate. See [how earnings work](https://zeroad.network/docs/monetization).
+For each subscriber, monthly funding is allocated by measured time on participating websites and creator content during paid coverage. Creator allocation preferences and publisher exclusions adjust those shares. Withheld amounts go to the non-excluded website publishers the subscriber visited, in proportion to website time; if there are none, they enter the shared pool. You keep 70% of your allocated share after the 30% platform fee. There is no fixed payment per visit, minute, or website. Test access earns nothing.
+
+Funding left unallocated, including funding from subscribers with no qualifying activity, enters the shared pool. It is divided equally per eligible publisher account with an observed or active integration, not per website. Pool earnings depend on remaining funds and rounding. Exclusion from direct subscriber allocations does not exclude an otherwise eligible publisher from the pool.
+
+Earnings from all your sites and creator integrations accumulate in your publisher account before payout setup. Once unpaid earnings reach $30, Stripe Express onboarding becomes available. Monthly processing transfers eligible balances to your connected Stripe account after onboarding is complete and payouts are enabled. Smaller balances carry forward; reaching $30 does not trigger an immediate transfer. The platform fee is not deducted again at transfer. Bank withdrawals are separate, and Zero Ad Network does not initiate them. See [how earnings work](https://zeroad.network/docs/monetization).
 
 = How It Works Technically =
 
@@ -71,7 +75,7 @@ Benefits only apply to verified Zero Ad Network subscribers. All other visitors 
 2. Install and activate this plugin
 3. Enter your Publisher ID and enable the plugin
 4. Select included paid posts and pages in their Freedom access box, verify access, and clear page caches
-5. Start earning from subscribers who visit your site
+5. Check your publisher dashboard for monthly earnings from funded subscriber attention and any shared-pool allocation
 
 == Installation ==
 1. Upload the plugin files to the `/wp-content/plugins/zero-ad-network` directory
@@ -79,7 +83,7 @@ Benefits only apply to verified Zero Ad Network subscribers. All other visitors 
 3. [Sign up at zeroad.network](https://zeroad.network) and copy your account’s Publisher ID from the dashboard
 4. Enter your Publisher ID and enable the plugin on the plugin's settings page
 5. If you sell access, select included posts and pages, verify access, and clear page caches
-6. Start earning from subscribers who visit your site
+6. Check your publisher dashboard for monthly earnings from funded subscriber attention and any shared-pool allocation
 
 == Frequently Asked Questions ==
 
