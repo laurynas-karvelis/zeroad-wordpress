@@ -107,7 +107,7 @@ class Settings
     {
         echo '<p class="description">';
         esc_html_e(
-            "Connect this site to your Zero Ad Network publisher account. Verified subscribers get a clean page. If you sell access, include posts and pages with their Freedom access box, and check that your membership plugin opens them.",
+            "Connect this website to your Zero Ad Network publisher account. Verified subscribers get a clean page. If you sell access, include posts and pages with their Freedom access box, and check that your membership plugin opens them.",
             "zero-ad-network"
         );
         echo "</p>";
@@ -151,7 +151,7 @@ class Settings
                    name="<?php echo esc_attr(self::OPTION_KEY); ?>[enabled]"
                    value="1"
                    <?php checked($enabled, true); ?>>
-            <?php esc_html_e("Activate Zero Ad Network integration on this site", "zero-ad-network"); ?>
+            <?php esc_html_e("Activate Zero Ad Network integration on this website", "zero-ad-network"); ?>
         </label>
         <p class="description" id="zeroad-enabled-help">
             <?php esc_html_e(
@@ -181,7 +181,7 @@ class Settings
                 wp_kses(
                     /* translators: %s: URL to Zero Ad Network dashboard */
                     __(
-                        'Copy it from <a href="%s" target="_blank" rel="noopener noreferrer">Sites &amp; creators</a> in your Zero Ad Network account. It starts with <code>zapub_</code>, and is the same for all your sites.',
+                        'Copy it from <a href="%s" target="_blank" rel="noopener noreferrer">Websites &amp; creators</a> in your Zero Ad Network account. It starts with <code>zapub_</code>, and is the same for all your websites.',
                         "zero-ad-network"
                     ),
                     ["a" => ["href" => [], "target" => [], "rel" => []], "code" => []]
@@ -275,13 +275,13 @@ class Settings
                placeholder="zeroad:">
         <p class="description" id="zeroad-cache_prefix-help">
             <?php esc_html_e(
-                "Keeps these cache keys apart from other plugins. Change it only if several WordPress sites share one APCu.",
+                "Keeps these cache keys apart from other plugins. Change it only if several WordPress websites share one APCu.",
                 "zero-ad-network"
             ); ?>
             <br>
             <strong><?php esc_html_e("Example:", "zero-ad-network"); ?></strong>
             <code>zeroad:wp1:</code>, <code>zeroad:wp2:</code>
-            <?php esc_html_e("for different sites", "zero-ad-network"); ?>
+            <?php esc_html_e("for different websites", "zero-ad-network"); ?>
         </p>
         <?php
     }

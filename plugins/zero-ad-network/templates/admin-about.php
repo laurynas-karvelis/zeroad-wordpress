@@ -11,16 +11,16 @@ $zeroadActivePage = "zeroad-about";
         <span class="zeroad-page-icon dashicons dashicons-info" aria-hidden="true"></span>
         <div>
     <h1><?php esc_html_e("About Zero Ad Network", "zero-ad-network"); ?></h1>
-    <p class="zeroad-intro"><?php esc_html_e("Subscribers fund the sites they spend time on, instead of advertisers.", "zero-ad-network"); ?></p>
+    <p class="zeroad-intro"><?php esc_html_e("Subscribers fund the websites they spend time on, instead of advertisers.", "zero-ad-network"); ?></p>
         </div>
     </header>
     <?php include __DIR__ . "/admin-navigation.php"; ?>
     <div class="zeroad-content zeroad-about-grid">
         <section class="zeroad-panel">
             <h2><?php esc_html_e("What subscribers get", "zero-ad-network"); ?></h2>
-            <p><?php esc_html_e("For verified Freedom subscribers, the plugin removes ads, non-essential trackers, cookie dialogs and marketing popups, through supported integrations. Everyone else keeps your normal site.", "zero-ad-network"); ?></p>
+            <p><?php esc_html_e("For verified Freedom subscribers, the plugin removes ads, non-essential trackers, cookie dialogs and marketing popups, through supported integrations. Everyone else keeps your normal website.", "zero-ad-network"); ?></p>
             <p><?php esc_html_e("If you sell access, include your base subscription content or a custom selection. Use the Freedom access box on each post or page. Paid Memberships Pro and WP-Members are supported; other paywalls need a custom integration. Private, draft, password-protected and unselected content stays protected.", "zero-ad-network"); ?></p>
-            <a class="button button-secondary" href="<?php echo esc_url(admin_url("admin.php?page=zeroad-config")); ?>"><?php esc_html_e("Configure your site", "zero-ad-network"); ?></a>
+            <a class="button button-secondary" href="<?php echo esc_url(admin_url("admin.php?page=zeroad-config")); ?>"><?php esc_html_e("Configure your website", "zero-ad-network"); ?></a>
         </section>
         <section class="zeroad-panel">
             <h2><?php esc_html_e("Where funding comes from", "zero-ad-network"); ?></h2>
@@ -39,7 +39,7 @@ $zeroadActivePage = "zeroad-about";
             <p>
                 <strong><?php esc_html_e("What you keep:", "zero-ad-network"); ?></strong><br>
                 <?php esc_html_e(
-                    "70% of your share. The platform keeps 30%. Earnings are combined across all your sites and creator integrations. There is no fixed payment per visit, minute or website. Test access earns nothing.",
+                    "70% of your share. The platform keeps 30%. Earnings are combined across all your websites and creator integrations. There is no fixed payment per visit, minute or website. Test access earns nothing.",
                     "zero-ad-network"
                 ); ?>
             </p>
