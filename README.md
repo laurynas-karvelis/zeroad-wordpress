@@ -12,7 +12,7 @@ The official WordPress plugin for [Zero Ad Network](https://zeroad.network). Ear
 
 1. Install **Zero Ad Network** from the [WordPress plugin directory](https://wordpress.org/plugins/zero-ad-network/).
 2. Open **Zero Ad Network > Settings**, paste your Publisher ID, select **Enable Plugin**, and save.
-3. Set your page caches to skip requests carrying `Better-Web-Token`.
+3. Configure your page caches so requests carrying `Better-Web-Token` bypass them and reach WordPress.
 
 The [WordPress integration guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress) covers setup, page caching, testing and supported plugins. The [plugin readme](plugins/zero-ad-network/readme.txt) is the WordPress.org listing.
 

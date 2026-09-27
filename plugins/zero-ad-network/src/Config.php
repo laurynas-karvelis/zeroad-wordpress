@@ -264,7 +264,7 @@ class Config
                         "zero-ad-network"
                     ); ?></li>
                     <li><?php esc_html_e(
-                        "Set your page cache to skip subscriber requests, then test a subscriber visit. Test access earns nothing.",
+                        "Make subscriber requests bypass your page cache, then test a subscriber visit. Test access earns nothing.",
                         "zero-ad-network"
                     ); ?></li>
                 </ol>

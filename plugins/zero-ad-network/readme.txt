@@ -68,7 +68,7 @@ These are targeted integrations, not a guarantee for every version or custom pla
 
 Once the plugin runs, it marks those responses private and non-cacheable, even for invalid or empty tokens. The header alone never grants access. The plugin can't change a page that an upstream cache or an early cache drop-in already served.
 
-Open **Zero Ad Network > Page cache setup** in WordPress for step-by-step rules. The [page-cache guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress#page-caches-and-cdns) has the same rules and a test checklist. If your host can't skip token requests, turn off HTML page caching on participating pages.
+Open **Zero Ad Network > Page cache setup** in WordPress for step-by-step rules. The [page-cache guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress#page-caches-and-cdns) has the same rules and a test checklist. If your host can't bypass the cache for token requests, turn off HTML page caching on participating pages.
 
 = Earnings =
 
@@ -186,4 +186,4 @@ First official stable release. Changes since 0.14.0:
 
 = 1.0.0 =
 
-First official stable release with the updated token SDK. Review your Publisher ID, select included posts and pages in the Freedom access box, configure all page caches to bypass requests carrying Better-Web-Token, and clear existing page caches. Broad paywall overrides have been removed.
+First official stable release with the updated token SDK. Review your Publisher ID, select included posts and pages in the Freedom access box, configure all page caches so requests carrying Better-Web-Token bypass them, and clear existing page caches. Broad paywall overrides have been removed.

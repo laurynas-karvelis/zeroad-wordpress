@@ -19,7 +19,7 @@ $zeroadActivePage = "zeroad-cache-config";
     <div class="notice notice-warning inline">
         <h2><?php esc_html_e("Token requests must reach WordPress", "zero-ad-network"); ?></h2>
         <p><?php esc_html_e("At every page cache, skip both cache reads and writes when a request has a Better-Web-Token header, even an invalid one. Forward the header to WordPress unchanged. Only a verified token unlocks Freedom. A cookie or variant header never does.", "zero-ad-network"); ?></p>
-        <p><?php esc_html_e("The plugin marks those responses private and no-store, and tells compatible WordPress caches not to store them. It can't stop a cached page served before WordPress loads. If your host can't skip token requests, turn off its full-page cache on participating pages. Static assets and object caching can stay on.", "zero-ad-network"); ?></p>
+        <p><?php esc_html_e("The plugin marks those responses private and no-store, and tells compatible WordPress caches not to store them. It can't stop a cached page served before WordPress loads. If your host can't bypass the cache for token requests, turn off its full-page cache on participating pages. Static assets and object caching can stay on.", "zero-ad-network"); ?></p>
     </div>
 
     <details class="zeroad-panel zeroad-disclosure" open><summary><?php esc_html_e("WordPress page caches", "zero-ad-network"); ?></summary>

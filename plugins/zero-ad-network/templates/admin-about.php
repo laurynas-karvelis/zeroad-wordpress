@@ -63,7 +63,7 @@ $zeroadActivePage = "zeroad-about";
             <h2><?php esc_html_e("Verification and privacy", "zero-ad-network"); ?></h2>
             <p><?php esc_html_e("The extension finds your Publisher ID, then sends a signed token bound to your hostname. The plugin checks it locally, without an API call. A subscriber's first visit may need a reload.", "zero-ad-network"); ?></p>
             <p><?php esc_html_e("Tokens contain no account ID, name or email. Reusing a token allows correlation on the same host while it's valid. Issuing tokens requires sign-in, and the extension separately reports account-linked attention, including creator page URLs. This is not anonymous measurement.", "zero-ad-network"); ?></p>
-            <p><?php esc_html_e("Cancelling a membership or closing an account can't revoke an issued token straight away. Tokens stop working when they expire, give or take the SDK's clock tolerance. Page caches must skip token requests.", "zero-ad-network"); ?></p>
+            <p><?php esc_html_e("Cancelling a membership or closing an account can't revoke an issued token straight away. Tokens stop working when they expire, give or take the SDK's clock tolerance. Token requests must bypass every page cache.", "zero-ad-network"); ?></p>
             <a href="<?php echo esc_url(admin_url("admin.php?page=zeroad-cache-config")); ?>"><?php esc_html_e("Review page cache setup", "zero-ad-network"); ?></a>
         </section>
     </div>
