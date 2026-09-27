@@ -24,12 +24,12 @@ jobs:
         with:
           path: zeroad-wordpress
 
-      # The bootstrap uses the PHP SDK 1.0.0 source and signing fixtures.
+      # The bootstrap uses the PHP SDK 1.0.1 source and signing fixtures.
       - name: Checkout PHP SDK and test tools
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: laurynas-karvelis/zeroad-token-php
-          ref: eab87fb4c24122b280bb636f76ed154e9fcd0bee # 1.0.0
+          ref: d6fd3f3a47e13b1efbacc42f8b2c157c16bcaa5a # 1.0.1
           path: zeroad-token-php
 
       - name: Set up PHP

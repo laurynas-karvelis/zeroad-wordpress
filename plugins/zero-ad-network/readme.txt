@@ -4,7 +4,7 @@ Tags: monetization, content monetization, paid content, membership, ad-free
 Requires PHP: 7.2
 Requires at least: 4.9
 Tested up to: 7.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -162,6 +162,10 @@ Read the service's [Terms of Use](https://zeroad.network/terms) and [Privacy Pol
 The [WordPress integration guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress) covers setup, cache configuration, compatibility, custom content access and troubleshooting.
 
 == Changelog ==
+
+= 1.0.2 =
+
+* Updated the bundled Zero Ad Network PHP token SDK to 1.0.1. Subscriber verification behavior is unchanged.
 
 = 1.0.1 =
 
