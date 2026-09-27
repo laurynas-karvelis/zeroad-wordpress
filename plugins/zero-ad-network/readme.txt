@@ -12,105 +12,154 @@ Earn revenue from Zero Ad Network subscribers by offering ad-free browsing and a
 
 == Description ==
 
-Zero Ad Network connects your WordPress site to a subscriber-funded publisher network. Visitors use their Zero Ad Network subscription and browser extension. You receive a share of funding based on their measured attention while providing the subscriber experience on your site.
+Earn from the time Zero Ad Network subscribers spend on your site. In return, they get your pages without ads, cookie banners or popups.
 
-You need a Zero Ad Network publisher account and your Publisher ID. Site owners do not need to buy a subscription to participate or test their integration.
+**In short**
 
-= What the plugin does =
+* Subscribers pay one monthly membership, called Freedom, and use the Zero Ad Network browser extension.
+* This plugin recognises them on your site, and cleans up your pages for them. Everyone else sees your site as usual.
+* You earn from subscribers' measured time on your site. You don't need a paid membership to take part or to test.
 
-For verified Freedom subscribers on front-end pages, the plugin:
+You need a free Zero Ad Network account and your Publisher ID.
 
-* Suppresses ads from supported advertising integrations.
-* Removes or hides supported cookie consent banners, marketing popups, and newsletter dialogs.
-* Removes matching advertising, consent, and marketing scripts from page HTML.
-* Grants reading access to included published posts and pages through Paid Memberships Pro or WP-Members.
+= What subscribers get =
 
-The plugin combines WordPress hooks, HTML filtering, and CSS. Coverage depends on your theme, installed plugins, and their versions. Check the actual pages and scripts on your site; hiding a banner does not establish that all tracking has stopped.
+On front-end pages, for verified Freedom subscribers, the plugin:
 
-Missing or invalid membership tokens do not enable subscriber benefits. Existing WordPress membership permissions continue to apply. Subscriber page modifications do not run on administration, AJAX, REST API, or JSON requests.
+* removes ads from supported advertising plugins
+* removes or hides supported cookie consent banners, marketing popups and newsletter dialogs
+* removes matching advertising, consent and marketing scripts from the page HTML
+* opens the posts and pages you include, through Paid Memberships Pro or WP-Members
 
-= Choose included paid content =
+Everyone else keeps your normal site. A missing or invalid membership token never unlocks anything. Existing WordPress membership permissions still apply. Admin, AJAX, REST API and JSON requests are never changed.
 
-In the post or page editor, select **Freedom access > Include this content with Freedom**, then save. This grants verified subscribers reading access through the supported membership integrations. Offer your base subscription content or a custom selection of paid posts and pages; other content keeps its existing restrictions.
+The plugin uses WordPress hooks, HTML filtering and CSS. Coverage depends on your theme, plugins and their versions. Check your real pages and scripts: hiding a banner doesn't prove all tracking has stopped.
 
-Private, draft, password-protected, and other post types are excluded. The plugin does not create site memberships, grant purchases, or provide subscription billing. Selecting content alone cannot unlock an unsupported paywall. Other paywalls and custom paid functionality need a custom integration; see the [WordPress integration guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress#custom-included-access).
+= Include paid content =
 
-Clear page caches after changing included content. An already clean, unrestricted site can participate without adding a paywall.
+Skip this if you don't sell access.
 
-= Supported integrations =
+1. Edit a post or page you want subscribers to read.
+2. In the **Freedom access** box, check **Include this content with Freedom**.
+3. Save, then clear your page caches.
 
-The plugin includes rules targeting these integrations, among others:
+Offer your base subscription content, or a custom selection. Anything you don't select keeps its restrictions.
 
-* Advertising: Ads For WP, Ad Inserter, Advanced Ads, WP Quads, AdRotate, and Google Site Kit's AdSense filters.
-* Cookie banners: Cookiebot, Real Cookie Banner, Complianz, CookieYes, Cookie Notice, and GDPR by Trew Knowledge.
-* Marketing popups: Popup Maker, Popup Maker WP, OptinMonster, MailOptin Lite, Hustle, and Thrive Leads.
-* Included paid content: Paid Memberships Pro and WP-Members.
+* Private, draft, password-protected and other post types are always excluded.
+* The plugin doesn't create site memberships, grant purchases or bill anyone.
+* Other paywalls and custom paid features need a custom integration. See [Custom included access](https://zeroad.network/docs/site-integration/remove-ads/wordpress#custom-included-access).
 
-These are targeted integrations, not a guarantee of compatibility with every version or custom placement. See the [full compatibility reference](https://zeroad.network/docs/site-integration/remove-ads/wordpress#supported-plugins-reference) for detection conditions and limitations, including the unconfirmed Raptive/AdThrive rule and the distinction between Convert Pro and Convert Plus.
+An already clean site, with no paywall, doesn't need to include anything.
+
+= Supported plugins =
+
+The plugin includes rules for these plugins, and more:
+
+* **Advertising:** Ads For WP, Ad Inserter, Advanced Ads, WP Quads, AdRotate and Google Site Kit's AdSense filters.
+* **Cookie banners:** Cookiebot, Real Cookie Banner, Complianz, CookieYes, Cookie Notice and GDPR by Trew Knowledge.
+* **Marketing popups:** Popup Maker, Popup Maker WP, OptinMonster, MailOptin Lite, Hustle and Thrive Leads.
+* **Included paid content:** Paid Memberships Pro and WP-Members.
+
+These are targeted integrations, not a guarantee for every version or custom placement. The [full compatibility reference](https://zeroad.network/docs/site-integration/remove-ads/wordpress#supported-plugins-reference) lists detection rules and limits, including the unconfirmed Raptive/AdThrive rule and the difference between Convert Pro and Convert Plus.
 
 = Page caches and CDNs =
 
-**Requests carrying `Better-Web-Token` must reach WordPress.** Configure every CDN, proxy, server cache, and WordPress page cache to bypass both cache reads and writes for those requests, and forward the header to WordPress.
+**Requests carrying `Better-Web-Token` must reach WordPress.** Set every CDN, proxy, server cache and WordPress page cache to skip both cache reads and writes for those requests. Forward the header to WordPress.
 
-Once the plugin runs, it marks token-bearing responses private and non-cacheable, including requests with invalid or empty tokens. Header presence alone never grants access. The plugin cannot change a response already served by an upstream cache or an early WordPress cache drop-in.
+Once the plugin runs, it marks those responses private and non-cacheable, even for invalid or empty tokens. The header alone never grants access. The plugin can't change a page that an upstream cache or an early cache drop-in already served.
 
-Open **Zero Ad Network > Cache Configuration** for setup guidance. The [page-cache guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress#page-caches-and-cdns) includes cache-specific instructions and verification steps. If your host cannot bypass token requests, disable HTML page caching on participating pages.
+Open **Zero Ad Network > Page cache setup** in WordPress for step-by-step rules. The [page-cache guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress#page-caches-and-cdns) has the same rules and a test checklist. If your host can't skip token requests, turn off HTML page caching on participating pages.
 
-= Publisher earnings =
+= Earnings =
 
-Earnings depend on funded subscriber attention and allocation preferences, not a fixed payment per visit or minute. Test visits earn nothing. View earnings and manage payout setup in your Zero Ad Network account; the WordPress plugin does not collect payments or process payouts. See [how publisher earnings work](https://zeroad.network/docs/monetization) for allocation, fees, and transfer requirements.
+* Earnings follow funded subscriber time and each subscriber's funding preferences. There is no fixed payment per visit or minute.
+* Test visits earn nothing.
+* View earnings and set up payouts in your Zero Ad Network account. The plugin doesn't collect payments or process payouts.
+
+See [how publisher earnings work](https://zeroad.network/docs/monetization) for the split, fees and transfer requirements.
 
 == Installation ==
 
-Requirements: WordPress 4.9 or later, PHP 7.2 or later with the Sodium extension, and an HTTPS website. APCu is optional.
+You need WordPress 4.9 or newer, PHP 7.2 or newer with the Sodium extension, and an HTTPS website. APCu is optional.
 
-1. Install and activate **Zero Ad Network** from the WordPress plugin directory, or upload the plugin ZIP through **Plugins > Add New Plugin > Upload Plugin**.
-2. [Sign in or create an account](https://zeroad.network/login), then copy your **Publisher ID** from [Sites & creators](https://zeroad.network/sites#publisher-id).
-3. In WordPress, open **Zero Ad Network > Settings**, paste your Publisher ID, select **Enable Plugin**, and save.
-4. Leave **Publisher Header Method** set to **HTTP Response Header** unless your host requires the **HTML Meta Tag** option. Your WordPress Address and Site Address hostnames must match the public domains you serve.
-5. If you sell access, choose included posts and pages using their **Freedom access** box and save them. Paid Memberships Pro, WP-Members, or a custom integration is needed to grant access.
-6. Configure page-cache bypass as described above, then clear existing page caches.
-7. Install the Zero Ad Network browser extension. In **Sites & creators**, enter a public page URL under **Ready? Verify your published page** and select **Verify & add**. This checks your published Publisher ID; separately test the subscriber experience below.
+1. Install and activate **Zero Ad Network** from the plugin directory. Or upload the ZIP through **Plugins > Add New Plugin > Upload Plugin**.
+2. [Sign in or create an account](https://zeroad.network/login). Copy your **Publisher ID** from [Sites & creators](https://zeroad.network/sites#publisher-id).
+3. In WordPress, open **Zero Ad Network > Settings**. Paste your Publisher ID, select **Enable Plugin**, and save.
+4. Leave **Publisher Header Method** set to **HTTP Response Header**. Choose **HTML Meta Tag** only if your host requires it.
+5. If you sell access, include posts and pages with their **Freedom access** box.
+6. Set up page-cache bypass, as described above. Then clear all page caches.
+7. Install the Zero Ad Network browser extension. In **Sites & creators**, under **Ready? Verify your published page**, enter a public page address and select **Verify & add**.
+
+Step 7 checks that your Publisher ID is published. Test the subscriber experience separately, as described in the FAQ.
+
+Your WordPress Address and Site Address must match the public domains you serve. The plugin uses them as its allowed hostnames.
 
 == Frequently Asked Questions ==
 
-= How do I test without buying a subscription? =
+= How do I test without buying a membership? =
 
-After adding your website, open its details in **Sites & creators** and select **Test in your browser** with the Zero Ad Network extension installed. Keep Freedom turned on in the extension, then open or reload your site. Test access earns no revenue.
+1. In **Sites & creators**, open your website and select **Test in your browser**. The Zero Ad Network extension must be installed.
+2. Keep Freedom turned on in the extension, then open or reload your site.
+3. Check pages with ads, banners and popups. They should be clean.
+4. Open included paid content. It should open. Unselected, private, draft and password-protected content should stay protected.
+5. Select **Turn Freedom off** in the extension, and reload. You should see your normal site.
 
-Check pages with ads, banners, and popups. Confirm included paid content opens while unselected, private, draft, and password-protected content keeps its restrictions. Turn Freedom off in the extension and reload to compare the ordinary experience; existing site memberships can still grant access independently.
+Test visits earn nothing. A site membership you already have can still grant access on its own.
 
-Repeat with warm page caches: load an ordinary page first, test the subscriber visit, then return to the ordinary experience. Subscriber responses must bypass cache lookup and storage, and must not appear to other visitors.
+Then repeat with warm page caches. Load an ordinary page first, test the subscriber visit, then return to the ordinary page. Subscriber pages must never be shown to other visitors.
 
-= Why is my site not detected, or why do subscribers still see ads? =
+= My site isn't detected. What should I check? =
 
-Check that the plugin is enabled, your Publisher ID is correct, and your public page exposes `Better-Web-Publisher` through the selected response header or meta tag. Clear old cached pages after setup. Sites can also appear automatically after accepted subscriber activity is uploaded and processed.
+* The plugin is enabled, and the Publisher ID is correct.
+* Your public pages include `Better-Web-Publisher`, as a response header or meta tag.
+* Old cached pages are cleared.
 
-If discovery succeeds but benefits do not appear, reload after discovery and check that `Better-Web-Token` reaches WordPress. Confirm your public hostname matches the WordPress configuration, check every page-cache layer, and consult the compatibility reference for the affected plugin. A successful Publisher ID check does not verify ad suppression or paid-content access.
+Sites also appear on their own after a subscriber visits and their activity is uploaded and processed. This isn't instant.
+
+= Subscribers still see ads or a paywall. What should I check? =
+
+1. Reload the page. The first visit to a newly discovered site may not carry a token.
+2. Check that `Better-Web-Token` reaches WordPress. A page cache or CDN is the usual cause.
+3. Check that your public hostname matches your WordPress Address and Site Address.
+4. Check the [compatibility reference](https://zeroad.network/docs/site-integration/remove-ads/wordpress#supported-plugins-reference) for the affected plugin.
+
+A successful Publisher ID check doesn't test ad removal or paid-content access.
 
 = Does verification contact Zero Ad Network on every page load? =
 
-No. The plugin verifies signed membership tokens locally using the bundled PHP SDK and Sodium. Tokens are checked against the request hostname; a token issued for another hostname does not grant access.
+No. The plugin checks signed membership tokens locally, using the bundled PHP SDK and Sodium. A token made for another hostname never grants access.
 
-Under **Performance & Caching**, **Enable APCu Caching** allows verification results to be reused between requests when APCu is available. With caching enabled but APCu unavailable, the SDK uses memory for the current request. Turning the setting off disables verification-result caching. **Cache TTL (seconds)** controls the cache duration. This is separate from page caching and does not remove the need for token-request bypass.
+Under **Performance & Caching**, **Enable APCu Caching** reuses verification results between requests when APCu is available. Without APCu, results last for the current request only. Turning the setting off turns off verification caching. **Cache TTL (seconds)** sets how long results are kept.
+
+This is separate from page caching. Token requests must still skip your page cache.
 
 = Does it block every tracker or replace my consent setup? =
 
-No. It targets specific ad, consent, and marketing integrations and matching scripts. It does not provide a general tracking blocker or manage consent for your whole site. Some integrations override consent-status filters to return an accepted state. Review the subscriber page's actual scripts and network requests, especially where custom code depends on those filters. Configure unsupported tracking and custom placements separately.
+No. It targets specific ad, consent and marketing plugins, and matching scripts. It isn't a general tracking blocker, and doesn't manage consent for your whole site.
+
+Some integrations make consent-status filters return "accepted". Check the subscriber page's actual scripts and network requests, especially where custom code relies on those filters. Configure unsupported tracking and custom placements yourself.
 
 = External service and privacy =
 
-This plugin integrates with [Zero Ad Network](https://zeroad.network), which manages subscriber memberships, issues signed membership credentials, processes attention reports, and allocates publisher earnings. A publisher account is required to participate; site owners do not need a paid subscription. Visitors use their own subscription and browser extension.
+This plugin connects to [Zero Ad Network](https://zeroad.network). The service manages memberships, issues signed membership credentials, processes attention reports and calculates publisher earnings. You need a publisher account, but not a paid membership. Visitors use their own membership and browser extension.
 
-The plugin makes no outbound API requests for verification or telemetry. When enabled and configured, it publishes your Publisher ID in a response header or meta tag for the extension to discover. Subscriber tokens contain no account ID, name, or email, but repeated use can be correlated on the same hostname during validity.
+What the plugin does:
 
-The subscriber's browser extension separately reports account-linked activity to Zero Ad Network, including Publisher ID, hostname, measured duration, views, and creator page URLs where applicable. This reporting is performed by the extension, not by this WordPress plugin. It is not anonymous. The plugin stores its settings, included-content selections, and welcome-notice dismissal in WordPress; optional APCu caching stores verification results on your server.
+* It makes no outbound requests for verification or telemetry.
+* When enabled, it publishes your Publisher ID in a response header or meta tag, for the extension to find.
+* It stores its settings, your included-content selections and the welcome-notice dismissal in WordPress. Optional APCu caching stores verification results on your server.
 
-Review the service's [Terms of Use](https://zeroad.network/terms) and [Privacy Policy](https://zeroad.network/privacy) before participating.
+What the extension does, separately:
+
+* It reports account-linked activity to Zero Ad Network: Publisher ID, hostname, measured time, views and, for creator pages, page URLs. This reporting is not anonymous.
+
+Subscriber tokens contain no account ID, name or email. Repeated use can be correlated on the same hostname while a token is valid.
+
+Read the service's [Terms of Use](https://zeroad.network/terms) and [Privacy Policy](https://zeroad.network/privacy) before taking part.
 
 = Where can I find setup help? =
 
-See the [WordPress integration guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress) for cache configuration, compatibility details, custom content access, and troubleshooting.
+The [WordPress integration guide](https://zeroad.network/docs/site-integration/remove-ads/wordpress) covers setup, cache configuration, compatibility, custom content access and troubleshooting.
 
 == Changelog ==
 

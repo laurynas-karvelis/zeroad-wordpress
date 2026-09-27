@@ -197,8 +197,8 @@ class Config
 
         add_submenu_page(
             "zeroad-config",
-            __("Cache Configuration", "zero-ad-network"),
-            __("Cache Configuration", "zero-ad-network"),
+            __("Page cache setup", "zero-ad-network"),
+            __("Page cache setup", "zero-ad-network"),
             "manage_options",
             "zeroad-cache-config",
             [$this->admin_pages, "renderCacheConfigPage"]
@@ -206,8 +206,8 @@ class Config
 
         add_submenu_page(
             "zeroad-config",
-            __("About", "zero-ad-network"),
-            __("About", "zero-ad-network"),
+            __("About & earnings", "zero-ad-network"),
+            __("About & earnings", "zero-ad-network"),
             "manage_options",
             "zeroad-about",
             [$this->admin_pages, "renderAboutPage"]
@@ -228,10 +228,10 @@ class Config
             <div class="notice notice-info is-dismissible zeroad-welcome-notice" data-dismiss-nonce="<?php echo esc_attr(
                 $nonce
             ); ?>">
-                <h3><?php esc_html_e("Welcome to Zero Ad Network!", "zero-ad-network"); ?></h3>
+                <h3><?php esc_html_e("Welcome to Zero Ad Network", "zero-ad-network"); ?></h3>
                 <p>
                     <?php esc_html_e(
-                        "Thank you for installing Zero Ad Network! Set up your site to participate:",
+                        "Finish these steps to start earning from subscribers:",
                         "zero-ad-network"
                     ); ?>
                 </p>
@@ -241,36 +241,36 @@ class Config
                             wp_kses(
                                 /* translators: %s: URL to Zero Ad Network registration page */
                                 __(
-                                    'Create an account at <a href="%s" target="_blank" rel="noopener noreferrer">zeroad.network</a> and copy your Publisher ID from the dashboard',
+                                    'Sign in or create a free account at <a href="%s" target="_blank" rel="noopener noreferrer">zeroad.network</a>, and copy your Publisher ID.',
                                     "zero-ad-network"
                                 ),
                                 ["a" => ["href" => [], "target" => [], "rel" => []]]
                             ),
-                            esc_url("https://zeroad.network")
+                            esc_url("https://zeroad.network/login")
                         ); ?>
                     </li>
                     <li>
                         <?php printf(
                             wp_kses(
                                 /* translators: %s: URL to plugin settings page */
-                                __('Enter your Publisher ID in the <a href="%s">plugin settings</a>', "zero-ad-network"),
+                                __('Paste it in the <a href="%s">plugin settings</a>.', "zero-ad-network"),
                                 ["a" => ["href" => []]]
                             ),
                             esc_url(admin_url("admin.php?page=zeroad-config"))
                         ); ?>
                     </li>
                     <li><?php esc_html_e(
-                        "Enable the plugin and save",
+                        "Select Enable Plugin, and save.",
                         "zero-ad-network"
                     ); ?></li>
                     <li><?php esc_html_e(
-                        "Verify the subscriber experience and page-cache setup. Earnings depend on funded subscriber attention and allocation preferences; test access earns nothing.",
+                        "Set your page cache to skip subscriber requests, then test a subscriber visit. Test access earns nothing.",
                         "zero-ad-network"
                     ); ?></li>
                 </ol>
                 <p>
-                    <a href="https://zeroad.network/docs" target="_blank" rel="noopener noreferrer" class="button button-primary">
-                        <?php esc_html_e("View Documentation", "zero-ad-network"); ?>
+                    <a href="https://zeroad.network/docs/site-integration/remove-ads/wordpress" target="_blank" rel="noopener noreferrer" class="button button-primary">
+                        <?php esc_html_e("Read the setup guide", "zero-ad-network"); ?>
                     </a>
                     <a href="<?php echo esc_url(admin_url("admin.php?page=zeroad-config")); ?>" class="button">
                         <?php esc_html_e("Go to Settings", "zero-ad-network"); ?>

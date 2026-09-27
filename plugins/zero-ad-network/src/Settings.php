@@ -107,7 +107,7 @@ class Settings
     {
         echo '<p class="description">';
         esc_html_e(
-            "Configure your Zero Ad Network partnership settings. Subscribers get a clean browsing experience. If you sell access, select included posts and pages in their Freedom access box and verify your membership integration.",
+            "Connect this site to your Zero Ad Network publisher account. Verified subscribers get a clean page. If you sell access, include posts and pages with their Freedom access box, and check that your membership plugin opens them.",
             "zero-ad-network"
         );
         echo "</p>";
@@ -120,7 +120,7 @@ class Settings
     {
         echo '<p class="description">';
         esc_html_e(
-            "Configure APCu token caching for improved performance. When enabled, validated tokens are cached for faster subsequent requests.",
+            "Reuse token verification results with APCu, so returning subscribers are checked faster. This does not cache your pages.",
             "zero-ad-network"
         );
         echo "</p>";
@@ -155,7 +155,7 @@ class Settings
         </label>
         <p class="description" id="zeroad-enabled-help">
             <?php esc_html_e(
-                "When enabled, the plugin verifies each visitor's subscriber token and applies the ad-free, clean experience for Zero Ad Network subscribers.",
+                "When on, the plugin checks each visitor's membership token, and gives verified subscribers a clean page.",
                 "zero-ad-network"
             ); ?>
         </p>
@@ -181,12 +181,12 @@ class Settings
                 wp_kses(
                     /* translators: %s: URL to Zero Ad Network dashboard */
                     __(
-                        'Your unique Publisher ID from the <a href="%s" target="_blank" rel="noopener noreferrer">Zero Ad Network dashboard</a>. It starts with <code>zapub_</code> and identifies your publisher account across your sites.',
+                        'Copy it from <a href="%s" target="_blank" rel="noopener noreferrer">Sites &amp; creators</a> in your Zero Ad Network account. It starts with <code>zapub_</code>, and is the same for all your sites.',
                         "zero-ad-network"
                     ),
                     ["a" => ["href" => [], "target" => [], "rel" => []], "code" => []]
                 ),
-                esc_url("https://zeroad.network/dashboard")
+                esc_url("https://zeroad.network/sites#publisher-id")
             ); ?>
         </p>
         <?php
@@ -210,7 +210,7 @@ class Settings
         </select>
         <p class="description" id="zeroad-output_method-help">
             <?php esc_html_e(
-                'How to send the "Better-Web-Publisher" identifier to the subscriber\'s browser extension. HTTP header is recommended for better performance with page caching.',
+                'How the plugin announces your Publisher ID to the browser extension, as "Better-Web-Publisher". Choose HTML Meta Tag only if your host requires it.',
                 "zero-ad-network"
             ); ?>
         </p>
@@ -230,7 +230,7 @@ class Settings
                    value="1" <?php checked($enabled, true); ?>>
             <?php esc_html_e("Reuse verification results with APCu when available", "zero-ad-network"); ?>
         </label>
-        <p class="description" id="zeroad-cache_enabled-help"><?php esc_html_e("This preference takes effect when your host enables APCu. Otherwise, token verification runs per request. It does not cache subscriber pages.", "zero-ad-network"); ?></p>
+        <p class="description" id="zeroad-cache_enabled-help"><?php esc_html_e("Takes effect when your host has APCu. Without it, tokens are verified on each request. This never caches pages.", "zero-ad-network"); ?></p>
         <?php
     }
 
@@ -252,7 +252,7 @@ class Settings
         <span><?php esc_html_e("seconds", "zero-ad-network"); ?></span>
         <p class="description" id="zeroad-cache_ttl-help">
             <?php esc_html_e(
-                "How long to reuse verification results. Default: 3600 seconds (1 hour). Maximum: 86400 seconds (24 hours). Cached access never extends beyond the token's expiry.",
+                "How long to reuse a verification result. Default: 3600 seconds (1 hour). Maximum: 86400 seconds (24 hours). A cached result never outlives the token's expiry.",
                 "zero-ad-network"
             ); ?>
         </p>
@@ -275,7 +275,7 @@ class Settings
                placeholder="zeroad:">
         <p class="description" id="zeroad-cache_prefix-help">
             <?php esc_html_e(
-                "Prefix for cache keys to avoid conflicts with other plugins. Change only if you have multiple WordPress installations sharing APCu.",
+                "Keeps these cache keys apart from other plugins. Change it only if several WordPress sites share one APCu.",
                 "zero-ad-network"
             ); ?>
             <br>
