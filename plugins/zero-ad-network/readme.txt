@@ -99,12 +99,12 @@ Your WordPress Address and Site Address must match the public domains you serve.
 = How do I test without buying a membership? =
 
 1. In **Websites & creators**, open your website and select **Test in your browser**. The Zero Ad Network extension must be installed.
-2. Keep Freedom turned on in the extension, then open or reload your website.
+2. Keep the extension running, then open or reload your website.
 3. Check pages with ads, banners and popups. They should be clean.
 4. Open included paid content. It should open. Unselected, private, draft and password-protected content should stay protected.
-5. Select **Turn Freedom off** in the extension, and reload. You should see your normal website.
+5. Expand **Browser extension** in the popup, select **Pause extension**, and reload. You should see your normal website.
 
-Test visits earn nothing. A website membership you already have can still grant access on its own.
+Select **Resume extension** and reload to restore subscriber access. Test visits earn nothing. A website membership you already have can still grant access on its own.
 
 Then repeat with warm page caches. Load an ordinary page first, test the subscriber visit, then return to the ordinary page. Subscriber pages must never be shown to other visitors.
 
