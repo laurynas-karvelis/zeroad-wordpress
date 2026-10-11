@@ -16,7 +16,7 @@ Earn from the time Zero Ad Network subscribers spend on your website. In return,
 
 **In short**
 
-* Subscribers pay one monthly membership, called Freedom, and use the Zero Ad Network browser extension.
+* Subscribers pay for one monthly membership, called Freedom, and use the Zero Ad Network browser extension.
 * This plugin recognises them on your website, and cleans up your pages for them. Everyone else sees your website as usual.
 * You earn from subscribers' measured time on your website. You don't need a paid membership to take part or to test.
 
@@ -31,7 +31,7 @@ On front-end pages, for verified Freedom subscribers, the plugin:
 * removes matching advertising, consent and marketing scripts from the page HTML
 * opens the posts and pages you include, through Paid Memberships Pro or WP-Members
 
-Everyone else keeps your normal website. A missing or invalid membership token never unlocks anything. Existing WordPress membership permissions still apply. Admin, AJAX, REST API and JSON requests are never changed.
+Everyone else sees your website as usual. A missing or invalid membership token never unlocks anything. Existing WordPress membership permissions still apply. Admin, AJAX, REST API and JSON requests are never changed.
 
 The plugin uses WordPress hooks, HTML filtering and CSS. Coverage depends on your theme, plugins and their versions. Check your real pages and scripts: hiding a banner doesn't prove all tracking has stopped.
 
@@ -102,7 +102,7 @@ Your WordPress Address and Site Address must match the public domains you serve.
 2. Keep the extension running, then open or reload your website.
 3. Check pages with ads, banners and popups. They should be clean.
 4. Open included paid content. It should open. Unselected, private, draft and password-protected content should stay protected.
-5. Expand **Browser extension** in the popup, select **Pause extension**, and reload. You should see your normal website.
+5. In the popup's **Browser extension** section, select **Pause extension** and reload. You should see your normal website.
 
 Select **Resume extension** and reload to restore subscriber access. Test visits earn nothing. A website membership you already have can still grant access on its own.
 

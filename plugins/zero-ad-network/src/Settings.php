@@ -107,7 +107,7 @@ class Settings
     {
         echo '<p class="description">';
         esc_html_e(
-            "Connect this website to your Zero Ad Network publisher account. Verified subscribers get a clean page. If you sell access, include posts and pages with their Freedom access box, and check that your membership plugin opens them.",
+            "Connect this website to your Zero Ad Network publisher account. Verified subscribers get a clean page. If you sell access, select posts and pages in the Freedom access box, then check that your membership plugin grants subscribers access.",
             "zero-ad-network"
         );
         echo "</p>";
@@ -275,7 +275,7 @@ class Settings
                placeholder="zeroad:">
         <p class="description" id="zeroad-cache_prefix-help">
             <?php esc_html_e(
-                "Keeps these cache keys apart from other plugins. Change it only if several WordPress websites share one APCu.",
+                "Keeps this plugin's cache keys separate from other plugins' keys. Change it only if several WordPress websites share the same APCu cache.",
                 "zero-ad-network"
             ); ?>
             <br>

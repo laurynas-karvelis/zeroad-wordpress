@@ -39,7 +39,7 @@ class IncludedContent
             <?php esc_html_e("Include this content with Freedom", "zero-ad-network"); ?>
         </label>
         <p class="description"><?php esc_html_e(
-            "Subscribers can read this through Paid Memberships Pro or WP-Members. Other paywalls need a custom integration. Private, draft and password-protected content stays protected. Clear page caches after changing this.",
+            "Paid Memberships Pro or WP-Members will grant subscribers access to this content. Other paywalls need a custom integration. Private, draft and password-protected content stays protected. Clear page caches after changing this.",
             "zero-ad-network"
         ); ?></p>
         <?php

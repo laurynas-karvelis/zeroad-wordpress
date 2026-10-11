@@ -6,7 +6,7 @@ The official WordPress plugin for [Zero Ad Network](https://zeroad.network). Ear
 
 - The plugin checks subscribers' membership tokens locally, with no API calls.
 - For verified subscribers, it removes supported ads, cookie banners and marketing popups. It opens the posts and pages you include, through Paid Memberships Pro or WP-Members.
-- Everyone else keeps your normal website.
+- Everyone else sees your website as usual.
 
 ## Get started
 

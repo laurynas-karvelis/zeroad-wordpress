@@ -11,14 +11,14 @@ $zeroadActivePage = "zeroad-about";
         <span class="zeroad-page-icon dashicons dashicons-info" aria-hidden="true"></span>
         <div>
     <h1><?php esc_html_e("About Zero Ad Network", "zero-ad-network"); ?></h1>
-    <p class="zeroad-intro"><?php esc_html_e("Subscribers fund the websites they spend time on, instead of advertisers.", "zero-ad-network"); ?></p>
+    <p class="zeroad-intro"><?php esc_html_e("Websites earn from the time subscribers spend on them, with funding from subscriptions rather than advertising.", "zero-ad-network"); ?></p>
         </div>
     </header>
     <?php include __DIR__ . "/admin-navigation.php"; ?>
     <div class="zeroad-content zeroad-about-grid">
         <section class="zeroad-panel">
             <h2><?php esc_html_e("What subscribers get", "zero-ad-network"); ?></h2>
-            <p><?php esc_html_e("For verified Freedom subscribers, the plugin removes ads, non-essential trackers, cookie dialogs and marketing popups, through supported integrations. Everyone else keeps your normal website.", "zero-ad-network"); ?></p>
+            <p><?php esc_html_e("For verified Freedom subscribers, the plugin removes ads, non-essential trackers, cookie dialogs and marketing popups, through supported integrations. Everyone else sees your website as usual.", "zero-ad-network"); ?></p>
             <p><?php esc_html_e("If you sell access, include your base subscription content or a custom selection. Use the Freedom access box on each post or page. Paid Memberships Pro and WP-Members are supported; other paywalls need a custom integration. Private, draft, password-protected and unselected content stays protected.", "zero-ad-network"); ?></p>
             <a class="button button-secondary" href="<?php echo esc_url(admin_url("admin.php?page=zeroad-config")); ?>"><?php esc_html_e("Configure your website", "zero-ad-network"); ?></a>
         </section>
@@ -46,14 +46,14 @@ $zeroadActivePage = "zeroad-about";
             <p>
                 <strong><?php esc_html_e("Shared pool:", "zero-ad-network"); ?></strong><br>
                 <?php esc_html_e(
-                    "Unallocated funding, including from subscribers who visited no one, is split equally per eligible publisher account, not per website. An account with at least one Observed or Active integration is eligible. Pool earnings aren't guaranteed. A subscriber's exclusion doesn't remove an eligible publisher from the pool.",
+                    "Unallocated funding, including from subscribers who visited no participating websites or creator pages, is split equally per eligible publisher account, not per website. An account with at least one Observed or Active integration is eligible. Pool earnings aren't guaranteed. A subscriber's exclusion doesn't remove an eligible publisher from the pool.",
                     "zero-ad-network"
                 ); ?>
             </p>
             <p>
                 <strong><?php esc_html_e("Transfers to Stripe:", "zero-ad-network"); ?></strong><br>
                 <?php esc_html_e(
-                    "Earnings build up before payout setup. Once you have at least $30 unpaid, you can complete Stripe Express onboarding. Each month, eligible balances are transferred to your Stripe account; smaller balances carry forward. Reaching $30 doesn't trigger an immediate payment, and the platform fee isn't deducted again. Bank withdrawals are separate, and Zero Ad Network doesn't start them.",
+                    "Earnings build up before payout setup. Once your unpaid earnings reach $30, you can complete Stripe Express onboarding. Each month, eligible balances are transferred to your Stripe account; smaller balances carry forward. Reaching $30 doesn't trigger an immediate payment, and the platform fee isn't deducted again. Bank withdrawals are separate, and Zero Ad Network doesn't start them.",
                     "zero-ad-network"
                 ); ?>
             </p>
