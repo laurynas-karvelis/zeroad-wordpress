@@ -1,6 +1,6 @@
 # Zero Ad Network for WordPress
 
-The official WordPress plugin for [Zero Ad Network](https://zeroad.network). Earn from the time subscribers spend on your website, and give them your pages without ads, cookie banners or popups.
+The official WordPress plugin for [Zero Ad Network](https://zeroad.network). Let subscribers browse your website without ads and access the paid content you include with their Freedom membership. Earn from the time they spend with your content.
 
 **In short**
 

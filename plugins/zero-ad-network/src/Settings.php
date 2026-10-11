@@ -107,7 +107,7 @@ class Settings
     {
         echo '<p class="description">';
         esc_html_e(
-            "Connect this website to your Zero Ad Network publisher account. Verified subscribers get a clean page. If you sell access, select posts and pages in the Freedom access box, then check that your membership plugin grants subscribers access.",
+            "Connect this website to your Zero Ad Network publisher account so Freedom subscribers can browse without ads and access the paid content you include. If you sell access, select posts and pages in the Freedom access box, then check that your membership plugin grants subscribers access.",
             "zero-ad-network"
         );
         echo "</p>";

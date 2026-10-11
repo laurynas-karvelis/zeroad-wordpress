@@ -11,7 +11,7 @@ $zeroadActivePage = "zeroad-about";
         <span class="zeroad-page-icon dashicons dashicons-info" aria-hidden="true"></span>
         <div>
     <h1><?php esc_html_e("About Zero Ad Network", "zero-ad-network"); ?></h1>
-    <p class="zeroad-intro"><?php esc_html_e("Websites earn from the time subscribers spend on them, with funding from subscriptions rather than advertising.", "zero-ad-network"); ?></p>
+    <p class="zeroad-intro"><?php esc_html_e("Let Freedom subscribers browse your website without ads and access the paid content you include with their membership. Earn from the time they spend with your content.", "zero-ad-network"); ?></p>
         </div>
     </header>
     <?php include __DIR__ . "/admin-navigation.php"; ?>

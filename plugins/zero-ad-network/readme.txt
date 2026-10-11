@@ -12,12 +12,12 @@ Earn revenue from Zero Ad Network subscribers by offering ad-free browsing and a
 
 == Description ==
 
-Earn from the time Zero Ad Network subscribers spend on your website. In return, they get your pages without ads, cookie banners or popups.
+Let Zero Ad Network subscribers browse your website without ads and access the paid content you include with their Freedom membership. Earn from the time they spend with your content.
 
 **In short**
 
 * Subscribers pay for one monthly membership, called Freedom, and use the Zero Ad Network browser extension.
-* This plugin recognises them on your website, and cleans up your pages for them. Everyone else sees your website as usual.
+* This plugin recognises them on your website, removes supported ads and interruptions, and gives them access to the paid content you include through supported membership plugins. Everyone else sees your website as usual.
 * You earn from subscribers' measured time on your website. You don't need a paid membership to take part or to test.
 
 You need a free Zero Ad Network account and your Publisher ID.
